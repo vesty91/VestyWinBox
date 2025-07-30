@@ -1,0 +1,303 @@
+/* Reset et base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--background);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-gold-gradient);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #FFE55C 0%, #FFD700 50%, #D4AF37 100%);
+}
+
+/* Variables CSS VIP Premium */
+:root {
+  /* Couleurs de base */
+  --background: #0a0a0a;
+  --background-glass: rgba(255, 255, 255, 0.05);
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-muted: #666666;
+  
+  /* Couleurs VIP Gold */
+  --primary-gold: #FFD700;
+  --primary-gold-light: #FFE55C;
+  --primary-gold-dark: #D4AF37;
+  --primary-gold-gradient: linear-gradient(135deg, #FFD700 0%, #FFE55C 50%, #D4AF37 100%);
+  
+  /* Couleurs VIP Premium */
+  --vip-purple: #8B5CF6;
+  --vip-purple-gradient: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+  --vip-emerald: #10B981;
+  --vip-emerald-gradient: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  --vip-sapphire: #3B82F6;
+  --vip-sapphire-gradient: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  --vip-ruby: #EF4444;
+  --vip-ruby-gradient: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
+  --vip-amber: #F59E0B;
+  --vip-amber-gradient: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+  
+  /* Gradients principaux */
+  --gradient-primary: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
+  --gradient-secondary: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+  --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  
+  /* Bordures */
+  --border-gold: rgba(255, 215, 0, 0.3);
+  --border-light: rgba(255, 255, 255, 0.1);
+  --border-dark: rgba(255, 255, 255, 0.05);
+  
+  /* Ombres */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.6);
+  --shadow-gold: 0 4px 12px rgba(255, 215, 0, 0.3);
+  --shadow-gold-strong: 0 6px 20px rgba(255, 215, 0, 0.5);
+  
+  /* Effets de flou */
+  --blur-sm: blur(4px);
+  --blur-md: blur(8px);
+  --blur-lg: blur(12px);
+  --blur-xl: blur(16px);
+  
+  /* Espacement */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+  
+  /* Rayons de bordure */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  /* Z-index */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+}
+
+/* Animations VIP */
+@keyframes vip-animate-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.8));
+  }
+}
+
+@keyframes vip-animate-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(-10px) translateY(-10px);
+  }
+  50% {
+    transform: translateX(10px) translateY(-5px);
+  }
+  75% {
+    transform: translateX(-5px) translateY(10px);
+  }
+}
+
+/* Responsive Design - Mobile First */
+@media (max-width: 480px) {
+  :root {
+    --space-xs: 3px;
+    --space-sm: 6px;
+    --space-md: 10px;
+    --space-lg: 14px;
+    --space-xl: 20px;
+    --space-2xl: 28px;
+    --space-3xl: 40px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  :root {
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 24px;
+    --space-2xl: 32px;
+    --space-3xl: 48px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  :root {
+    --space-xs: 5px;
+    --space-sm: 10px;
+    --space-md: 15px;
+    --space-lg: 20px;
+    --space-xl: 30px;
+    --space-2xl: 40px;
+    --space-3xl: 60px;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+  :root {
+    --space-xs: 6px;
+    --space-sm: 12px;
+    --space-md: 18px;
+    --space-lg: 24px;
+    --space-xl: 36px;
+    --space-2xl: 48px;
+    --space-3xl: 72px;
+  }
+}
+
+@media (min-width: 1441px) and (max-width: 1920px) {
+  :root {
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 24px;
+    --space-lg: 32px;
+    --space-xl: 48px;
+    --space-2xl: 64px;
+    --space-3xl: 96px;
+  }
+}
+
+@media (min-width: 1921px) and (max-width: 2560px) {
+  :root {
+    --space-xs: 10px;
+    --space-sm: 20px;
+    --space-md: 30px;
+    --space-lg: 40px;
+    --space-xl: 60px;
+    --space-2xl: 80px;
+    --space-3xl: 120px;
+  }
+}
+
+@media (min-width: 2561px) {
+  :root {
+    --space-xs: 12px;
+    --space-sm: 24px;
+    --space-md: 36px;
+    --space-lg: 48px;
+    --space-xl: 72px;
+    --space-2xl: 96px;
+    --space-3xl: 144px;
+  }
+}
+
+/* Responsive pour les écrans ultra-larges */
+@media (min-width: 3200px) {
+  :root {
+    --space-xs: 16px;
+    --space-sm: 32px;
+    --space-md: 48px;
+    --space-lg: 64px;
+    --space-xl: 96px;
+    --space-2xl: 128px;
+    --space-3xl: 192px;
+  }
+}
+
+/* Responsive pour les écrans 4K et plus */
+@media (min-width: 3840px) {
+  :root {
+    --space-xs: 20px;
+    --space-sm: 40px;
+    --space-md: 60px;
+    --space-lg: 80px;
+    --space-xl: 120px;
+    --space-2xl: 160px;
+    --space-3xl: 240px;
+  }
+}
+
+/* Mode sombre optimisé */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+  }
+}
+
+/* Print styles */
+@media print {
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  html, body {
+    overflow: visible !important;
+  }
+  
+  #root {
+    overflow: visible !important;
+  }
+} 

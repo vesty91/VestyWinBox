@@ -1,0 +1,34 @@
+# Fichiers externes et assets
+assets/tools/**/*.js
+assets/tools/**/*.min.js
+assets/tools/**/*.ico
+assets/tools/**/*.png
+assets/tools/**/*.jpg
+assets/tools/**/*.jpeg
+assets/tools/**/*.gif
+assets/tools/**/*.svg
+assets/tools/**/*.exe
+assets/tools/**/*.msi
+assets/tools/**/*.zip
+assets/tools/**/*.rar
+assets/tools/**/*.7z
+
+# Fichiers de build
+dist/
+build/
+node_modules/
+
+# Fichiers de configuration
+*.config.js
+*.config.ts
+vite.config.ts
+tailwind.config.js
+
+# Fichiers de test
+coverage/
+*.test.js
+*.spec.js
+
+# Fichiers temporaires
+*.tmp
+*.temp 

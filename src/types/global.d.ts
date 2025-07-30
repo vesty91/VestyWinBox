@@ -1,0 +1,47 @@
+// Types globaux pour les APIs DOM
+declare global {
+  interface File {
+    name: string;
+    size: number;
+    type: string;
+    lastModified: number;
+  }
+
+  interface FileReader {
+    readAsText(file: File): void;
+    readAsDataURL(blob: Blob): void;
+    result: string | null;
+    onload: ((this: FileReader, ev: ProgressEvent<FileReader>) => void) | null;
+    onerror: ((this: FileReader, ev: ProgressEvent<FileReader>) => void) | null;
+  }
+
+  var FileReader: {
+    new(): FileReader;
+  };
+
+  interface ProgressEvent<T = EventTarget> extends Event {
+    readonly lengthComputable: boolean;
+    readonly loaded: number;
+    readonly total: number;
+  }
+
+  // Types pour l'API Electron
+  interface ElectronAPI {
+    minimizeWindow: () => void;
+    maximizeWindow: () => void;
+    closeWindow: () => void;
+    onMaximize: (callback: () => void) => void;
+    onUnmaximize: (callback: () => void) => void;
+    getVersion: () => Promise<string>;
+    getPlatform: () => Promise<string>;
+    showNotification: (title: string, body: string) => void;
+    openExternal: (url: string) => void;
+    getSystemInfo: () => Promise<any>;
+  }
+
+  interface Window {
+    electronAPI?: ElectronAPI;
+  }
+}
+
+export {}; 
