@@ -4,7 +4,6 @@ import {
   Search, 
   Grid, 
   List, 
-  Download, 
   Play, 
   X,
   Package,
@@ -16,8 +15,7 @@ import {
   FileText,
   HardDrive,
   Zap,
-  Info,
-  Image
+  Info
 } from 'lucide-react';
 import { ToolsService, Tool } from '../../services/ToolsService';
 import './SoftwarePage.css';
