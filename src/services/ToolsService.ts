@@ -53,16 +53,25 @@ export class ToolsService {
           name: '7-Zip',
           category: 'Compression & Archivage',
           path: 'assets/tools/logiciels/Compression & Archivage/7zFM.exe',
-          iconPath: 'assets/tools/icons/Compression & Archivage/7-Zip.ico',
+          iconPath: 'assets/tools/icons/Compression & Archivage/7zip.ico',
           description: 'Compresseur et décompresseur de fichiers',
           version: '23.01',
           size: '1.2 MB'
         },
         {
+          name: 'WinRAR',
+          category: 'Compression & Archivage',
+          path: 'assets/tools/logiciels/Compression & Archivage/WinRAR.exe',
+          iconPath: 'assets/tools/icons/Compression & Archivage/winrar.ico',
+          description: 'Compresseur de fichiers populaire',
+          version: '6.24',
+          size: '3.5 MB'
+        },
+        {
           name: 'Chrome',
           category: 'navigateurs',
           path: 'assets/tools/logiciels/navigateurs/chrome.exe',
-          iconPath: 'assets/tools/icons/navigateurs/chrome.ico',
+          iconPath: 'assets/tools/icons/navigateurs/Chrome.ico',
           description: 'Navigateur web rapide et sécurisé',
           version: '120.0.6099.109',
           size: '85 MB'
@@ -71,55 +80,235 @@ export class ToolsService {
           name: 'Firefox',
           category: 'navigateurs',
           path: 'assets/tools/logiciels/navigateurs/firefox.exe',
-          iconPath: 'assets/tools/icons/navigateurs/firefox.ico',
+          iconPath: 'assets/tools/icons/navigateurs/Firefox.ico',
           description: 'Navigateur web open source',
           version: '121.0',
           size: '65 MB'
         },
         {
+          name: 'Opera',
+          category: 'navigateurs',
+          path: 'assets/tools/logiciels/navigateurs/opera.exe',
+          iconPath: 'assets/tools/icons/navigateurs/Opera.ico',
+          description: 'Navigateur web avec VPN intégré',
+          version: '105.0.4970.63',
+          size: '75 MB'
+        },
+        {
+          name: 'Brave',
+          category: 'navigateurs',
+          path: 'assets/tools/logiciels/navigateurs/brave.exe',
+          iconPath: 'assets/tools/icons/navigateurs/Brave.ico',
+          description: 'Navigateur web axé sur la confidentialité',
+          version: '1.60.109',
+          size: '80 MB'
+        },
+        {
           name: 'Visual Studio Code',
           category: 'Éditeurs de code & Développement',
           path: 'assets/tools/logiciels/Éditeurs de code & Développement/Code.exe',
-          iconPath: 'assets/tools/icons/Éditeurs de code & Développement/vscode.ico',
+          iconPath: 'assets/tools/icons/Éditeurs de code & Développement/VS-Code.ico',
           description: 'Éditeur de code moderne et extensible',
           version: '1.85.1',
           size: '45 MB'
         },
         {
+          name: 'Git',
+          category: 'Éditeurs de code & Développement',
+          path: 'assets/tools/logiciels/Éditeurs de code & Développement/git.exe',
+          iconPath: 'assets/tools/icons/Éditeurs de code & Développement/Git-2.50.0-64-bit.ico',
+          description: 'Système de contrôle de version',
+          version: '2.50.0',
+          size: '25 MB'
+        },
+        {
+          name: 'Node.js',
+          category: 'Éditeurs de code & Développement',
+          path: 'assets/tools/logiciels/Éditeurs de code & Développement/node.exe',
+          iconPath: 'assets/tools/icons/Éditeurs de code & Développement/NodeJS.ico',
+          description: 'Runtime JavaScript',
+          version: '20.10.0',
+          size: '35 MB'
+        },
+        {
+          name: 'Cursor',
+          category: 'Éditeurs de code & Développement',
+          path: 'assets/tools/logiciels/Éditeurs de code & Développement/Cursor.exe',
+          iconPath: 'assets/tools/icons/Éditeurs de code & Développement/cursorusersetup-x64-0.50.5.ico',
+          description: 'Éditeur de code avec IA',
+          version: '0.50.5',
+          size: '55 MB'
+        },
+        {
           name: 'CPU-Z',
           category: 'Outils système & Monitoring matériel',
           path: 'assets/tools/logiciels/Outils système & Monitoring matériel/cpuz.exe',
-          iconPath: 'assets/tools/icons/Outils système & Monitoring matériel/cpuz.ico',
+          iconPath: 'assets/tools/icons/Outils système & Monitoring matériel/cpu-z.ico',
           description: 'Informations détaillées sur le matériel',
           version: '2.06',
           size: '8.5 MB'
         },
         {
-          name: 'CCleaner',
-          category: 'Maintenance & Utilitaires Windows',
-          path: 'assets/tools/logiciels/Maintenance & Utilitaires Windows/ccleaner.exe',
-          iconPath: 'assets/tools/icons/Maintenance & Utilitaires Windows/ccleaner.ico',
-          description: 'Nettoyage et optimisation du système',
-          version: '6.12',
+          name: 'CrystalDiskInfo',
+          category: 'Outils système & Monitoring matériel',
+          path: 'assets/tools/logiciels/Outils système & Monitoring matériel/CrystalDiskInfo.exe',
+          iconPath: 'assets/tools/icons/Outils système & Monitoring matériel/crystaldiskinfo.ico',
+          description: 'Surveillance de la santé des disques',
+          version: '9.2.1',
+          size: '12 MB'
+        },
+        {
+          name: 'CrystalDiskMark',
+          category: 'Outils système & Monitoring matériel',
+          path: 'assets/tools/logiciels/Outils système & Monitoring matériel/CrystalDiskMark.exe',
+          iconPath: 'assets/tools/icons/Outils système & Monitoring matériel/crystaldiskmark.ico',
+          description: 'Test de performance des disques',
+          version: '9.0.0',
           size: '15 MB'
+        },
+        {
+          name: 'AIDA64',
+          category: 'Outils système & Monitoring matériel',
+          path: 'assets/tools/logiciels/Outils système & Monitoring matériel/aida64.exe',
+          iconPath: 'assets/tools/icons/Outils système & Monitoring matériel/AIDA.64.ico',
+          description: 'Diagnostic système complet',
+          version: '7.3.6400',
+          size: '45 MB'
+        },
+        {
+          name: 'HWiNFO',
+          category: 'Outils système & Monitoring matériel',
+          path: 'assets/tools/logiciels/Outils système & Monitoring matériel/hwinfo.exe',
+          iconPath: 'assets/tools/icons/Outils système & Monitoring matériel/hwinfo.ico',
+          description: 'Informations système détaillées',
+          version: '8.02',
+          size: '18 MB'
+        },
+        {
+          name: 'MSI Afterburner',
+          category: 'Outils système & Monitoring matériel',
+          path: 'assets/tools/logiciels/Outils système & Monitoring matériel/MSIAfterburner.exe',
+          iconPath: 'assets/tools/icons/Outils système & Monitoring matériel/MSI.Afterburner.ico',
+          description: 'Overclocking et monitoring GPU',
+          version: '4.6.5',
+          size: '25 MB'
+        },
+        {
+          name: 'HD Tune',
+          category: 'Outils système & Monitoring matériel',
+          path: 'assets/tools/logiciels/Outils système & Monitoring matériel/HDTune.exe',
+          iconPath: 'assets/tools/icons/Outils système & Monitoring matériel/HD.Tune.ico',
+          description: 'Test et diagnostic des disques',
+          version: '5.75',
+          size: '8 MB'
+        },
+        {
+          name: 'Hard Disk Sentinel',
+          category: 'Outils système & Monitoring matériel',
+          path: 'assets/tools/logiciels/Outils système & Monitoring matériel/HardDiskSentinel.exe',
+          iconPath: 'assets/tools/icons/Outils système & Monitoring matériel/Hard.Disk.Sentinel.ico',
+          description: 'Surveillance de la santé des disques',
+          version: '6.10',
+          size: '12 MB'
+        },
+        {
+          name: 'OCCT',
+          category: 'Outils système & Monitoring matériel',
+          path: 'assets/tools/logiciels/Outils système & Monitoring matériel/OCCT.exe',
+          iconPath: 'assets/tools/icons/Outils système & Monitoring matériel/O.C.C.T.ico',
+          description: 'Test de stabilité système',
+          version: '11.2.8',
+          size: '35 MB'
+        },
+        {
+          name: 'BurnIn Test',
+          category: 'Outils système & Monitoring matériel',
+          path: 'assets/tools/logiciels/Outils système & Monitoring matériel/BurnInTest.exe',
+          iconPath: 'assets/tools/icons/Outils système & Monitoring matériel/Burn.In.Test.ico',
+          description: 'Test de stress matériel',
+          version: '10.1.1001',
+          size: '28 MB'
+        },
+        {
+          name: 'Performance Test',
+          category: 'Outils système & Monitoring matériel',
+          path: 'assets/tools/logiciels/Outils système & Monitoring matériel/PerformanceTest.exe',
+          iconPath: 'assets/tools/icons/Outils système & Monitoring matériel/Performance.Test.ico',
+          description: 'Benchmark système complet',
+          version: '11.0.1001',
+          size: '42 MB'
+        },
+        {
+          name: 'RAM Saver',
+          category: 'Outils système & Monitoring matériel',
+          path: 'assets/tools/logiciels/Outils système & Monitoring matériel/RAMSaver.exe',
+          iconPath: 'assets/tools/icons/Outils système & Monitoring matériel/RAM.Saver.ico',
+          description: 'Optimisation de la mémoire RAM',
+          version: '24.0',
+          size: '5 MB'
         },
         {
           name: 'HashTab',
           category: 'Outils de vérification & hash',
           path: 'assets/tools/logiciels/Outils de vérification & hash/hashtab.exe',
-          iconPath: 'assets/tools/icons/Outils de vérification & hash/hashtab.ico',
+          iconPath: 'assets/tools/icons/Outils de vérification & hash/Hash.Tab.ico',
           description: 'Calcul et vérification de hash',
           version: '6.0.0.34',
           size: '2.1 MB'
         },
         {
+          name: 'Hash Check',
+          category: 'Outils de vérification & hash',
+          path: 'assets/tools/logiciels/Outils de vérification & hash/hashcheck.exe',
+          iconPath: 'assets/tools/icons/Outils de vérification & hash/Hash.Check.ico',
+          description: 'Vérification d\'intégrité des fichiers',
+          version: '2.4.0',
+          size: '1.8 MB'
+        },
+        {
           name: 'VirtualBox',
           category: 'virtualisation',
           path: 'assets/tools/logiciels/virtualisation/VirtualBox.exe',
-          iconPath: 'assets/tools/icons/virtualisation/virtualbox.ico',
+          iconPath: 'assets/tools/icons/virtualisation/Virtual.Box.ico',
           description: 'Plateforme de virtualisation',
           version: '7.0.12',
           size: '120 MB'
+        },
+        {
+          name: 'VMware Workstation',
+          category: 'virtualisation',
+          path: 'assets/tools/logiciels/virtualisation/VMwareWorkstation.exe',
+          iconPath: 'assets/tools/icons/virtualisation/VMware.Workstation.ico',
+          description: 'Solution de virtualisation professionnelle',
+          version: '17.5.0',
+          size: '180 MB'
+        },
+        {
+          name: 'Driver Booster',
+          category: 'Maintenance & Utilitaires Windows',
+          path: 'assets/tools/logiciels/Maintenance & Utilitaires Windows/DriverBooster.exe',
+          iconPath: 'assets/tools/icons/Maintenance & Utilitaires Windows/Driver Booster.ico',
+          description: 'Mise à jour automatique des pilotes',
+          version: '12.0.0',
+          size: '35 MB'
+        },
+        {
+          name: 'ProduKey',
+          category: 'Maintenance & Utilitaires Windows',
+          path: 'assets/tools/logiciels/Maintenance & Utilitaires Windows/ProduKey.exe',
+          iconPath: 'assets/tools/icons/Maintenance & Utilitaires Windows/produkey.ico',
+          description: 'Récupération des clés de produit',
+          version: '1.97',
+          size: '2.5 MB'
+        },
+        {
+          name: 'Pause Update',
+          category: 'Maintenance & Utilitaires Windows',
+          path: 'assets/tools/logiciels/Maintenance & Utilitaires Windows/PauseUpdate.exe',
+          iconPath: 'assets/tools/icons/Maintenance & Utilitaires Windows/Pause_Update_12-30-3000.ico',
+          description: 'Pause des mises à jour Windows',
+          version: '1.0',
+          size: '1.2 MB'
         }
       ];
 
