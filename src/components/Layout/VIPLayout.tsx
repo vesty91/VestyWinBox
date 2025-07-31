@@ -239,7 +239,7 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
         <div className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
           <div className="sidebar-header">
             <div className="sidebar-brand">
-              <Settings size={24} />
+              <Settings size={20} />
               {!sidebarCollapsed && (
                 <>
                   <span className="brand-name">VestyWinBox</span>
