@@ -6,17 +6,16 @@ import {
   List, 
   Download, 
   Play, 
-  MoreVertical,
-  Heart,
-  Share2,
+  X,
   Package,
   Monitor,
   Code,
   Globe,
-  MessageCircle,
-  HardDrive,
   Shield,
-  Settings
+  Settings,
+  FileText,
+  HardDrive,
+  Zap
 } from 'lucide-react';
 import { ToolsService, Tool } from '../../services/ToolsService';
 import './SoftwarePage.css';
@@ -81,16 +80,6 @@ const SoftwarePage: React.FC = () => {
     setFilteredLogiciels(filtered);
   };
 
-  const handleInstall = (logiciel: Tool) => {
-    console.log('🚀 Installation de:', logiciel.name);
-    alert(`Installation de ${logiciel.name} en cours...`);
-  };
-
-  const handleUninstall = (logiciel: Tool) => {
-    console.log('🗑️ Désinstallation de:', logiciel.name);
-    alert(`Désinstallation de ${logiciel.name} en cours...`);
-  };
-
   const handleLaunch = (logiciel: Tool) => {
     console.log('▶️ Lancement de:', logiciel.name);
     if (window.electronAPI?.launchExecutable) {
@@ -102,7 +91,7 @@ const SoftwarePage: React.FC = () => {
 
   const getCategoryIcon = (category: string) => {
     const iconMap: { [key: string]: React.ReactNode } = {
-      'Communication': <MessageCircle size={20} />,
+      'Communication': <FileText size={20} />,
       'Maintenance Windows': <Settings size={20} />,
       'Vérification & Hash': <Shield size={20} />,
       'Système & Monitoring': <Monitor size={20} />,
@@ -130,6 +119,52 @@ const SoftwarePage: React.FC = () => {
       );
     }
     return getCategoryIcon(logiciel.category);
+  };
+
+  const getLogicielDescription = (logiciel: Tool) => {
+    const descriptions: { [key: string]: string } = {
+      'CrystalDiskInfo': 'Outil de surveillance de la santé des disques durs. Affiche les informations SMART et les températures en temps réel.',
+      'CPU-Z': 'Informations détaillées sur le processeur, la carte mère et la mémoire. Identification complète des composants système.',
+      'GPU-Z': 'Informations techniques détaillées sur la carte graphique. Spécifications, températures et performances.',
+      'HWMonitor': 'Surveillance en temps réel des températures, tensions et vitesses de ventilateurs. Monitoring complet du système.',
+      'Process Explorer': 'Gestionnaire de processus avancé avec informations détaillées. Alternative puissante au Gestionnaire des tâches.',
+      'Autoruns': 'Gestionnaire de démarrage système avancé. Contrôle des programmes qui se lancent au démarrage.',
+      'Revo Uninstaller': 'Désinstallateur avancé qui supprime complètement les applications et leurs traces. Nettoyage en profondeur.',
+      'CCleaner': 'Nettoyage système pour optimiser les performances. Supprime les fichiers temporaires et nettoie le registre.',
+      'Malwarebytes': 'Protection contre les malwares et logiciels espions. Scan en temps réel et suppression des menaces.',
+      'Kaspersky Virus Removal Tool': 'Outil de suppression de virus portable. Nettoyage des infections sans installation.',
+      'Windows Firewall Control': 'Contrôle avancé du pare-feu Windows. Gestion fine des règles de sécurité réseau.',
+      '7-Zip': 'Compresseur et décompresseur de fichiers très efficace. Support de nombreux formats d\'archives.',
+      'WinRAR': 'Compresseur de fichiers populaire avec interface graphique. Création et extraction d\'archives.',
+      'PeaZip': 'Compresseur open source avec interface moderne. Support de nombreux formats d\'archives.',
+      'VirtualBox': 'Plateforme de virtualisation open source. Création et gestion de machines virtuelles.',
+      'VMware Workstation': 'Solution de virtualisation professionnelle. Environnements virtuels avancés.',
+      'Google Chrome': 'Navigateur web rapide et sécurisé. Interface moderne avec synchronisation des données.',
+      'Mozilla Firefox': 'Navigateur web open source avec protection de la vie privée. Personnalisation avancée.',
+      'Microsoft Edge': 'Navigateur web moderne de Microsoft. Intégration avec les services Microsoft.',
+      'Visual Studio Code': 'Éditeur de code source léger et puissant. Support de nombreux langages de programmation.',
+      'Notepad++': 'Éditeur de texte avancé avec coloration syntaxique. Support de nombreux langages.',
+      'Sublime Text': 'Éditeur de texte rapide et extensible. Interface minimaliste et performances élevées.',
+      'Atom': 'Éditeur de texte hackable pour le 21ème siècle. Personnalisation complète.',
+      'FileZilla': 'Client FTP/SFTP pour transférer des fichiers. Interface simple et efficace.',
+      'PuTTY': 'Client SSH et Telnet pour Windows. Connexion sécurisée aux serveurs distants.',
+      'WinSCP': 'Client SFTP, SCP et FTP pour Windows. Transfert de fichiers sécurisé.',
+      'HashTab': 'Calcul et vérification de hashes de fichiers. Intégration dans l\'explorateur Windows.',
+      'HashMyFiles': 'Calcul de hashes MD5, SHA1 et SHA256. Vérification d\'intégrité des fichiers.',
+      'FCIV': 'Outil de ligne de commande pour calculer les hashes. Intégration dans les scripts.',
+      'TeamViewer': 'Logiciel de contrôle à distance et partage d\'écran. Accès distant sécurisé.',
+      'AnyDesk': 'Logiciel de bureau à distance rapide et sécurisé. Connexion à distance simple.',
+      'VNC Viewer': 'Client VNC pour accès distant. Connexion aux serveurs VNC.',
+      'Discord': 'Plateforme de communication pour les joueurs et développeurs. Chat vocal et textuel.',
+      'Slack': 'Plateforme de collaboration d\'équipe. Communication et partage de fichiers.',
+      'Telegram': 'Messagerie instantanée sécurisée. Chiffrement de bout en bout.',
+      'WhatsApp': 'Application de messagerie populaire. Communication simple et sécurisée.',
+      'Skype': 'Logiciel de communication vocale et vidéo. Appels internationaux.',
+      'Zoom': 'Plateforme de visioconférence professionnelle. Réunions en ligne.',
+      'Microsoft Teams': 'Plateforme de collaboration Microsoft. Réunions et chat d\'équipe.'
+    };
+    
+    return descriptions[logiciel.name] || logiciel.description || 'Logiciel système sans description détaillée.';
   };
 
   const categories = ['Tous', ...ToolsService.getCategories(logiciels)];
@@ -167,7 +202,7 @@ const SoftwarePage: React.FC = () => {
             </div>
           </div>
           <div className="stat-card">
-            <Grid size={20} />
+            <Zap size={20} />
             <div className="stat-info">
               <span className="stat-value">{categories.length - 1}</span>
               <span className="stat-label">Catégories</span>
@@ -194,47 +229,55 @@ const SoftwarePage: React.FC = () => {
         </div>
 
         <div className="filter-controls">
-          <div className="category-filters">
-            {categories.map((category) => (
-              <button
-                key={category}
-                className={`category-filter ${selectedCategory === category ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(category)}
+          <div className="filter-dropdowns">
+            <div className="dropdown-container">
+              <label htmlFor="category-select">Catégorie</label>
+              <select 
+                id="category-select"
+                value={selectedCategory} 
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="filter-select"
+                title="Filtrer par catégorie"
               >
-                {category === 'Tous' ? <Package size={16} /> : getCategoryIcon(category)}
-                <span>{category}</span>
-              </button>
-            ))}
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="dropdown-container">
+              <label htmlFor="sort-select">Trier par</label>
+              <select 
+                id="sort-select"
+                value={sortBy} 
+                onChange={(e) => setSortBy(e.target.value as 'name' | 'category' | 'size')}
+                className="filter-select"
+                title="Trier les logiciels"
+              >
+                <option value="name">Nom</option>
+                <option value="category">Catégorie</option>
+                <option value="size">Taille</option>
+              </select>
+            </div>
           </div>
 
-          <div className="view-controls">
-            <select 
-              value={sortBy} 
-              onChange={(e) => setSortBy(e.target.value as 'name' | 'category' | 'size')}
-              className="sort-select"
-              title="Trier les logiciels"
+          <div className="view-toggle">
+            <button
+              className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
+              onClick={() => setViewMode('grid')}
+              title="Vue grille"
             >
-              <option value="name">Trier par nom</option>
-              <option value="category">Trier par catégorie</option>
-              <option value="size">Trier par taille</option>
-            </select>
-
-            <div className="view-toggle">
-              <button
-                className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
-                onClick={() => setViewMode('grid')}
-                title="Vue grille"
-              >
-                <Grid size={18} />
-              </button>
-              <button
-                className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
-                onClick={() => setViewMode('list')}
-                title="Vue liste"
-              >
-                <List size={18} />
-              </button>
-            </div>
+              <Grid size={18} />
+            </button>
+            <button
+              className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
+              onClick={() => setViewMode('list')}
+              title="Vue liste"
+            >
+              <List size={18} />
+            </button>
           </div>
         </div>
       </motion.div>
@@ -260,34 +303,14 @@ const SoftwarePage: React.FC = () => {
               <div className="card-header">
                 <div className="logiciel-icon-container">
                   {getLogicielIcon(logiciel)}
-                  {getCategoryIcon(logiciel.category)}
-                </div>
-                <div className="card-actions">
-                  <button className="action-btn favorite" title="Favoris">
-                    <Heart size={16} />
-                  </button>
-                  <button className="action-btn share" title="Partager">
-                    <Share2 size={16} />
-                  </button>
-                  <button 
-                    className="action-btn more" 
-                    title="Plus d'options"
-                    onClick={() => {
-                      setSelectedLogiciel(logiciel);
-                      setShowModal(true);
-                    }}
-                  >
-                    <MoreVertical size={16} />
-                  </button>
                 </div>
               </div>
 
               <div className="card-content">
                 <h3 className="logiciel-name">{logiciel.name}</h3>
-                <p className="logiciel-description">{logiciel.description}</p>
+                <p className="logiciel-description">{getLogicielDescription(logiciel)}</p>
                 
                 <div className="logiciel-meta">
-                  <span className="logiciel-category">{logiciel.category}</span>
                   {logiciel.version && (
                     <span className="logiciel-version">v{logiciel.version}</span>
                   )}
@@ -308,11 +331,14 @@ const SoftwarePage: React.FC = () => {
                 </button>
                 <button 
                   className="btn-secondary"
-                  onClick={() => handleInstall(logiciel)}
-                  title="Installer"
+                  onClick={() => {
+                    setSelectedLogiciel(logiciel);
+                    setShowModal(true);
+                  }}
+                  title="Plus d'infos"
                 >
                   <Download size={16} />
-                  <span>Installer</span>
+                  <span>Infos</span>
                 </button>
               </div>
             </motion.div>
@@ -343,7 +369,6 @@ const SoftwarePage: React.FC = () => {
                 </div>
                 <div className="modal-info">
                   <h2>{selectedLogiciel.name}</h2>
-                  <p>{selectedLogiciel.description}</p>
                 </div>
                 <button 
                   className="modal-close"
@@ -354,11 +379,11 @@ const SoftwarePage: React.FC = () => {
               </div>
 
               <div className="modal-body">
+                <div className="modal-description">
+                  <p>{getLogicielDescription(selectedLogiciel)}</p>
+                </div>
+                
                 <div className="modal-details">
-                  <div className="detail-item">
-                    <span className="detail-label">Catégorie:</span>
-                    <span className="detail-value">{selectedLogiciel.category}</span>
-                  </div>
                   {selectedLogiciel.version && (
                     <div className="detail-item">
                       <span className="detail-label">Version:</span>
@@ -371,10 +396,6 @@ const SoftwarePage: React.FC = () => {
                       <span className="detail-value">{selectedLogiciel.size}</span>
                     </div>
                   )}
-                  <div className="detail-item">
-                    <span className="detail-label">Chemin:</span>
-                    <span className="detail-value">{selectedLogiciel.path}</span>
-                  </div>
                 </div>
               </div>
 
@@ -392,22 +413,11 @@ const SoftwarePage: React.FC = () => {
                 <button 
                   className="btn-secondary"
                   onClick={() => {
-                    handleInstall(selectedLogiciel);
                     setShowModal(false);
                   }}
                 >
-                  <Download size={16} />
-                  Installer
-                </button>
-                <button 
-                  className="btn-danger"
-                  onClick={() => {
-                    handleUninstall(selectedLogiciel);
-                    setShowModal(false);
-                  }}
-                >
-                  <MoreVertical size={16} />
-                  Désinstaller
+                  <X size={16} />
+                  Fermer
                 </button>
               </div>
             </motion.div>
