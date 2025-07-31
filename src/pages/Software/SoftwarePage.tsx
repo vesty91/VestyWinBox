@@ -310,16 +310,6 @@ const SoftwarePage: React.FC = () => {
 
               <div className="card-content">
                 <h3 className="logiciel-name">{logiciel.name}</h3>
-                <p className="logiciel-description">{getLogicielDescription(logiciel)}</p>
-                
-                <div className="logiciel-meta">
-                  {logiciel.version && (
-                    <span className="logiciel-version">v{logiciel.version}</span>
-                  )}
-                  {logiciel.size && (
-                    <span className="logiciel-size">{logiciel.size}</span>
-                  )}
-                </div>
               </div>
 
               <div className="card-footer">
