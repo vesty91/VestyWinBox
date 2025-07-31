@@ -15,7 +15,9 @@ import {
   Settings,
   FileText,
   Smartphone,
-  Zap
+  Zap,
+  Info,
+  Image
 } from 'lucide-react';
 import { ToolsService, Tool } from '../../services/ToolsService';
 import './PortableAppsPage.css';
@@ -95,7 +97,7 @@ const PortableAppsPage: React.FC = () => {
       'Utilitaires & divers': <Settings size={20} />,
       'Maintenance système': <Monitor size={20} />,
       'Internet': <Globe size={20} />,
-      'Graphisme & multimédia': <Code size={20} />,
+      'Graphisme & multimédia': <Image size={20} />,
       'Gestion de fichiers & compression': <Package size={20} />,
       'securite': <Shield size={20} />
     };
@@ -105,16 +107,25 @@ const PortableAppsPage: React.FC = () => {
   const getAppIcon = (app: Tool) => {
     if (app.iconPath) {
       return (
-        <img 
-          src={app.iconPath} 
-          alt={app.name}
-          className="app-icon"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-            target.nextElementSibling?.classList.remove('hidden');
-          }}
-        />
+        <>
+          <img 
+            src={app.iconPath} 
+            alt={app.name}
+            className="app-icon"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              // Afficher l'icône de catégorie en fallback
+              const fallbackIcon = target.parentElement?.querySelector('.fallback-icon');
+              if (fallbackIcon) {
+                fallbackIcon.classList.remove('hidden');
+              }
+            }}
+          />
+          <div className="hidden fallback-icon">
+            {getCategoryIcon(app.category)}
+          </div>
+        </>
       );
     }
     return getCategoryIcon(app.category);
@@ -333,7 +344,7 @@ const PortableAppsPage: React.FC = () => {
                   }}
                   title="Plus d'infos"
                 >
-                  <Download size={16} />
+                  <Info size={16} />
                   <span>Infos</span>
                 </button>
               </div>

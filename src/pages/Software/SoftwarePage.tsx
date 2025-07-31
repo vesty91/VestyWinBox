@@ -15,7 +15,9 @@ import {
   Settings,
   FileText,
   HardDrive,
-  Zap
+  Zap,
+  Info,
+  Image
 } from 'lucide-react';
 import { ToolsService, Tool } from '../../services/ToolsService';
 import './SoftwarePage.css';
@@ -106,16 +108,25 @@ const SoftwarePage: React.FC = () => {
   const getLogicielIcon = (logiciel: Tool) => {
     if (logiciel.iconPath) {
       return (
-        <img 
-          src={logiciel.iconPath} 
-          alt={logiciel.name}
-          className="logiciel-icon"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-            target.nextElementSibling?.classList.remove('hidden');
-          }}
-        />
+        <>
+          <img 
+            src={logiciel.iconPath} 
+            alt={logiciel.name}
+            className="logiciel-icon"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              // Afficher l'icône de catégorie en fallback
+              const fallbackIcon = target.parentElement?.querySelector('.fallback-icon');
+              if (fallbackIcon) {
+                fallbackIcon.classList.remove('hidden');
+              }
+            }}
+          />
+          <div className="hidden fallback-icon">
+            {getCategoryIcon(logiciel.category)}
+          </div>
+        </>
       );
     }
     return getCategoryIcon(logiciel.category);
@@ -337,7 +348,7 @@ const SoftwarePage: React.FC = () => {
                   }}
                   title="Plus d'infos"
                 >
-                  <Download size={16} />
+                  <Info size={16} />
                   <span>Infos</span>
                 </button>
               </div>

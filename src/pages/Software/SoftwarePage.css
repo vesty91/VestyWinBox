@@ -338,6 +338,28 @@
   height: 40px;
 }
 
+.hidden {
+  display: none !important;
+}
+
+.fallback-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.1);
+  padding: var(--space-sm);
+}
+
+.fallback-icon svg {
+  color: #667eea;
+  filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.4));
+  width: 40px;
+  height: 40px;
+}
+
 /* Card Content */
 .card-content {
   margin-bottom: var(--space-lg);
