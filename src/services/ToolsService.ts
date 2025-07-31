@@ -418,15 +418,6 @@ export class ToolsService {
         
         // Maintenance système
         {
-          name: 'CCleaner',
-          category: 'Maintenance système',
-          path: 'assets/tools/Apps portable/Maintenance système/ccsetup/ccleaner.exe',
-          iconPath: 'assets/tools/icons/Maintenance système/l.ico',
-          description: 'Nettoyage système portable',
-          version: '6.12',
-          size: '15 MB'
-        },
-        {
           name: 'SPEC',
           category: 'Maintenance système',
           path: 'assets/tools/Apps portable/Maintenance système/specPortable/SPEC.exe',
