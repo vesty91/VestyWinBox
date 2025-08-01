@@ -35,8 +35,12 @@ declare global {
     getVersion: () => Promise<string>;
     getPlatform: () => Promise<string>;
     showNotification: (title: string, body: string) => void;
-    openExternal: (url: string) => void;
+    openExternal: (url: string) => Promise<{ success: boolean; error?: string }>;
     getSystemInfo: () => Promise<any>;
+    launchExecutable: (filePath: string) => Promise<{ success: boolean; message?: string; error?: string }>;
+    executeSystemCommand: (command: string, args?: string[]) => Promise<{ success: boolean; output?: string; error?: string }>;
+    selectBackupFolder: () => Promise<{ success: boolean; folderPath?: string; error?: string }>;
+    backupUserFolders: (destinationPath: string) => Promise<{ success: boolean; message?: string; error?: string; progress?: number }>;
   }
 
   interface Window {
