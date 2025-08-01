@@ -24,6 +24,7 @@ import MonitorModal from '../../components/MonitorModal';
 import FavoritesModal from '../../components/FavoritesModal';
 import TelemetryModal from '../../components/TelemetryModal';
 import SecureBootModal from '../../components/SecureBootModal';
+import RestorePointModal from '../../components/RestorePointModal';
 
 interface QuickAction {
   id: string;
@@ -70,6 +71,7 @@ const VIPDashboard: React.FC = () => {
   const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
   const [isTelemetryModalOpen, setIsTelemetryModalOpen] = useState(false);
   const [isSecureBootModalOpen, setIsSecureBootModalOpen] = useState(false);
+  const [isRestorePointModalOpen, setIsRestorePointModalOpen] = useState(false);
 
   // Fonction pour ouvrir les paramètres de thèmes Windows
   const openThemeSettings = () => {
@@ -191,48 +193,6 @@ const VIPDashboard: React.FC = () => {
     } catch (error) {
       console.error('❌ Erreur lors de la désactivation de l\'UAC:', error);
       alert('❌ Erreur lors de la désactivation de l\'UAC.');
-    }
-  };
-
-  // Fonction pour créer un point de restauration
-  const createRestorePoint = () => {
-    try {
-      console.log('💾 Création d\'un point de restauration système...');
-      
-      if (window.electronAPI?.executeSystemCommand) {
-        const confirmed = window.confirm(
-          '💾 Créer un Point de Restauration\n\n' +
-          'Cette action va créer un point de restauration système.\n\n' +
-          '⚠️ ATTENTION :\n' +
-          '• Nécessite des privilèges administrateur\n' +
-          '• Peut prendre quelques minutes\n\n' +
-          'Êtes-vous sûr de vouloir continuer ?'
-        );
-
-        if (confirmed) {
-          window.electronAPI.executeSystemCommand('powershell.exe', [
-            '-Command', 'Checkpoint-Computer -Description "RestaurerAvantManip" -RestorePointType "MODIFY_SETTINGS"'
-          ])
-          .then((result) => {
-            if (result.success) {
-              console.log('✅ Point de restauration créé avec succès');
-              alert('✅ Point de restauration créé avec succès !\n\nDescription : "RestaurerAvantManip"\nType : MODIFY_SETTINGS');
-            } else {
-              console.log('❌ Erreur lors de la création:', result.error);
-              alert('❌ Erreur lors de la création du point de restauration.\n\nVeuillez exécuter en tant qu\'administrateur.');
-            }
-          })
-          .catch((error) => {
-            console.error('❌ Erreur lors de l\'exécution:', error);
-            alert('❌ Erreur lors de l\'exécution de la commande.');
-          });
-        }
-      } else {
-        alert('⚠️ API Electron non disponible.\n\nExécutez manuellement en tant qu\'administrateur :\nCheckpoint-Computer -Description "RestaurerAvantManip" -RestorePointType "MODIFY_SETTINGS"');
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors de la création du point de restauration:', error);
-      alert('❌ Erreur lors de la création du point de restauration.');
     }
   };
 
@@ -408,7 +368,7 @@ const VIPDashboard: React.FC = () => {
       icon: HardDrive,
       color: '#059669',
       gradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-      action: () => createRestorePoint(),
+      action: () => setIsRestorePointModalOpen(true),
       status: 'available'
     },
     {
@@ -662,6 +622,10 @@ const VIPDashboard: React.FC = () => {
       <SecureBootModal 
         isOpen={isSecureBootModalOpen}
         onClose={() => setIsSecureBootModalOpen(false)}
+      />
+      <RestorePointModal 
+        isOpen={isRestorePointModalOpen}
+        onClose={() => setIsRestorePointModalOpen(false)}
       />
     </div>
   );
