@@ -127,20 +127,20 @@ const RestorePointModal: React.FC<RestorePointModalProps> = ({ isOpen, onClose }
                     </p>
                     
                     <div className="info-cards">
-                      <div className="info-card">
+                      <div className="info-card security-card">
                         <Shield size={24} />
                         <h4>Sécurité</h4>
-                        <p>Protection contre les modifications système</p>
+                        <p>Protège votre système contre les modifications non désirées</p>
                       </div>
-                      <div className="info-card">
+                      <div className="info-card recovery-card">
                         <Clock size={24} />
                         <h4>Récupération</h4>
-                        <p>Retour rapide à un état stable</p>
+                        <p>Permet un retour rapide à un état stable</p>
                       </div>
-                      <div className="info-card">
+                      <div className="info-card data-card">
                         <HardDrive size={24} />
                         <h4>Données</h4>
-                        <p>Vos fichiers personnels sont préservés</p>
+                        <p>Vos fichiers personnels restent préservés</p>
                       </div>
                     </div>
 
@@ -151,7 +151,7 @@ const RestorePointModal: React.FC<RestorePointModalProps> = ({ isOpen, onClose }
                         <li>Nécessite des privilèges administrateur</li>
                         <li>Création rapide (quelques secondes)</li>
                         <li>N'affecte pas vos fichiers personnels</li>
-                        <li>Recommandé avant toute modification système</li>
+                        <li>Recommandé avant toute modification importante</li>
                       </ul>
                     </div>
                   </div>
