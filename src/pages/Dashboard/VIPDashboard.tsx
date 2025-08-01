@@ -13,6 +13,7 @@ import {
 import './VIPDashboard.css';
 import logoPage1 from '../../../assets/logo-page-1.png';
 import BackupModal from '../../components/BackupModal';
+import SystemCheckModal from '../../components/SystemCheckModal';
 
 interface QuickAction {
   id: string;
@@ -53,6 +54,7 @@ const VIPDashboard: React.FC = () => {
 
   const [selectedQuickAction, setSelectedQuickAction] = useState<string | null>(null);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
+  const [isSystemCheckModalOpen, setIsSystemCheckModalOpen] = useState(false);
 
   // Fonction pour ouvrir les paramètres de thèmes Windows
   const openThemeSettings = () => {
@@ -102,34 +104,11 @@ const VIPDashboard: React.FC = () => {
   // Fonction pour vérifier l'intégrité des fichiers système
   const runSystemFileChecker = () => {
     try {
-      console.log('🔍 Démarrage de la vérification de l\'intégrité des fichiers système...');
-      
-      if (window.electronAPI?.executeSystemCommand) {
-        // Exécuter sfc /scannow avec élévation de privilèges
-        window.electronAPI.executeSystemCommand('powershell.exe', [
-          '-Command', 
-          'Start-Process cmd -ArgumentList "/c sfc /scannow" -Verb RunAs -WindowStyle Hidden'
-        ])
-        .then((result) => {
-          if (result.success) {
-            console.log('✅ Vérification de l\'intégrité des fichiers système lancée avec succès');
-            alert('🔍 Vérification de l\'intégrité des fichiers système lancée.\n\nCette opération peut prendre plusieurs minutes. Vous recevrez une notification une fois terminée.');
-          } else {
-            console.log('❌ Erreur lors du lancement de sfc /scannow:', result.error);
-            alert('❌ Erreur lors du lancement de la vérification.\n\nVeuillez exécuter manuellement "sfc /scannow" en tant qu\'administrateur.');
-          }
-        })
-        .catch((error) => {
-          console.error('❌ Erreur lors de l\'exécution:', error);
-          alert('❌ Erreur lors de l\'exécution de la commande.\n\nVeuillez exécuter manuellement "sfc /scannow" en tant qu\'administrateur.');
-        });
-      } else {
-        // Fallback : ouvrir une invite de commande avec la commande
-        alert('🔍 Pour vérifier l\'intégrité des fichiers système :\n\n1. Ouvrez une invite de commande en tant qu\'administrateur\n2. Tapez : sfc /scannow\n3. Attendez la fin de la vérification');
-      }
+      console.log('🔍 Ouverture du modal de vérification d\'intégrité...');
+      setIsSystemCheckModalOpen(true);
     } catch (error) {
-      console.error('❌ Erreur lors de la vérification de l\'intégrité:', error);
-      alert('❌ Erreur lors de la vérification.\n\nVeuillez exécuter manuellement "sfc /scannow" en tant qu\'administrateur.');
+      console.error('❌ Erreur lors de l\'ouverture du modal:', error);
+      alert('❌ Erreur lors de l\'ouverture du modal de vérification.');
     }
   };
 
@@ -391,6 +370,10 @@ const VIPDashboard: React.FC = () => {
       <BackupModal 
         isOpen={isBackupModalOpen}
         onClose={() => setIsBackupModalOpen(false)}
+      />
+      <SystemCheckModal 
+        isOpen={isSystemCheckModalOpen}
+        onClose={() => setIsSystemCheckModalOpen(false)}
       />
     </div>
   );
