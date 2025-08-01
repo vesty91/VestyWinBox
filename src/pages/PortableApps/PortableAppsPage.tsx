@@ -4,12 +4,10 @@ import {
   Search, 
   Grid, 
   List, 
-  Download, 
   Play, 
   X,
   Package,
   Monitor,
-  Code,
   Globe,
   Shield,
   Settings,
@@ -82,12 +80,25 @@ const PortableAppsPage: React.FC = () => {
     setFilteredApps(filtered);
   };
 
-  const handleLaunch = (app: Tool) => {
+  const handleLaunch = async (app: Tool) => {
     console.log('▶️ Lancement de:', app.name);
-    if (window.electronAPI?.launchExecutable) {
-      window.electronAPI.launchExecutable(app.path);
-    } else {
-      alert(`Lancement de ${app.name}...`);
+    try {
+      if (window.electronAPI?.launchExecutable) {
+        const result = await window.electronAPI.launchExecutable(app.path);
+        if (result.success) {
+          console.log('✅', result.message);
+          // Optionnel : afficher une notification de succès
+        } else {
+          console.error('❌ Erreur:', result.error);
+          alert(`Erreur lors du lancement de ${app.name}: ${result.error}`);
+        }
+      } else {
+        console.log('⚠️ API Electron non disponible, simulation...');
+        alert(`Lancement de ${app.name}... (mode simulation)`);
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors du lancement:', error);
+      alert(`Erreur lors du lancement de ${app.name}: ${error}`);
     }
   };
 

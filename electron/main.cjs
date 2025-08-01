@@ -1,5 +1,6 @@
 const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron');
 const path = require('path');
+const { spawn, exec } = require('child_process');
 const isDev = process.env.NODE_ENV === 'development';
 
 // Configuration pour réduire les erreurs de cache
@@ -207,4 +208,61 @@ ipcMain.on('show-notification', (event, { title, body }) => {
 
 ipcMain.on('open-external', (event, url) => {
   shell.openExternal(url);
+});
+
+// Gestionnaire pour le lancement d'exécutables
+ipcMain.handle('launch-executable', async (event, filePath) => {
+  try {
+    console.log('🚀 Tentative de lancement:', filePath);
+    
+    // Construire le chemin complet
+    const fullPath = path.resolve(__dirname, '..', filePath);
+    console.log('📁 Chemin complet:', fullPath);
+    
+    // Vérifier si le fichier existe
+    const fs = require('fs');
+    if (!fs.existsSync(fullPath)) {
+      console.error('❌ Fichier non trouvé:', fullPath);
+      return { success: false, error: 'Fichier non trouvé' };
+    }
+    
+    // Lancer l'exécutable
+    const child = spawn(fullPath, [], {
+      detached: true,
+      stdio: 'ignore'
+    });
+    
+    // Détacher le processus enfant
+    child.unref();
+    
+    console.log('✅ Exécutable lancé avec succès:', fullPath);
+    return { success: true, message: 'Exécutable lancé avec succès' };
+    
+  } catch (error) {
+    console.error('❌ Erreur lors du lancement:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Gestionnaire pour les commandes système
+ipcMain.handle('execute-system-command', async (event, command, args = []) => {
+  try {
+    console.log('🔧 Exécution de commande:', command, args);
+    
+    return new Promise((resolve, reject) => {
+      exec(command, { windowsHide: true }, (error, stdout, stderr) => {
+        if (error) {
+          console.error('❌ Erreur commande:', error);
+          resolve({ success: false, error: error.message });
+        } else {
+          console.log('✅ Commande exécutée:', stdout);
+          resolve({ success: true, output: stdout, error: stderr });
+        }
+      });
+    });
+    
+  } catch (error) {
+    console.error('❌ Erreur lors de l\'exécution:', error);
+    return { success: false, error: error.message };
+  }
 }); 
