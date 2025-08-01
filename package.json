@@ -31,7 +31,7 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "assets/logo_vestywinbox.ico"
+      "icon": "public/icon.png"
     },
     "nsis": {
       "oneClick": false,
