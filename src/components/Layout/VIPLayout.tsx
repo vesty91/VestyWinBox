@@ -14,6 +14,7 @@ import {
 import './VIPLayout.css';
 import logoBarreLaterale from '../../../assets/logo-barre-laterale.png';
 import Footer from './Footer';
+import { motion } from 'framer-motion';
 
 interface VIPLayoutProps {
   children: React.ReactNode;
@@ -87,6 +88,38 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
+  // Fonction pour obtenir la couleur en fonction de la valeur
+  const getMetricColor = (value: number, type: string) => {
+    if (type === 'TEMP') {
+      if (value < 40) return '#10b981'; // Vert pour température normale
+      if (value < 60) return '#f59e0b'; // Orange pour température modérée
+      return '#ef4444'; // Rouge pour température élevée
+    }
+    
+    if (type === 'BAT') {
+      if (value > 50) return '#10b981'; // Vert pour batterie OK
+      if (value > 20) return '#f59e0b'; // Orange pour batterie faible
+      return '#ef4444'; // Rouge pour batterie critique
+    }
+    
+    // Pour CPU, RAM, DISK, NET
+    if (value < 50) return '#10b981'; // Vert pour usage faible
+    if (value < 80) return '#f59e0b'; // Orange pour usage modéré
+    return '#ef4444'; // Rouge pour usage élevé
+  };
+
+  // Fonction pour obtenir le gradient en fonction de la valeur
+  const getMetricGradient = (value: number, type: string) => {
+    const color = getMetricColor(value, type);
+    if (color === '#10b981') {
+      return 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+    } else if (color === '#f59e0b') {
+      return 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+    } else {
+      return 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+    }
+  };
+
   const menuItems = [
     {
       id: 'dashboard',
@@ -116,12 +149,12 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
   ];
 
   const metrics = [
-    { icon: Cpu, value: systemMetrics.cpu, label: 'CPU', unit: '%', color: '#667eea' },
-    { icon: MemoryStick, value: systemMetrics.ram, label: 'RAM', unit: '%', color: '#10b981' },
-    { icon: HardDrive, value: systemMetrics.disk, label: 'DISK', unit: '%', color: '#f59e0b' },
-    { icon: Wifi, value: systemMetrics.network, label: 'NET', unit: 'Mbps', color: '#8b5cf6' },
-    { icon: Battery, value: systemMetrics.battery, label: 'BAT', unit: '%', color: '#06b6d4' },
-    { icon: Thermometer, value: systemMetrics.temp, label: 'TEMP', unit: '°C', color: '#ef4444' }
+    { icon: Cpu, value: systemMetrics.cpu, label: 'CPU', unit: '%', type: 'CPU' },
+    { icon: MemoryStick, value: systemMetrics.ram, label: 'RAM', unit: '%', type: 'RAM' },
+    { icon: HardDrive, value: systemMetrics.disk, label: 'DISK', unit: '%', type: 'DISK' },
+    { icon: Wifi, value: systemMetrics.network, label: 'NET', unit: 'Mbps', type: 'NET' },
+    { icon: Battery, value: systemMetrics.battery, label: 'BAT', unit: '%', type: 'BAT' },
+    { icon: Thermometer, value: systemMetrics.temp, label: 'TEMP', unit: '°C', type: 'TEMP' }
   ];
 
   return (
@@ -140,12 +173,46 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
         </div>
 
         {/* Métriques Système dans le Header */}
-        <div className="header-metrics">
-          {metrics.map((metric, index) => (
-            <span key={metric.label} className="metric-text">
-              {metric.label} : {metric.value}{metric.unit}
-            </span>
-          ))}
+        <div className="header-metrics-container">
+          <div className="header-metrics-background">
+            <div className="metrics-gradient-animation"></div>
+          </div>
+          <div className="header-metrics">
+            {metrics.map((metric, index) => (
+              <motion.div
+                key={metric.label}
+                className="metric-badge"
+                initial={{ opacity: 0, scale: 0.8, y: -10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.5, 
+                  delay: index * 0.1,
+                  type: "spring",
+                  stiffness: 200
+                }}
+                whileHover={{ 
+                  scale: 1.05,
+                  y: -2,
+                  transition: { duration: 0.2 }
+                }}
+                style={{
+                  background: getMetricGradient(metric.value, metric.type),
+                  boxShadow: `0 4px 15px ${getMetricColor(metric.value, metric.type)}40`
+                }}
+              >
+                <div className="metric-icon">
+                  <metric.icon size={16} />
+                </div>
+                <div className="metric-content">
+                  <span className="metric-label">{metric.label}</span>
+                  <span className="metric-value">
+                    {metric.value}{metric.unit}
+                  </span>
+                </div>
+                <div className="metric-glow"></div>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         <div className="top-bar-right">
