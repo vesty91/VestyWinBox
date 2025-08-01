@@ -21,6 +21,8 @@ import BackupModal from '../../components/BackupModal';
 import SystemCheckModal from '../../components/SystemCheckModal';
 import CleanupModal from '../../components/CleanupModal';
 import MonitorModal from '../../components/MonitorModal';
+import FavoritesModal from '../../components/FavoritesModal';
+import TelemetryModal from '../../components/TelemetryModal';
 
 interface QuickAction {
   id: string;
@@ -64,6 +66,8 @@ const VIPDashboard: React.FC = () => {
   const [isSystemCheckModalOpen, setIsSystemCheckModalOpen] = useState(false);
   const [isCleanupModalOpen, setIsCleanupModalOpen] = useState(false);
   const [isMonitorModalOpen, setIsMonitorModalOpen] = useState(false);
+  const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
+  const [isTelemetryModalOpen, setIsTelemetryModalOpen] = useState(false);
 
   // Fonction pour ouvrir les paramètres de thèmes Windows
   const openThemeSettings = () => {
@@ -511,7 +515,7 @@ const VIPDashboard: React.FC = () => {
       icon: Star,
       color: '#fbbf24',
       gradient: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-      action: () => backupFavorites(),
+      action: () => setIsFavoritesModalOpen(true),
       status: 'available'
     },
     {
@@ -521,7 +525,7 @@ const VIPDashboard: React.FC = () => {
       icon: Ban,
       color: '#dc2626',
       gradient: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
-      action: () => disableTelemetry(),
+      action: () => setIsTelemetryModalOpen(true),
       status: 'available'
     },
     {
@@ -773,6 +777,14 @@ const VIPDashboard: React.FC = () => {
       <MonitorModal 
         isOpen={isMonitorModalOpen}
         onClose={() => setIsMonitorModalOpen(false)}
+      />
+      <FavoritesModal 
+        isOpen={isFavoritesModalOpen}
+        onClose={() => setIsFavoritesModalOpen(false)}
+      />
+      <TelemetryModal 
+        isOpen={isTelemetryModalOpen}
+        onClose={() => setIsTelemetryModalOpen(false)}
       />
     </div>
   );
