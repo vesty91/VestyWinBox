@@ -124,6 +124,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   margin: 0 0 4px 0;
+  text-align: center;
 }
 
 .info-card p {
@@ -131,6 +132,7 @@
   font-size: 0.75rem;
   margin: 0;
   line-height: 1.4;
+  text-align: center;
 }
 
 /* Instructions */
@@ -140,6 +142,7 @@
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 24px;
+  text-align: center;
 }
 
 .instructions-section h4 {
@@ -149,6 +152,7 @@
   margin: 0 0 8px 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
 }
 
@@ -156,17 +160,21 @@
   color: #fbbf24;
   font-size: 0.75rem;
   margin: 0;
-  padding-left: 20px;
+  padding-left: 0;
   line-height: 1.5;
+  list-style: none;
+  text-align: center;
 }
 
 .instructions-section li {
   margin-bottom: 4px;
+  text-align: center;
 }
 
 /* Form */
 .form-section {
   margin-bottom: 24px;
+  text-align: center;
 }
 
 .form-label {
@@ -175,6 +183,7 @@
   font-size: 0.875rem;
   font-weight: 500;
   margin-bottom: 8px;
+  text-align: center;
 }
 
 .form-input {
@@ -187,6 +196,7 @@
   font-size: 0.875rem;
   transition: all 0.2s ease;
   box-sizing: border-box;
+  text-align: center;
 }
 
 .form-input:focus {
@@ -198,6 +208,7 @@
 
 .form-input::placeholder {
   color: #64748b;
+  text-align: center;
 }
 
 .form-help {
@@ -205,6 +216,7 @@
   color: #94a3b8;
   font-size: 0.75rem;
   margin-top: 6px;
+  text-align: center;
 }
 
 /* Button */
@@ -318,7 +330,7 @@
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 24px;
-  text-align: left;
+  text-align: center;
 }
 
 .details-section h4 {
@@ -326,6 +338,7 @@
   font-size: 1rem;
   font-weight: 600;
   margin: 0 0 16px 0;
+  text-align: center;
 }
 
 .detail-item {
@@ -333,6 +346,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  text-align: center;
 }
 
 .detail-item:last-child {
@@ -345,12 +359,14 @@
   gap: 8px;
   color: #94a3b8;
   font-size: 0.875rem;
+  text-align: center;
 }
 
 .detail-value {
   color: #f8fafc;
   font-size: 0.875rem;
   font-weight: 500;
+  text-align: center;
 }
 
 /* Restore Instructions */
@@ -360,7 +376,7 @@
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 24px;
-  text-align: left;
+  text-align: center;
 }
 
 .restore-instructions h4 {
@@ -368,18 +384,22 @@
   font-size: 1rem;
   font-weight: 600;
   margin: 0 0 12px 0;
+  text-align: center;
 }
 
 .restore-instructions ol {
   color: #cbd5e1;
   font-size: 0.875rem;
   margin: 0;
-  padding-left: 20px;
+  padding-left: 0;
   line-height: 1.6;
+  list-style: none;
+  text-align: center;
 }
 
 .restore-instructions li {
   margin-bottom: 6px;
+  text-align: center;
 }
 
 /* Actions */
@@ -436,12 +456,14 @@
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0 0 8px 0;
+  text-align: center;
 }
 
 .error-section p {
   color: #cbd5e1;
   font-size: 0.875rem;
   margin-bottom: 24px;
+  text-align: center;
 }
 
 .error-help {
@@ -450,7 +472,7 @@
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 24px;
-  text-align: left;
+  text-align: center;
 }
 
 .error-help h4 {
@@ -458,18 +480,22 @@
   font-size: 0.875rem;
   font-weight: 600;
   margin: 0 0 8px 0;
+  text-align: center;
 }
 
 .error-help ul {
   color: #fca5a5;
   font-size: 0.75rem;
   margin: 0;
-  padding-left: 20px;
+  padding-left: 0;
   line-height: 1.5;
+  list-style: none;
+  text-align: center;
 }
 
 .error-help li {
   margin-bottom: 4px;
+  text-align: center;
 }
 
 .retry-btn {
