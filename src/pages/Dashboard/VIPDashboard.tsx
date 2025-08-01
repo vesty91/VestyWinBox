@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Activity, 
-  Zap,
   Trash2,
   Shield,
-  Download,
   Save,
   Sun,
   Unlock,
@@ -69,7 +67,7 @@ const VIPDashboard: React.FC = () => {
       // Méthode 1: Utiliser shell.openExternal via Electron (recommandé)
       if (window.electronAPI?.openExternal) {
         window.electronAPI.openExternal('ms-settings:themes')
-          .then((result) => {
+          .then((result: { success: boolean; error?: string }) => {
             if (result.success) {
               console.log('✅ Paramètres de thèmes Windows ouverts via shell.openExternal');
             } else {
@@ -90,7 +88,7 @@ const VIPDashboard: React.FC = () => {
               }
             }
           })
-          .catch((error) => {
+          .catch((error: any) => {
             console.log('❌ Erreur shell.openExternal:', error);
             // Fallback vers window.open
             window.open('ms-settings:themes', '_blank');
@@ -124,7 +122,7 @@ const VIPDashboard: React.FC = () => {
       
       if (window.electronAPI?.executeSystemCommand) {
         // Afficher une confirmation avant de procéder
-        const confirmed = confirm(
+        const confirmed = window.confirm(
           '⚠️ ATTENTION - Désactivation de l\'UAC\n\n' +
           'Cette action va désactiver le Contrôle de Compte Utilisateur (UAC) de Windows.\n\n' +
           '⚠️ AVERTISSEMENTS :\n' +
@@ -151,7 +149,7 @@ const VIPDashboard: React.FC = () => {
               );
               
               // Proposer le redémarrage
-              const restart = confirm('Voulez-vous redémarrer votre ordinateur maintenant ?');
+              const restart = window.confirm('Voulez-vous redémarrer votre ordinateur maintenant ?');
               if (restart) {
                 window.electronAPI.executeSystemCommand('shutdown.exe', ['/r', '/t', '10', '/c', 'Redémarrage pour appliquer les changements UAC']);
               }
@@ -180,138 +178,6 @@ const VIPDashboard: React.FC = () => {
     } catch (error) {
       console.error('❌ Erreur lors de la désactivation de l\'UAC:', error);
       alert('❌ Erreur lors de la désactivation de l\'UAC.');
-    }
-  };
-
-  // Fonction pour redémarrer en mode sans échec
-  const restartSafeMode = () => {
-    try {
-      console.log('🔄 Démarrage du redémarrage en mode sans échec...');
-      
-      const confirmed = confirm(
-        '🔄 Redémarrage en Mode Sans Échec\n\n' +
-        'Cette action va redémarrer votre ordinateur en mode sans échec.\n\n' +
-        '⚠️ ATTENTION :\n' +
-        '• Votre ordinateur va redémarrer immédiatement\n' +
-        '• Vous serez en mode sans échec au prochain démarrage\n' +
-        '• Pour sortir du mode sans échec, redémarrez normalement\n\n' +
-        'Êtes-vous sûr de vouloir continuer ?'
-      );
-
-      if (confirmed) {
-        if (window.electronAPI?.executeSystemCommand) {
-          // Configurer le mode sans échec et redémarrer
-          window.electronAPI.executeSystemCommand('cmd.exe', [
-            '/c', 'bcdedit /set {current} safeboot minimal && shutdown /r /t 0'
-          ])
-          .then((result) => {
-            if (result.success) {
-              console.log('✅ Redémarrage en mode sans échec lancé');
-              alert('✅ Redémarrage en mode sans échec lancé !\n\nVotre ordinateur va redémarrer dans quelques secondes.');
-            } else {
-              console.log('❌ Erreur lors du redémarrage en mode sans échec:', result.error);
-              alert('❌ Erreur lors du redémarrage en mode sans échec.\n\nVeuillez exécuter en tant qu\'administrateur.');
-            }
-          })
-          .catch((error) => {
-            console.error('❌ Erreur lors de l\'exécution:', error);
-            alert('❌ Erreur lors de l\'exécution de la commande.');
-          });
-        } else {
-          alert('⚠️ API Electron non disponible.\n\nVeuillez exécuter manuellement :\nbcdedit /set {current} safeboot minimal && shutdown /r /t 0');
-        }
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors du redémarrage en mode sans échec:', error);
-      alert('❌ Erreur lors du redémarrage en mode sans échec.');
-    }
-  };
-
-  // Fonction pour redémarrer dans le BIOS
-  const restartBIOS = () => {
-    try {
-      console.log('🔧 Démarrage du redémarrage vers le BIOS...');
-      
-      const confirmed = confirm(
-        '🔧 Redémarrage vers le BIOS\n\n' +
-        'Cette action va redémarrer votre ordinateur et accéder directement au BIOS.\n\n' +
-        '⚠️ ATTENTION :\n' +
-        '• Votre ordinateur va redémarrer immédiatement\n' +
-        '• Vous accéderez directement au BIOS/UEFI\n' +
-        '• Ne modifiez pas les paramètres BIOS sans connaissance\n\n' +
-        'Êtes-vous sûr de vouloir continuer ?'
-      );
-
-      if (confirmed) {
-        if (window.electronAPI?.executeSystemCommand) {
-          // Redémarrer vers le BIOS
-          window.electronAPI.executeSystemCommand('shutdown.exe', [
-            '/r', '/fw', '/t', '0'
-          ])
-          .then((result) => {
-            if (result.success) {
-              console.log('✅ Redémarrage vers le BIOS lancé');
-              alert('✅ Redémarrage vers le BIOS lancé !\n\nVotre ordinateur va redémarrer et accéder au BIOS.');
-            } else {
-              console.log('❌ Erreur lors du redémarrage vers le BIOS:', result.error);
-              alert('❌ Erreur lors du redémarrage vers le BIOS.\n\nVeuillez exécuter en tant qu\'administrateur.');
-            }
-          })
-          .catch((error) => {
-            console.error('❌ Erreur lors de l\'exécution:', error);
-            alert('❌ Erreur lors de l\'exécution de la commande.');
-          });
-        } else {
-          alert('⚠️ API Electron non disponible.\n\nVeuillez exécuter manuellement :\nshutdown /r /fw /t 0');
-        }
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors du redémarrage vers le BIOS:', error);
-      alert('❌ Erreur lors du redémarrage vers le BIOS.');
-    }
-  };
-
-  // Fonction pour le démarrage avancé
-  const advancedStartup = () => {
-    try {
-      console.log('⚙️ Démarrage des options de démarrage avancées...');
-      
-      const confirmed = confirm(
-        '⚙️ Démarrage Avancé\n\n' +
-        'Cette action va redémarrer votre ordinateur vers les options de démarrage avancées.\n\n' +
-        '⚠️ ATTENTION :\n' +
-        '• Votre ordinateur va redémarrer immédiatement\n' +
-        '• Vous accéderez aux options de démarrage avancées\n' +
-        '• Options disponibles : Mode sans échec, Récupération, etc.\n\n' +
-        'Êtes-vous sûr de vouloir continuer ?'
-      );
-
-      if (confirmed) {
-        if (window.electronAPI?.executeSystemCommand) {
-          // Redémarrer vers les options de démarrage avancées
-          window.electronAPI.executeSystemCommand('shutdown.exe', [
-            '/r', '/o', '/f', '/t', '0'
-          ])
-          .then((result) => {
-            if (result.success) {
-              console.log('✅ Démarrage avancé lancé');
-              alert('✅ Démarrage avancé lancé !\n\nVotre ordinateur va redémarrer vers les options de démarrage avancées.');
-            } else {
-              console.log('❌ Erreur lors du démarrage avancé:', result.error);
-              alert('❌ Erreur lors du démarrage avancé.\n\nVeuillez exécuter en tant qu\'administrateur.');
-            }
-          })
-          .catch((error) => {
-            console.error('❌ Erreur lors de l\'exécution:', error);
-            alert('❌ Erreur lors de l\'exécution de la commande.');
-          });
-        } else {
-          alert('⚠️ API Electron non disponible.\n\nVeuillez exécuter manuellement :\nshutdown /r /o /f /t 0');
-        }
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors du démarrage avancé:', error);
-      alert('❌ Erreur lors du démarrage avancé.');
     }
   };
 
@@ -368,8 +234,8 @@ const VIPDashboard: React.FC = () => {
     },
     {
       id: 'monitor',
-      title: 'Surveiller',
-      description: 'Surveillance temps réel',
+      title: 'Options de Redémarrage',
+      description: 'Redémarrage avancé et mode sans échec',
       icon: Activity,
       color: '#ef4444',
       gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
@@ -439,13 +305,13 @@ const VIPDashboard: React.FC = () => {
                 className="dashboard-logo"
               />
             </motion.div>
-          </motion.div>
+      </motion.div>
 
           {/* Titre Principal */}
-          <motion.div 
+      <motion.div 
             className="hero-title-section"
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+        animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             <h1>Bienvenue dans VestyWinBox</h1>
@@ -499,7 +365,7 @@ const VIPDashboard: React.FC = () => {
 
       {/* System Processes & Weather */}
       <div className="bottom-section">
-        <motion.div 
+      <motion.div 
           className="processes-section"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -522,8 +388,8 @@ const VIPDashboard: React.FC = () => {
               >
                 <div className="process-info">
                   <h4>{process.name}</h4>
-                  <div className="process-metrics">
-                    <span>CPU: {process.cpu}%</span>
+              <div className="process-metrics">
+                  <span>CPU: {process.cpu}%</span>
                     <span>RAM: {process.memory}%</span>
                   </div>
                 </div>
@@ -536,13 +402,13 @@ const VIPDashboard: React.FC = () => {
                     className="priority-indicator"
                     style={{ backgroundColor: getPriorityColor(process.priority) }}
                   />
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
 
-        <motion.div 
+      <motion.div 
           className="weather-section"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -551,12 +417,12 @@ const VIPDashboard: React.FC = () => {
           <div className="section-header">
             <h2>Météo Locale</h2>
             <p>Conditions météorologiques actuelles</p>
-          </div>
+              </div>
           
           <div className="weather-card">
             <div className="weather-icon">
               <weatherData.icon size={48} />
-            </div>
+              </div>
             <div className="weather-info">
               <h3>{weatherData.temperature}°C</h3>
               <p>{weatherData.condition}</p>
@@ -564,10 +430,10 @@ const VIPDashboard: React.FC = () => {
                 <span>Humidité: {weatherData.humidity}%</span>
                 <span>Vent: {weatherData.windSpeed} km/h</span>
               </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
+                </div>
+              </div>
+            </motion.div>
+        </div>
       
       {/* Modal de sauvegarde */}
       <BackupModal 
