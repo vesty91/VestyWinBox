@@ -1,0 +1,12 @@
+[Ditto]
+SetCurrentDirectory = 1
+Portable = 1
+DisableRecieve = 1
+CheckForMaxEntries=1
+MaxEntries=100
+CheckForUpdates=0
+UseHookDllForFocus=0
+LanguageFile=ENGLISH
+SimpleTextSearch=1
+DBPath3=Ditto.db
+MainhWnd=0

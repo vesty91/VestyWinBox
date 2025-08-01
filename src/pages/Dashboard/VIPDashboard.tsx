@@ -1,43 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Activity, 
-  Thermometer,
   Zap,
   Trash2,
   Shield,
   Download,
   Save,
-  RefreshCw,
-  Wifi,
-  HardDrive,
-  Cpu,
-  MemoryStick,
-  Bell,
-  BellOff,
   Sun,
-  Moon,
-  Battery
+  LucideIcon
 } from 'lucide-react';
 import './VIPDashboard.css';
 import logoPage1 from '../../../assets/logo-page-1.png';
-
-interface SystemStats {
-  cpu: number;
-  disk: number;
-  ram: number;
-  temp: number;
-  network: number;
-  gpu: number;
-  battery: number;
-  uptime: string;
-}
 
 interface QuickAction {
   id: string;
   title: string;
   description: string;
-  icon: React.ComponentType<any>;
+  icon: LucideIcon;
   color: string;
   gradient: string;
   action: () => void;
@@ -58,21 +38,10 @@ interface WeatherData {
   condition: string;
   humidity: number;
   windSpeed: number;
-  icon: React.ComponentType<any>;
+  icon: LucideIcon;
 }
 
 const VIPDashboard: React.FC = () => {
-  const [systemStats, setSystemStats] = useState<SystemStats>({
-    cpu: 0,
-    disk: 0,
-    ram: 0,
-    temp: 0,
-    network: 0,
-    gpu: 0,
-    battery: 0,
-    uptime: '0j 0h 0m'
-  });
-
   const [weatherData] = useState<WeatherData>({
     temperature: 22,
     condition: 'Ensoleillé',
@@ -81,8 +50,6 @@ const VIPDashboard: React.FC = () => {
     icon: Sun
   });
 
-  const [isDarkMode, setIsDarkMode] = useState(true);
-  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
   const [selectedQuickAction, setSelectedQuickAction] = useState<string | null>(null);
 
   // Fonction pour ouvrir les paramètres de thèmes Windows via PowerShell
@@ -102,21 +69,21 @@ const VIPDashboard: React.FC = () => {
                   if (cmdResult.success) {
                     console.log('✅ Paramètres de thèmes Windows ouverts via cmd');
                   } else {
-                    console.log('❌ Erreur cmd, tentative navigateur...');
-                    // Dernier fallback : ouvrir dans le navigateur
+                    console.log('❌ Erreur cmd, tentative window.open...');
+                    // Fallback vers window.open
                     window.open('ms-settings:themes', '_blank');
                   }
                 });
             }
           });
       } else {
-        // Si pas d'Electron, essayer directement le protocole
+        // Fallback direct vers window.open si pas d'API Electron
         window.open('ms-settings:themes', '_blank');
       }
     } catch (error) {
-      console.log('❌ Erreur lors de l\'ouverture des paramètres de thèmes:', error);
-      // Dernier recours : message à l'utilisateur
-      alert('Impossible d\'ouvrir les paramètres de thèmes Windows automatiquement. Veuillez les ouvrir manuellement.');
+      console.error('❌ Erreur lors de l\'ouverture des paramètres de thèmes:', error);
+      // Fallback final
+      window.open('ms-settings:themes', '_blank');
     }
   };
 
@@ -213,24 +180,6 @@ const VIPDashboard: React.FC = () => {
     { id: '4', name: 'Steam', cpu: 3, memory: 8, status: 'running', priority: 'low' },
     { id: '5', name: 'Windows Defender', cpu: 2, memory: 6, status: 'running', priority: 'high' }
   ];
-
-  useEffect(() => {
-    // Simulation des données système en temps réel
-    const interval = setInterval(() => {
-      setSystemStats({
-        cpu: Math.floor(Math.random() * 40) + 20,
-        disk: Math.floor(Math.random() * 30) + 10,
-        ram: Math.floor(Math.random() * 50) + 30,
-        temp: Math.floor(Math.random() * 20) + 25,
-        network: Math.floor(Math.random() * 100) + 50,
-        gpu: Math.floor(Math.random() * 60) + 20,
-        battery: Math.floor(Math.random() * 40) + 60,
-        uptime: '2j 14h 32m'
-      });
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   const handleQuickAction = (action: QuickAction) => {
     setSelectedQuickAction(action.id);
@@ -343,153 +292,6 @@ const VIPDashboard: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* System Metrics */}
-      <motion.div 
-        className="system-metrics-section"
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.8 }}
-      >
-        <div className="section-header">
-          <h2>Métriques Système</h2>
-          <p>Surveillance en temps réel des performances</p>
-        </div>
-        
-        <div className="metrics-grid">
-              <motion.div
-            className="metric-card cpu"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="metric-header">
-              <div className="metric-icon">
-                <Cpu />
-              </div>
-              <div className="metric-info">
-                <h3>CPU</h3>
-                <span className="metric-value">{systemStats.cpu}%</span>
-                </div>
-                </div>
-            <div className="metric-progress">
-              <div 
-                className="progress-bar" 
-                style={{ width: `${systemStats.cpu}%` }}
-              />
-                </div>
-              </motion.div>
-
-          <motion.div 
-            className="metric-card ram"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="metric-header">
-              <div className="metric-icon">
-                <MemoryStick />
-              </div>
-              <div className="metric-info">
-                <h3>RAM</h3>
-                <span className="metric-value">{systemStats.ram}%</span>
-              </div>
-            </div>
-            <div className="metric-progress">
-              <div 
-                className="progress-bar" 
-                style={{ width: `${systemStats.ram}%` }}
-              />
-        </div>
-      </motion.div>
-
-      <motion.div 
-            className="metric-card disk"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-      >
-            <div className="metric-header">
-              <div className="metric-icon">
-                <HardDrive />
-              </div>
-              <div className="metric-info">
-                <h3>DISQUE</h3>
-                <span className="metric-value">{systemStats.disk}%</span>
-              </div>
-            </div>
-            <div className="metric-progress">
-              <div 
-                className="progress-bar" 
-                style={{ width: `${systemStats.disk}%` }}
-              />
-            </div>
-          </motion.div>
-
-            <motion.div
-            className="metric-card temp"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-            >
-            <div className="metric-header">
-              <div className="metric-icon">
-                <Thermometer />
-              </div>
-              <div className="metric-info">
-                <h3>TEMP CPU</h3>
-                <span className="metric-value">{systemStats.temp}°C</span>
-                  </div>
-                </div>
-            <div className="metric-progress">
-              <div 
-                className="progress-bar" 
-                style={{ width: `${(systemStats.temp / 100) * 100}%` }}
-              />
-            </div>
-          </motion.div>
-
-          <motion.div 
-            className="metric-card network"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="metric-header">
-              <div className="metric-icon">
-                <Wifi />
-              </div>
-              <div className="metric-info">
-                <h3>RÉSEAU</h3>
-                <span className="metric-value">{systemStats.network} Mbps</span>
-                  </div>
-                </div>
-            <div className="metric-progress">
-              <div 
-                className="progress-bar" 
-                style={{ width: `${(systemStats.network / 1000) * 100}%` }}
-              />
-            </div>
-          </motion.div>
-
-          <motion.div 
-            className="metric-card battery"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="metric-header">
-              <div className="metric-icon">
-                <Battery />
-              </div>
-              <div className="metric-info">
-                <h3>BATTERIE</h3>
-                <span className="metric-value">{systemStats.battery}%</span>
-              </div>
-            </div>
-            <div className="metric-progress">
-              <div 
-                className="progress-bar" 
-                style={{ width: `${systemStats.battery}%` }}
-              />
-              </div>
-            </motion.div>
-        </div>
-      </motion.div>
-
       {/* System Processes & Weather */}
       <div className="bottom-section">
       <motion.div 
@@ -561,40 +363,6 @@ const VIPDashboard: React.FC = () => {
               </div>
             </motion.div>
         </div>
-
-      {/* Floating Action Buttons */}
-      <motion.div 
-        className="floating-actions"
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, delay: 1.4 }}
-      >
-        <motion.button
-          className="fab fab-theme"
-          whileHover={{ scale: 1.1, rotate: 180 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setIsDarkMode(!isDarkMode)}
-        >
-          {isDarkMode ? <Sun /> : <Moon />}
-        </motion.button>
-        
-        <motion.button
-          className="fab fab-notifications"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setIsNotificationsEnabled(!isNotificationsEnabled)}
-        >
-          {isNotificationsEnabled ? <Bell /> : <BellOff />}
-        </motion.button>
-        
-        <motion.button
-          className="fab fab-refresh"
-          whileHover={{ scale: 1.1, rotate: 180 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <RefreshCw />
-        </motion.button>
-      </motion.div>
     </div>
   );
 };

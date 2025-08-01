@@ -1,0 +1,68 @@
+{
+	"Backups" : [],
+	"DeviceList" : [],
+	"IgnoreList" : [],
+	"OpenTasks" : [],
+	"Status" : 
+	{
+		"crashingDrivers" : 0,
+		"foundDevices" : 0,
+		"hasProblemDevices" : 0,
+		"lastDeviceScan" : 0,
+		"lastRevert" : 0,
+		"lastScan" : 0,
+		"lastUpdate" : 0,
+		"outdatedDrivers" : 0,
+		"rebootRequired" : false,
+		"version" : "24.4.5778.0",
+		"vulnerableDrivers" : 0
+	},
+	"audioEndpoints" : 
+	{
+		"current" : 
+		[
+			{
+				"default" : false,
+				"flow" : 0,
+				"id" : "{0.0.0.00000000}.{1F192351-1C38-499C-A495-D3EC2A405AB5}",
+				"name" : "2590G5 (NVIDIA High Definition Audio)",
+				"role" : 0,
+				"state" : 1
+			},
+			{
+				"default" : true,
+				"flow" : 0,
+				"id" : "{0.0.0.00000000}.{25E1523A-25AC-405D-9623-19F9422B0033}",
+				"name" : "Haut-parleurs (Realtek USB Audio)",
+				"role" : 2,
+				"state" : 1
+			},
+			{
+				"default" : false,
+				"flow" : 0,
+				"id" : "{0.0.0.00000000}.{D12EEBDE-10D5-4BCC-A380-DDE019EE97A8}",
+				"name" : "MAG342CQPV (NVIDIA High Definition Audio)",
+				"role" : 0,
+				"state" : 1
+			},
+			{
+				"default" : false,
+				"flow" : 0,
+				"id" : "{0.0.0.00000000}.{F10D9B44-FA2E-421B-B52A-15CEDAD3E0E0}",
+				"name" : "Interface SPDIF (Realtek USB Audio)",
+				"role" : 0,
+				"state" : 1
+			},
+			{
+				"default" : true,
+				"flow" : 1,
+				"id" : "{0.0.1.00000000}.{182CEEBD-1532-4EF7-B5F6-2590006A100B}",
+				"name" : "Microphone (WO Mic Device)",
+				"role" : 2,
+				"state" : 1
+			}
+		]
+	},
+	"computerInfo" : null,
+	"hasProblemList" : []
+}

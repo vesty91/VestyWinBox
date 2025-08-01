@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Menu, 
-  Settings,
-  Activity,
   Minimize2 as MinimizeIcon,
   Maximize2,
-  X as CloseIcon
+  X as CloseIcon,
+  Cpu,
+  MemoryStick,
+  HardDrive,
+  Wifi,
+  Battery,
+  Thermometer
 } from 'lucide-react';
 import './VIPLayout.css';
 import logoBarreLaterale from '../../../assets/logo-barre-laterale.png';
@@ -20,6 +24,30 @@ interface VIPLayoutProps {
 const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChange }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [systemMetrics, setSystemMetrics] = useState({
+    cpu: 45,
+    ram: 62,
+    disk: 28,
+    network: 78,
+    battery: 85,
+    temp: 42
+  });
+
+  // Simulation des métriques système en temps réel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSystemMetrics({
+        cpu: Math.floor(Math.random() * 40) + 20,
+        ram: Math.floor(Math.random() * 50) + 30,
+        disk: Math.floor(Math.random() * 30) + 10,
+        network: Math.floor(Math.random() * 100) + 50,
+        battery: Math.floor(Math.random() * 40) + 60,
+        temp: Math.floor(Math.random() * 20) + 25
+      });
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Fonctions réelles pour les contrôles de fenêtre
   const handleMinimize = () => {
@@ -44,23 +72,6 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
     } else {
       console.log('Close window');
     }
-  };
-
-  // Fonctions pour les actions rapides
-  const handleQuickScan = () => {
-    console.log('🔍 Scan rapide du système...');
-    // Simulation d'un scan
-    setTimeout(() => {
-      alert('✅ Scan rapide terminé ! Aucune menace détectée.');
-    }, 2000);
-  };
-
-  const handleOptimize = () => {
-    console.log('⚡ Optimisation du système...');
-    // Simulation d'une optimisation
-    setTimeout(() => {
-      alert('🚀 Optimisation terminée ! Système plus rapide.');
-    }, 3000);
   };
 
   // Fonction de navigation
@@ -104,6 +115,15 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
     }
   ];
 
+  const metrics = [
+    { icon: Cpu, value: systemMetrics.cpu, label: 'CPU', unit: '%', color: '#667eea' },
+    { icon: MemoryStick, value: systemMetrics.ram, label: 'RAM', unit: '%', color: '#10b981' },
+    { icon: HardDrive, value: systemMetrics.disk, label: 'DISK', unit: '%', color: '#f59e0b' },
+    { icon: Wifi, value: systemMetrics.network, label: 'NET', unit: 'Mbps', color: '#8b5cf6' },
+    { icon: Battery, value: systemMetrics.battery, label: 'BAT', unit: '%', color: '#06b6d4' },
+    { icon: Thermometer, value: systemMetrics.temp, label: 'TEMP', unit: '°C', color: '#ef4444' }
+  ];
+
   return (
     <div className="vip-layout desktop-pro">
       {/* Top Bar */}
@@ -119,18 +139,13 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
           </button>
         </div>
 
-        <div className="top-bar-center">
-          <div className="app-brand">
-            <img 
-              src={logoBarreLaterale} 
-              alt="VestyWinBox Logo" 
-              className="top-bar-logo"
-            />
-            <span className="brand-text">VestyWinBox</span>
-            <div className="brand-badge">
-              <span>PRO</span>
-            </div>
-          </div>
+        {/* Métriques Système dans le Header */}
+        <div className="header-metrics">
+          {metrics.map((metric, index) => (
+            <span key={metric.label} className="metric-text">
+              {metric.label} : {metric.value}{metric.unit}
+            </span>
+          ))}
         </div>
 
         <div className="top-bar-right">
@@ -194,14 +209,7 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
                 </button>
               </div>
               <div className="mobile-menu-content">
-                <button className="mobile-menu-item" onClick={handleQuickScan}>
-                  <Activity size={16} />
-                  <span>Scan Rapide</span>
-                </button>
-                <button className="mobile-menu-item" onClick={handleOptimize}>
-                  <Settings size={16} />
-                  <span>Optimiser</span>
-                </button>
+                {/* Menu items supprimés - plus de boutons d'action */}
               </div>
             </div>
           </div>

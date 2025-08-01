@@ -20,5 +20,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   // Système
   openExternal: (url) => ipcRenderer.send('open-external', url),
-  getSystemInfo: () => ipcRenderer.invoke('get-system-info')
+  getSystemInfo: () => ipcRenderer.invoke('get-system-info'),
+  
+  // Lancement d'exécutables
+  launchExecutable: (filePath) => ipcRenderer.invoke('launch-executable', filePath),
+  
+  // Commandes système
+  executeSystemCommand: (command, args) => ipcRenderer.invoke('execute-system-command', command, args)
 }); 
