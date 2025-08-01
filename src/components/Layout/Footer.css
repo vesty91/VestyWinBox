@@ -1,0 +1,69 @@
+/* Footer - Style professionnel et discret */
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 var(--space-lg);
+}
+
+.footer-text {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #8e96ff;
+  text-align: center;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.footer-text:hover {
+  opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app-footer {
+    height: 35px;
+  }
+  
+  .footer-content {
+    padding: 0 var(--space-md);
+  }
+  
+  .footer-text {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-footer {
+    height: 30px;
+  }
+  
+  .footer-content {
+    padding: 0 var(--space-sm);
+  }
+  
+  .footer-text {
+    font-size: 0.65rem;
+  }
+} 
