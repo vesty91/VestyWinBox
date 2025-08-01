@@ -141,7 +141,7 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
 
         {/* Métriques Système dans le Header */}
         <div className="header-metrics">
-          {metrics.map((metric, index) => (
+          {metrics.map((metric) => (
             <span key={metric.label} className="metric-text" data-metric={metric.label}>
               {metric.label} : {metric.value}{metric.unit}
             </span>
