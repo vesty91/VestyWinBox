@@ -52,29 +52,39 @@ const VIPDashboard: React.FC = () => {
 
   const [selectedQuickAction, setSelectedQuickAction] = useState<string | null>(null);
 
-  // Fonction pour ouvrir les paramètres de thèmes Windows via PowerShell
-  const openThemeSettingsWithPowerShell = () => {
+  // Fonction pour ouvrir les paramètres de thèmes Windows
+  const openThemeSettings = () => {
     try {
-      // Méthode 1: PowerShell avec Start-Process
-      if (window.electronAPI?.executeSystemCommand) {
-        window.electronAPI.executeSystemCommand('powershell.exe', ['-Command', 'Start-Process "ms-settings:themes"'])
+      console.log('🔧 Ouverture des paramètres de thèmes Windows...');
+      
+      // Méthode 1: Utiliser shell.openExternal via Electron (recommandé)
+      if (window.electronAPI?.openExternal) {
+        window.electronAPI.openExternal('ms-settings:themes')
           .then((result) => {
             if (result.success) {
-              console.log('✅ Paramètres de thèmes Windows ouverts via PowerShell');
+              console.log('✅ Paramètres de thèmes Windows ouverts via shell.openExternal');
             } else {
-              console.log('❌ Erreur PowerShell, tentative cmd...');
+              console.log('❌ Erreur shell.openExternal, tentative cmd...');
               // Fallback vers cmd
-              window.electronAPI.executeSystemCommand('cmd.exe', ['/c', 'start', 'ms-settings:themes'])
-                .then((cmdResult) => {
-                  if (cmdResult.success) {
-                    console.log('✅ Paramètres de thèmes Windows ouverts via cmd');
-                  } else {
-                    console.log('❌ Erreur cmd, tentative window.open...');
-                    // Fallback vers window.open
-                    window.open('ms-settings:themes', '_blank');
-                  }
-                });
+              if (window.electronAPI?.executeSystemCommand) {
+                window.electronAPI.executeSystemCommand('cmd.exe', ['/c', 'start', 'ms-settings:themes'])
+                  .then((cmdResult) => {
+                    if (cmdResult.success) {
+                      console.log('✅ Paramètres de thèmes Windows ouverts via cmd');
+                    } else {
+                      console.log('❌ Erreur cmd, tentative window.open...');
+                      window.open('ms-settings:themes', '_blank');
+                    }
+                  });
+              } else {
+                window.open('ms-settings:themes', '_blank');
+              }
             }
+          })
+          .catch((error) => {
+            console.log('❌ Erreur shell.openExternal:', error);
+            // Fallback vers window.open
+            window.open('ms-settings:themes', '_blank');
           });
       } else {
         // Fallback direct vers window.open si pas d'API Electron
@@ -95,30 +105,7 @@ const VIPDashboard: React.FC = () => {
       icon: Shield,
       color: '#667eea',
       gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      action: () => {
-        console.log('🔧 Ouverture des paramètres de thèmes Windows...');
-        
-        // Méthode 1: Electron (si disponible)
-        if (window.electronAPI?.executeSystemCommand) {
-          // Utiliser le protocole ms-settings:themes pour ouvrir les paramètres de thèmes Windows
-          window.electronAPI.executeSystemCommand('start', ['ms-settings:themes'])
-            .then((result) => {
-              if (result.success) {
-                console.log('✅ Paramètres de thèmes Windows ouverts via Electron');
-              } else {
-                console.log('❌ Erreur Electron, tentative PowerShell...');
-                openThemeSettingsWithPowerShell();
-              }
-            })
-            .catch((error) => {
-              console.log('❌ Erreur Electron:', error);
-              openThemeSettingsWithPowerShell();
-            });
-        } else {
-          // Méthode 2: PowerShell (fallback)
-          openThemeSettingsWithPowerShell();
-        }
-      },
+      action: openThemeSettings,
       status: 'available'
     },
     {

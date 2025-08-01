@@ -19,7 +19,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   showNotification: (title, body) => ipcRenderer.send('show-notification', { title, body }),
   
   // Système
-  openExternal: (url) => ipcRenderer.send('open-external', url),
+  openExternal: (url) => ipcRenderer.invoke('open-external', url),
   getSystemInfo: () => ipcRenderer.invoke('get-system-info'),
   
   // Lancement d'exécutables

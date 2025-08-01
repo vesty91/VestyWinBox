@@ -206,8 +206,14 @@ ipcMain.on('show-notification', (event, { title, body }) => {
   console.log('Notification:', title, body);
 });
 
-ipcMain.on('open-external', (event, url) => {
-  shell.openExternal(url);
+ipcMain.handle('open-external', async (event, url) => {
+  try {
+    await shell.openExternal(url);
+    return { success: true };
+  } catch (error) {
+    console.error('❌ Erreur lors de l\'ouverture externe:', error);
+    return { success: false, error: error.message };
+  }
 });
 
 // Gestionnaire pour le lancement d'exécutables
