@@ -464,6 +464,64 @@
   box-shadow: 0 8px 25px rgba(29, 78, 216, 0.3);
 }
 
+/* Debug Section */
+.debug-section {
+  margin-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 16px;
+}
+
+.debug-summary {
+  color: #1d4ed8;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 0;
+  user-select: none;
+  transition: color 0.3s ease;
+}
+
+.debug-summary:hover {
+  color: #3b82f6;
+}
+
+.debug-content {
+  margin-top: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.debug-item {
+  margin-bottom: 16px;
+}
+
+.debug-item:last-child {
+  margin-bottom: 0;
+}
+
+.debug-item strong {
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.debug-item pre {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 8px;
+  color: #9ca3af;
+  font-size: 0.8rem;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .secureboot-modal {

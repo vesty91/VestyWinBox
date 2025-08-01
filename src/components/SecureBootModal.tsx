@@ -19,6 +19,12 @@ interface SecureBootStatus {
     tpmVersion?: string;
     virtualizationEnabled?: boolean;
   };
+  debugInfo?: {
+    secureBootRaw?: string;
+    uefiRaw?: string;
+    tpmRaw?: string;
+    virtualizationRaw?: string;
+  };
 }
 
 const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) => {
@@ -36,48 +42,163 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
     });
 
     try {
-      // Vérifier le Secure Boot
-      const secureBootResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
-        '-Command', 'Confirm-SecureBootUEFI'
-      ]);
+      // Vérifier le Secure Boot avec plusieurs méthodes
+      let isSecureBootEnabled = false;
+      let secureBootOutput = '';
+      let secureBootRaw = '';
 
-      // Vérifier le mode UEFI
-      const uefiResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
-        '-Command', 'Get-ComputerInfo | Select-Object -ExpandProperty BiosFirmwareType'
-      ]);
+      try {
+        const secureBootResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
+          '-Command', 'Confirm-SecureBootUEFI'
+        ]);
+        
+        if (secureBootResult?.success) {
+          secureBootOutput = secureBootResult.output || '';
+          secureBootRaw = `Méthode 1: ${secureBootOutput}`;
+          isSecureBootEnabled = secureBootOutput.includes('True');
+        }
+      } catch (error) {
+        console.log('Méthode 1 échouée, tentative méthode 2...');
+        secureBootRaw = 'Méthode 1: Échec';
+      }
+
+      // Méthode de fallback pour Secure Boot
+      if (!secureBootOutput) {
+        try {
+          const fallbackResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
+            '-Command', 'Get-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\SecureBoot\\State" -Name "UEFISecureBootEnabled" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty UEFISecureBootEnabled'
+          ]);
+          
+          if (fallbackResult?.success && fallbackResult.output) {
+            secureBootRaw += `\nMéthode 2: ${fallbackResult.output}`;
+            isSecureBootEnabled = fallbackResult.output.trim() === '1';
+          } else {
+            secureBootRaw += '\nMéthode 2: Aucun résultat';
+          }
+        } catch (error) {
+          console.log('Méthode 2 échouée, tentative méthode 3...');
+          secureBootRaw += '\nMéthode 2: Échec';
+        }
+      }
+
+      // Vérifier le mode UEFI avec plusieurs méthodes
+      let isUefiMode = false;
+      let uefiOutput = '';
+      let uefiRaw = '';
+
+      try {
+        const uefiResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
+          '-Command', 'Get-ComputerInfo | Select-Object -ExpandProperty BiosFirmwareType'
+        ]);
+        
+        if (uefiResult?.success) {
+          uefiOutput = uefiResult.output || '';
+          uefiRaw = `Méthode 1: ${uefiOutput}`;
+          isUefiMode = uefiOutput.includes('UEFI');
+        }
+      } catch (error) {
+        console.log('Vérification UEFI méthode 1 échouée...');
+        uefiRaw = 'Méthode 1: Échec';
+      }
+
+      // Méthode de fallback pour UEFI
+      if (!uefiOutput) {
+        try {
+          const fallbackUefiResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
+            '-Command', 'Get-WmiObject -Class Win32_ComputerSystem | Select-Object -ExpandProperty BootupState'
+          ]);
+          
+          if (fallbackUefiResult?.success && fallbackUefiResult.output) {
+            uefiRaw += `\nMéthode 2: ${fallbackUefiResult.output}`;
+            isUefiMode = fallbackUefiResult.output.includes('Normal boot');
+          } else {
+            uefiRaw += '\nMéthode 2: Aucun résultat';
+          }
+        } catch (error) {
+          console.log('Vérification UEFI méthode 2 échouée...');
+          uefiRaw += '\nMéthode 2: Échec';
+        }
+      }
 
       // Vérifier la version TPM
-      const tpmResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
-        '-Command', 'Get-WmiObject -Namespace "root\\CIMV2\\Security\\MicrosoftTpm" -Class "Win32_Tpm" | Select-Object -ExpandProperty SpecVersion'
-      ]);
+      let tpmVersion = undefined;
+      let tpmRaw = '';
+      try {
+        const tpmResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
+          '-Command', 'Get-WmiObject -Namespace "root\\CIMV2\\Security\\MicrosoftTpm" -Class "Win32_Tpm" | Select-Object -ExpandProperty SpecVersion'
+        ]);
+        
+        if (tpmResult?.success && tpmResult.output) {
+          tpmVersion = tpmResult.output.trim();
+          tpmRaw = tpmResult.output;
+        } else {
+          tpmRaw = 'Aucun résultat';
+        }
+      } catch (error) {
+        console.log('Vérification TPM échouée...');
+        tpmRaw = 'Échec';
+      }
 
       // Vérifier la virtualisation
-      const virtualizationResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
-        '-Command', 'Get-ComputerInfo | Select-Object -ExpandProperty HyperVRequirementVirtualizationFirmwareEnabled'
-      ]);
+      let virtualizationEnabled = false;
+      let virtualizationRaw = '';
+      try {
+        const virtualizationResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
+          '-Command', 'Get-ComputerInfo | Select-Object -ExpandProperty HyperVRequirementVirtualizationFirmwareEnabled'
+        ]);
+        
+        if (virtualizationResult?.success) {
+          virtualizationRaw = `Méthode 1: ${virtualizationResult.output || 'Aucun résultat'}`;
+          virtualizationEnabled = virtualizationResult.output?.includes('True') || false;
+        }
+      } catch (error) {
+        console.log('Vérification virtualisation échouée...');
+        virtualizationRaw = 'Méthode 1: Échec';
+      }
 
-      const isSecureBootEnabled = secureBootResult?.success && secureBootResult.output?.includes('True');
-      const isUefiMode = uefiResult?.success && uefiResult.output?.includes('UEFI');
-      const tpmVersion = tpmResult?.success ? tpmResult.output?.trim() : undefined;
-      const virtualizationEnabled = virtualizationResult?.success && virtualizationResult.output?.includes('True');
+      // Méthode de fallback pour la virtualisation
+      if (!virtualizationEnabled) {
+        try {
+          const fallbackVirtResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
+            '-Command', 'Get-WmiObject -Class Msvm_VirtualSystemSettingData -Namespace "root\\virtualization\\v2" -ErrorAction SilentlyContinue'
+          ]);
+          
+          if (fallbackVirtResult?.success) {
+            virtualizationRaw += '\nMéthode 2: Virtualisation détectée';
+            virtualizationEnabled = true;
+          } else {
+            virtualizationRaw += '\nMéthode 2: Aucun résultat';
+          }
+        } catch (error) {
+          console.log('Vérification virtualisation méthode 2 échouée...');
+          virtualizationRaw += '\nMéthode 2: Échec';
+        }
+      }
 
       setSecureBootStatus({
-        isEnabled: isSecureBootEnabled || false,
+        isEnabled: isSecureBootEnabled,
         isRunning: false,
-        message: isSecureBootEnabled ? 'Secure Boot est activé !' : 'Secure Boot n\'est pas activé.',
+        message: isSecureBootEnabled ? 'Secure Boot est activé !' : 'Secure Boot n\'est pas activé ou non détecté.',
         details: {
-          secureBootEnabled: isSecureBootEnabled || false,
-          uefiMode: isUefiMode || false,
+          secureBootEnabled: isSecureBootEnabled,
+          uefiMode: isUefiMode,
           tpmVersion,
-          virtualizationEnabled: virtualizationEnabled || false
+          virtualizationEnabled
+        },
+        debugInfo: {
+          secureBootRaw,
+          uefiRaw,
+          tpmRaw,
+          virtualizationRaw
         }
       });
 
     } catch (error) {
+      console.error('Erreur lors de la vérification:', error);
       setSecureBootStatus({
         isEnabled: false,
         isRunning: false,
-        message: 'Erreur lors de la vérification',
+        message: 'Erreur lors de la vérification - Vérifiez les privilèges administrateur',
         error: error instanceof Error ? error.message : 'Erreur inconnue'
       });
     }
@@ -303,6 +424,35 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
                           Vérifier à nouveau
                         </button>
                       </div>
+
+                      {/* Debug Info */}
+                      {secureBootStatus.debugInfo && (
+                        <div className="debug-section">
+                          <details>
+                            <summary className="debug-summary">
+                              🔍 Informations de diagnostic (cliquez pour voir)
+                            </summary>
+                            <div className="debug-content">
+                              <div className="debug-item">
+                                <strong>Secure Boot (brut):</strong>
+                                <pre>{secureBootStatus.debugInfo.secureBootRaw || 'Aucune donnée'}</pre>
+                              </div>
+                              <div className="debug-item">
+                                <strong>UEFI (brut):</strong>
+                                <pre>{secureBootStatus.debugInfo.uefiRaw || 'Aucune donnée'}</pre>
+                              </div>
+                              <div className="debug-item">
+                                <strong>TPM (brut):</strong>
+                                <pre>{secureBootStatus.debugInfo.tpmRaw || 'Aucune donnée'}</pre>
+                              </div>
+                              <div className="debug-item">
+                                <strong>Virtualisation (brut):</strong>
+                                <pre>{secureBootStatus.debugInfo.virtualizationRaw || 'Aucune donnée'}</pre>
+                              </div>
+                            </div>
+                          </details>
+                        </div>
+                      )}
                     </div>
                   )}
 
