@@ -116,6 +116,10 @@
   backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .info-card::before {
@@ -143,6 +147,9 @@
 .info-card svg {
   margin-bottom: 12px;
   transition: transform 0.3s ease;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .info-card:hover svg {
@@ -156,6 +163,7 @@
   margin: 0 0 8px 0;
   text-align: center;
   line-height: 1.2;
+  width: 100%;
 }
 
 .info-card p {
@@ -166,6 +174,8 @@
   text-align: center;
   word-wrap: break-word;
   hyphens: auto;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Cartes spécifiques avec couleurs */
