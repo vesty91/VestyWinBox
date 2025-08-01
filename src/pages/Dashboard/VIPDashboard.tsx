@@ -533,8 +533,8 @@ const VIPDashboard: React.FC = () => {
         
         <div className="quick-actions-grid">
           {quickActions.map((action, index) => (
-            <motion.div
-              key={action.id}
+              <motion.div
+                key={action.id}
               className={`quick-action-card ${selectedQuickAction === action.id ? 'selected' : ''}`}
               style={{ background: action.gradient }}
               initial={{ opacity: 0, scale: 0.8 }}
@@ -549,22 +549,22 @@ const VIPDashboard: React.FC = () => {
             >
               <div className="action-icon">
                 <action.icon size={32} />
-              </div>
-              <div className="action-content">
+                </div>
+                <div className="action-content">
                 <h3>{action.title}</h3>
                 <p>{action.description}</p>
               </div>
               <div className="action-status">
                 <div className={`status-dot ${action.status}`} />
-              </div>
-            </motion.div>
+                </div>
+              </motion.div>
           ))}
         </div>
       </motion.div>
 
       {/* System Processes & Weather */}
       <div className="bottom-section">
-        <motion.div 
+      <motion.div 
           className="processes-section"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -587,8 +587,8 @@ const VIPDashboard: React.FC = () => {
               >
                 <div className="process-info">
                   <h4>{process.name}</h4>
-                  <div className="process-metrics">
-                    <span>CPU: {process.cpu}%</span>
+              <div className="process-metrics">
+                  <span>CPU: {process.cpu}%</span>
                     <span>RAM: {process.memory}%</span>
                   </div>
                 </div>
@@ -601,13 +601,13 @@ const VIPDashboard: React.FC = () => {
                     className="priority-indicator"
                     style={{ backgroundColor: getPriorityColor(process.priority) }}
                   />
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
 
-        <motion.div 
+      <motion.div 
           className="weather-section"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -616,12 +616,12 @@ const VIPDashboard: React.FC = () => {
           <div className="section-header">
             <h2>Météo Locale</h2>
             <p>Conditions météorologiques actuelles</p>
-          </div>
+              </div>
           
           <div className="weather-card">
             <div className="weather-icon">
               <weatherData.icon size={48} />
-            </div>
+              </div>
             <div className="weather-info">
               <h3>{weatherData.temperature}°C</h3>
               <p>{weatherData.condition}</p>
@@ -629,10 +629,10 @@ const VIPDashboard: React.FC = () => {
                 <span>Humidité: {weatherData.humidity}%</span>
                 <span>Vent: {weatherData.windSpeed} km/h</span>
               </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
+                </div>
+              </div>
+            </motion.div>
+        </div>
       
       {/* Modals */}
       <BackupModal 
@@ -667,4 +667,4 @@ const VIPDashboard: React.FC = () => {
   );
 };
 
-export default VIPDashboard;
+export default VIPDashboard; 
