@@ -129,7 +129,7 @@ const BackupModal: React.FC<BackupModalProps> = ({ isOpen, onClose }) => {
                 <Save className="backup-icon" />
                 <h2>Sauvegarde des Dossiers Utilisateur</h2>
               </div>
-              <button className="backup-modal-close" onClick={onClose}>
+              <button className="backup-modal-close" onClick={onClose} title="Fermer">
                 <X size={20} />
               </button>
             </div>

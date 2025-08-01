@@ -283,12 +283,12 @@ const VIPDashboard: React.FC = () => {
 
       {/* System Processes & Weather */}
       <div className="bottom-section">
-      <motion.div 
+        <motion.div 
           className="processes-section"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 1.0 }}
-      >
+        >
           <div className="section-header">
             <h2>Processus Système</h2>
             <p>Gestion des processus en cours</p>
@@ -296,21 +296,21 @@ const VIPDashboard: React.FC = () => {
           
           <div className="processes-list">
             {systemProcesses.map((process, index) => (
-            <motion.div
+              <motion.div
                 key={process.id}
                 className="process-item"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ scale: 1.02 }}
-            >
+              >
                 <div className="process-info">
                   <h4>{process.name}</h4>
                   <div className="process-metrics">
                     <span>CPU: {process.cpu}%</span>
                     <span>RAM: {process.memory}%</span>
                   </div>
-              </div>
+                </div>
                 <div className="process-status">
                   <div 
                     className={`status-indicator ${process.status}`}
@@ -320,18 +320,18 @@ const VIPDashboard: React.FC = () => {
                     className="priority-indicator"
                     style={{ backgroundColor: getPriorityColor(process.priority) }}
                   />
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
 
-      <motion.div 
+        <motion.div 
           className="weather-section"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 1.2 }}
-      >
+        >
           <div className="section-header">
             <h2>Météo Locale</h2>
             <p>Conditions météorologiques actuelles</p>
@@ -348,10 +348,9 @@ const VIPDashboard: React.FC = () => {
                 <span>Humidité: {weatherData.humidity}%</span>
                 <span>Vent: {weatherData.windSpeed} km/h</span>
               </div>
-                </div>
-              </div>
-            </motion.div>
-        </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
       
       {/* Modal de sauvegarde */}
