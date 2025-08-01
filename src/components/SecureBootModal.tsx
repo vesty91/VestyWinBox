@@ -68,15 +68,59 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
         
         if (secureBootResult?.success) {
           secureBootRaw = secureBootResult.output || '';
-          isSecureBootEnabled = secureBootRaw.includes('True');
-          console.log('🔍 Secure Boot enabled:', isSecureBootEnabled);
+          const confirmResult = secureBootRaw.includes('True');
+          console.log('🔍 Confirm-SecureBootUEFI result:', confirmResult);
+          
+          // Vérification supplémentaire avec la registry
+          try {
+            const registryResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
+              '-Command', 'Get-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\SecureBoot\\State\\" -Name UEFISecureBootEnabled -ErrorAction SilentlyContinue'
+            ]);
+            
+            if (registryResult?.success && registryResult.output) {
+              const registryEnabled = registryResult.output.includes('UEFISecureBootEnabled : 1');
+              console.log('🔍 Registry Secure Boot:', registryEnabled);
+              
+              // Vérification avec bcdedit pour être plus strict
+              try {
+                const bcdeditResult = await window.electronAPI?.executeSystemCommand('bcdedit.exe', [
+                  '/enum'
+                ]);
+                
+                const bcdeditEnabled = bcdeditResult?.success && bcdeditResult.output?.includes('Secure Boot');
+                console.log('🔍 BCDEdit Secure Boot:', bcdeditEnabled);
+                
+                // Être très strict : au moins 2 tests sur 3 doivent être positifs
+                const positiveTests = [confirmResult, registryEnabled, bcdeditEnabled].filter(Boolean).length;
+                isSecureBootEnabled = positiveTests >= 2;
+                console.log('🔍 Secure Boot final (strict):', isSecureBootEnabled, `(${positiveTests}/3 tests positifs)`);
+                
+              } catch (bcdeditError) {
+                console.log('🔍 Erreur bcdedit:', bcdeditError);
+                // Si bcdedit échoue, être plus strict
+                isSecureBootEnabled = confirmResult && registryEnabled;
+                console.log('🔍 Secure Boot final (sans bcdedit):', isSecureBootEnabled);
+              }
+            } else {
+              // Si registry échoue, être très strict
+              isSecureBootEnabled = false;
+              console.log('🔍 Secure Boot final (registry échoué):', isSecureBootEnabled);
+            }
+          } catch (registryError) {
+            console.log('🔍 Erreur vérification registry:', registryError);
+            // Si registry échoue, être très strict
+            isSecureBootEnabled = false;
+            console.log('🔍 Secure Boot final (registry exception):', isSecureBootEnabled);
+          }
         } else {
           secureBootRaw = `Erreur: ${secureBootResult?.error || 'Commande échouée'}`;
           console.log('🔍 Erreur Secure Boot:', secureBootRaw);
+          isSecureBootEnabled = false;
         }
       } catch (error) {
         secureBootRaw = `Exception: ${error}`;
         console.log('🔍 Exception Secure Boot:', error);
+        isSecureBootEnabled = false;
       }
 
       // Vérifier le mode UEFI avec une commande plus simple
@@ -281,6 +325,7 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
                         <li>Fonctionne uniquement en mode UEFI</li>
                         <li>Peut nécessiter une activation dans le BIOS</li>
                         <li>Compatible Windows 8+ et Windows Server 2012+</li>
+                        <li><strong>Note :</strong> En cas de doute, vérifiez directement dans le BIOS/UEFI</li>
                       </ul>
                     </div>
                   </div>
@@ -399,7 +444,11 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
                             <CheckCircle size={20} />
                             <div>
                               <h5>Configuration sécurisée</h5>
-                              <p>Votre système est correctement configuré avec le Secure Boot activé.</p>
+                              <p>Votre système semble correctement configuré avec le Secure Boot activé.</p>
+                              <div className="warning-note">
+                                <AlertCircle size={16} />
+                                <p><strong>Note importante :</strong> Si vous pensez que Secure Boot n'est pas vraiment activé sur votre machine, vérifiez directement dans le BIOS/UEFI. Windows peut parfois afficher des faux positifs.</p>
+                              </div>
                             </div>
                           </div>
                         )}
