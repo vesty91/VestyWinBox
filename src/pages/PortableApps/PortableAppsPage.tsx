@@ -83,7 +83,7 @@ const PortableAppsPage: React.FC = () => {
   const handleLaunch = async (app: Tool) => {
     console.log('▶️ Lancement de:', app.name);
     try {
-      if (window.electronAPI?.launchExecutable) {
+    if (window.electronAPI?.launchExecutable) {
         const result = await window.electronAPI.launchExecutable(app.path);
         if (result.success) {
           console.log('✅', result.message);
@@ -92,7 +92,7 @@ const PortableAppsPage: React.FC = () => {
           console.error('❌ Erreur:', result.error);
           alert(`Erreur lors du lancement de ${app.name}: ${result.error}`);
         }
-      } else {
+    } else {
         console.log('⚠️ API Electron non disponible, simulation...');
         alert(`Lancement de ${app.name}... (mode simulation)`);
       }

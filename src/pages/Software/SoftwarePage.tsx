@@ -83,7 +83,7 @@ const SoftwarePage: React.FC = () => {
   const handleLaunch = async (logiciel: Tool) => {
     console.log('▶️ Lancement de:', logiciel.name);
     try {
-      if (window.electronAPI?.launchExecutable) {
+    if (window.electronAPI?.launchExecutable) {
         const result = await window.electronAPI.launchExecutable(logiciel.path);
         if (result.success) {
           console.log('✅', result.message);
@@ -92,7 +92,7 @@ const SoftwarePage: React.FC = () => {
           console.error('❌ Erreur:', result.error);
           alert(`Erreur lors du lancement de ${logiciel.name}: ${result.error}`);
         }
-      } else {
+    } else {
         console.log('⚠️ API Electron non disponible, simulation...');
         alert(`Lancement de ${logiciel.name}... (mode simulation)`);
       }
