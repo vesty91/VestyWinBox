@@ -75,3 +75,19 @@ builder-effective-config.yaml
 
 # Activity logs
 activity-log.json
+
+# PortableApps cache and logs
+**/LOG/*.log
+**/*.cache
+**/*.bak
+**/*.old
+**/session.xml.inCaseOfCorruption.bak
+**/change.log
+**/loaders.cache
+**/giomodule.cache
+**/icon-theme.cache
+
+# Duplicate logo files
+dist/assets/mon logo.png
+dist/assets/logo-page-1.png
+dist/assets/logo-barre-laterale.png
