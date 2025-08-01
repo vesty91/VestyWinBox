@@ -8,6 +8,7 @@ import {
   Download,
   Save,
   Sun,
+  Unlock,
   LucideIcon
 } from 'lucide-react';
 import './VIPDashboard.css';
@@ -15,7 +16,6 @@ import logoPage1 from '../../../assets/logo-page-1.png';
 import BackupModal from '../../components/BackupModal';
 import SystemCheckModal from '../../components/SystemCheckModal';
 import CleanupModal from '../../components/CleanupModal';
-import UpdateModal from '../../components/UpdateModal';
 
 interface QuickAction {
   id: string;
@@ -58,7 +58,6 @@ const VIPDashboard: React.FC = () => {
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [isSystemCheckModalOpen, setIsSystemCheckModalOpen] = useState(false);
   const [isCleanupModalOpen, setIsCleanupModalOpen] = useState(false);
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   // Fonction pour ouvrir les paramètres de thèmes Windows
   const openThemeSettings = () => {
@@ -116,6 +115,72 @@ const VIPDashboard: React.FC = () => {
     }
   };
 
+  // Fonction pour désactiver l'UAC
+  const disableUAC = () => {
+    try {
+      console.log('🔓 Démarrage de la désactivation de l\'UAC...');
+      
+      if (window.electronAPI?.executeSystemCommand) {
+        // Afficher une confirmation avant de procéder
+        const confirmed = confirm(
+          '⚠️ ATTENTION - Désactivation de l\'UAC\n\n' +
+          'Cette action va désactiver le Contrôle de Compte Utilisateur (UAC) de Windows.\n\n' +
+          '⚠️ AVERTISSEMENTS :\n' +
+          '• Votre système sera moins sécurisé\n' +
+          '• Les applications pourront s\'exécuter avec des privilèges élevés\n' +
+          '• Redémarrage requis pour appliquer les changements\n\n' +
+          'Êtes-vous sûr de vouloir continuer ?'
+        );
+
+        if (confirmed) {
+          // Exécuter la commande pour désactiver l'UAC
+          window.electronAPI.executeSystemCommand('powershell.exe', [
+            '-Command', 
+            'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "EnableLUA" -Value 0; Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "ConsentPromptBehaviorAdmin" -Value 0; Write-Host "UAC désactivé avec succès. Redémarrage requis."'
+          ])
+          .then((result) => {
+            if (result.success) {
+              console.log('✅ UAC désactivé avec succès');
+              alert(
+                '✅ UAC désactivé avec succès !\n\n' +
+                'Les modifications ont été appliquées.\n' +
+                'Un redémarrage est requis pour que les changements prennent effet.\n\n' +
+                'Voulez-vous redémarrer maintenant ?'
+              );
+              
+              // Proposer le redémarrage
+              const restart = confirm('Voulez-vous redémarrer votre ordinateur maintenant ?');
+              if (restart) {
+                window.electronAPI.executeSystemCommand('shutdown.exe', ['/r', '/t', '10', '/c', 'Redémarrage pour appliquer les changements UAC']);
+              }
+            } else {
+              console.log('❌ Erreur lors de la désactivation de l\'UAC:', result.error);
+              alert('❌ Erreur lors de la désactivation de l\'UAC.\n\nVeuillez exécuter en tant qu\'administrateur.');
+            }
+          })
+          .catch((error) => {
+            console.error('❌ Erreur lors de l\'exécution:', error);
+            alert('❌ Erreur lors de l\'exécution de la commande.\n\nVeuillez exécuter en tant qu\'administrateur.');
+          });
+        }
+      } else {
+        // Fallback : instructions manuelles
+        alert(
+          '🔓 Désactivation manuelle de l\'UAC\n\n' +
+          '1. Ouvrez l\'Éditeur de registre (regedit)\n' +
+          '2. Naviguez vers : HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\n' +
+          '3. Modifiez la valeur "EnableLUA" à 0\n' +
+          '4. Modifiez la valeur "ConsentPromptBehaviorAdmin" à 0\n' +
+          '5. Redémarrez votre ordinateur\n\n' +
+          '⚠️ ATTENTION : Cette action réduit la sécurité de votre système.'
+        );
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la désactivation de l\'UAC:', error);
+      alert('❌ Erreur lors de la désactivation de l\'UAC.');
+    }
+  };
+
   const quickActions: QuickAction[] = [
     {
       id: 'scan',
@@ -159,12 +224,12 @@ const VIPDashboard: React.FC = () => {
     },
     {
       id: 'update',
-      title: 'Mettre à jour',
-      description: 'Dernières versions',
-      icon: Download,
+      title: 'Désactiver l\'UAC',
+      description: 'Désactiver le Contrôle de Compte Utilisateur Windows',
+      icon: Unlock,
       color: '#06b6d4',
       gradient: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
-      action: () => setIsUpdateModalOpen(true),
+      action: disableUAC,
       status: 'available'
     },
     {
@@ -382,10 +447,6 @@ const VIPDashboard: React.FC = () => {
       <CleanupModal 
         isOpen={isCleanupModalOpen}
         onClose={() => setIsCleanupModalOpen(false)}
-      />
-      <UpdateModal 
-        isOpen={isUpdateModalOpen}
-        onClose={() => setIsUpdateModalOpen(false)}
       />
     </div>
   );
