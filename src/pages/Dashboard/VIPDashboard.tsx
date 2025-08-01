@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import './VIPDashboard.css';
 import logoPage1 from '../../../assets/logo-page-1.png';
+import BackupModal from '../../components/BackupModal';
 
 interface QuickAction {
   id: string;
@@ -51,6 +52,7 @@ const VIPDashboard: React.FC = () => {
   });
 
   const [selectedQuickAction, setSelectedQuickAction] = useState<string | null>(null);
+  const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
 
   // Fonction pour ouvrir les paramètres de thèmes Windows
   const openThemeSettings = () => {
@@ -135,7 +137,7 @@ const VIPDashboard: React.FC = () => {
       icon: Save,
       color: '#8b5cf6',
       gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-      action: () => console.log('Sauvegarder'),
+      action: () => setIsBackupModalOpen(true),
       status: 'available'
     },
     {
@@ -350,6 +352,13 @@ const VIPDashboard: React.FC = () => {
               </div>
             </motion.div>
         </div>
+      </div>
+      
+      {/* Modal de sauvegarde */}
+      <BackupModal 
+        isOpen={isBackupModalOpen}
+        onClose={() => setIsBackupModalOpen(false)}
+      />
     </div>
   );
 };

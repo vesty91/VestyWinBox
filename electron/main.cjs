@@ -1,6 +1,7 @@
-const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, shell, ipcMain, dialog } = require('electron');
 const path = require('path');
 const { spawn, exec } = require('child_process');
+const fs = require('fs');
 const isDev = process.env.NODE_ENV === 'development';
 
 // Configuration pour réduire les erreurs de cache
@@ -226,7 +227,6 @@ ipcMain.handle('launch-executable', async (event, filePath) => {
     console.log('📁 Chemin complet:', fullPath);
     
     // Vérifier si le fichier existe
-    const fs = require('fs');
     if (!fs.existsSync(fullPath)) {
       console.error('❌ Fichier non trouvé:', fullPath);
       return { success: false, error: 'Fichier non trouvé' };
@@ -269,6 +269,138 @@ ipcMain.handle('execute-system-command', async (event, command, args = []) => {
     
   } catch (error) {
     console.error('❌ Erreur lors de l\'exécution:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Gestionnaire pour sélectionner le dossier de sauvegarde
+ipcMain.handle('select-backup-folder', async (event) => {
+  try {
+    console.log('📁 Sélection du dossier de sauvegarde...');
+    
+    const result = await dialog.showOpenDialog(mainWindow, {
+      title: 'Sélectionner le dossier de destination pour la sauvegarde',
+      buttonLabel: 'Sélectionner ce dossier',
+      properties: ['openDirectory', 'createDirectory'],
+      defaultPath: path.join(process.env.USERPROFILE || '', 'Desktop', 'Sauvegarde_VestyWinBox')
+    });
+    
+    if (!result.canceled && result.filePaths.length > 0) {
+      const selectedPath = result.filePaths[0];
+      console.log('✅ Dossier sélectionné:', selectedPath);
+      return { success: true, folderPath: selectedPath };
+    } else {
+      console.log('❌ Aucun dossier sélectionné');
+      return { success: false, error: 'Aucun dossier sélectionné' };
+    }
+    
+  } catch (error) {
+    console.error('❌ Erreur lors de la sélection du dossier:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Gestionnaire pour sauvegarder les dossiers utilisateur
+ipcMain.handle('backup-user-folders', async (event, destinationPath) => {
+  try {
+    console.log('💾 Début de la sauvegarde vers:', destinationPath);
+    
+    // Dossiers à sauvegarder
+    const userFolders = [
+      { name: 'Bureau', path: path.join(process.env.USERPROFILE || '', 'Desktop') },
+      { name: 'Images', path: path.join(process.env.USERPROFILE || '', 'Pictures') },
+      { name: 'Documents', path: path.join(process.env.USERPROFILE || '', 'Documents') },
+      { name: 'Vidéos', path: path.join(process.env.USERPROFILE || '', 'Videos') },
+      { name: 'Téléchargements', path: path.join(process.env.USERPROFILE || '', 'Downloads') },
+      { name: 'Musique', path: path.join(process.env.USERPROFILE || '', 'Music') }
+    ];
+    
+    let totalProgress = 0;
+    const totalFolders = userFolders.length;
+    
+    // Créer le dossier de destination s'il n'existe pas
+    if (!fs.existsSync(destinationPath)) {
+      fs.mkdirSync(destinationPath, { recursive: true });
+    }
+    
+    // Ajouter un timestamp au nom du dossier de sauvegarde
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    const backupFolderName = `Sauvegarde_${timestamp}`;
+    const backupPath = path.join(destinationPath, backupFolderName);
+    
+    if (!fs.existsSync(backupPath)) {
+      fs.mkdirSync(backupPath, { recursive: true });
+    }
+    
+    // Sauvegarder chaque dossier
+    for (let i = 0; i < userFolders.length; i++) {
+      const folder = userFolders[i];
+      const sourcePath = folder.path;
+      const targetPath = path.join(backupPath, folder.name);
+      
+      console.log(`📁 Sauvegarde de ${folder.name}...`);
+      
+      // Vérifier si le dossier source existe
+      if (!fs.existsSync(sourcePath)) {
+        console.log(`⚠️ Dossier ${folder.name} non trouvé:`, sourcePath);
+        continue;
+      }
+      
+      try {
+        // Copier le dossier avec robocopy (plus fiable que fs.cp)
+        await new Promise((resolve, reject) => {
+          const robocopy = spawn('robocopy', [
+            sourcePath,
+            targetPath,
+            '/E',    // Copier les sous-dossiers
+            '/R:3',  // 3 tentatives en cas d'erreur
+            '/W:1',  // Attendre 1 seconde entre les tentatives
+            '/TEE',  // Afficher la sortie dans la console et le fichier log
+            '/NP',   // Pas de barre de progression
+            '/NDL',  // Pas de liste des fichiers
+            '/NC',   // Pas de classe
+            '/NS',   // Pas de taille
+            '/MT:4'  // Utiliser 4 threads pour la copie
+          ], {
+            windowsHide: true,
+            stdio: ['ignore', 'pipe', 'pipe']
+          });
+          
+          robocopy.on('close', (code) => {
+            // Robocopy retourne des codes spéciaux : 0-7 = succès, 8+ = erreur
+            if (code <= 7) {
+              console.log(`✅ ${folder.name} sauvegardé avec succès (code: ${code})`);
+              resolve();
+            } else {
+              console.log(`❌ Erreur lors de la sauvegarde de ${folder.name} (code: ${code})`);
+              reject(new Error(`Erreur robocopy: ${code}`));
+            }
+          });
+          
+          robocopy.on('error', (error) => {
+            console.log(`❌ Erreur robocopy pour ${folder.name}:`, error);
+            reject(error);
+          });
+        });
+        
+        totalProgress = ((i + 1) / totalFolders) * 100;
+        console.log(`📊 Progression: ${Math.round(totalProgress)}%`);
+        
+      } catch (error) {
+        console.error(`❌ Erreur lors de la sauvegarde de ${folder.name}:`, error);
+        // Continuer avec les autres dossiers même en cas d'erreur
+      }
+    }
+    
+    console.log('✅ Sauvegarde terminée!');
+    return { 
+      success: true, 
+      message: `Sauvegarde terminée avec succès dans: ${backupPath}`,
+      progress: 100
+    };
+    
+  } catch (error) {
+    console.error('❌ Erreur lors de la sauvegarde:', error);
     return { success: false, error: error.message };
   }
 }); 

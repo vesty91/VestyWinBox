@@ -26,5 +26,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   launchExecutable: (filePath) => ipcRenderer.invoke('launch-executable', filePath),
   
   // Commandes système
-  executeSystemCommand: (command, args) => ipcRenderer.invoke('execute-system-command', command, args)
+  executeSystemCommand: (command, args) => ipcRenderer.invoke('execute-system-command', command, args),
+  
+  // Sauvegarde
+  selectBackupFolder: () => ipcRenderer.invoke('select-backup-folder'),
+  backupUserFolders: (destinationPath) => ipcRenderer.invoke('backup-user-folders', destinationPath)
 }); 
