@@ -256,12 +256,21 @@ ipcMain.handle('execute-system-command', async (event, command, args = []) => {
     console.log('🔧 Exécution de commande:', command, args);
     
     return new Promise((resolve, reject) => {
-      exec(command, { windowsHide: true }, (error, stdout, stderr) => {
+      // Construire la commande complète avec les arguments
+      const fullCommand = args.length > 0 ? `${command} ${args.join(' ')}` : command;
+      console.log('🔧 Commande complète:', fullCommand);
+      
+      exec(fullCommand, { 
+        windowsHide: true,
+        timeout: 10000 // 10 secondes de timeout
+      }, (error, stdout, stderr) => {
         if (error) {
           console.error('❌ Erreur commande:', error);
-          resolve({ success: false, error: error.message });
+          resolve({ success: false, error: error.message, stderr });
         } else {
-          console.log('✅ Commande exécutée:', stdout);
+          console.log('✅ Commande exécutée avec succès');
+          console.log('📄 Sortie stdout:', stdout);
+          console.log('⚠️ Sortie stderr:', stderr);
           resolve({ success: true, output: stdout, error: stderr });
         }
       });

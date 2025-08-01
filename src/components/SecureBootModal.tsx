@@ -49,87 +49,115 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
         message: 'Timeout - Vérification trop longue',
         error: 'La vérification a pris trop de temps'
       });
-    }, 30000); // 30 secondes
+    }, 15000); // 15 secondes
 
     try {
+      console.log('🔍 Début de la vérification Secure Boot...');
+
       // Vérifier le Secure Boot avec une commande simple
       let isSecureBootEnabled = false;
       let secureBootRaw = '';
 
       try {
+        console.log('🔍 Exécution de Confirm-SecureBootUEFI...');
         const secureBootResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
           '-Command', 'Confirm-SecureBootUEFI'
         ]);
         
+        console.log('🔍 Résultat Secure Boot:', secureBootResult);
+        
         if (secureBootResult?.success) {
           secureBootRaw = secureBootResult.output || '';
           isSecureBootEnabled = secureBootRaw.includes('True');
+          console.log('🔍 Secure Boot enabled:', isSecureBootEnabled);
         } else {
           secureBootRaw = `Erreur: ${secureBootResult?.error || 'Commande échouée'}`;
+          console.log('🔍 Erreur Secure Boot:', secureBootRaw);
         }
       } catch (error) {
         secureBootRaw = `Exception: ${error}`;
+        console.log('🔍 Exception Secure Boot:', error);
       }
 
-      // Vérifier le mode UEFI
+      // Vérifier le mode UEFI avec une commande plus simple
       let isUefiMode = false;
       let uefiRaw = '';
 
       try {
+        console.log('🔍 Exécution de Get-ComputerInfo...');
         const uefiResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
-          '-Command', 'Get-ComputerInfo | Select-Object -ExpandProperty BiosFirmwareType'
+          '-Command', 'Get-ComputerInfo | Select-Object BiosFirmwareType'
         ]);
+        
+        console.log('🔍 Résultat UEFI:', uefiResult);
         
         if (uefiResult?.success) {
           uefiRaw = uefiResult.output || '';
           isUefiMode = uefiRaw.includes('UEFI');
+          console.log('🔍 UEFI mode:', isUefiMode);
         } else {
           uefiRaw = `Erreur: ${uefiResult?.error || 'Commande échouée'}`;
+          console.log('🔍 Erreur UEFI:', uefiRaw);
         }
       } catch (error) {
         uefiRaw = `Exception: ${error}`;
+        console.log('🔍 Exception UEFI:', error);
       }
 
-      // Vérifier la version TPM
+      // Vérifier la version TPM avec une commande simple
       let tpmVersion = undefined;
       let tpmRaw = '';
       
       try {
+        console.log('🔍 Exécution de Get-WmiObject TPM...');
         const tpmResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
-          '-Command', 'Get-WmiObject -Namespace "root\\CIMV2\\Security\\MicrosoftTpm" -Class "Win32_Tpm" | Select-Object -ExpandProperty SpecVersion'
+          '-Command', 'Get-WmiObject -Namespace "root\\CIMV2\\Security\\MicrosoftTpm" -Class "Win32_Tpm" | Select-Object SpecVersion'
         ]);
+        
+        console.log('🔍 Résultat TPM:', tpmResult);
         
         if (tpmResult?.success && tpmResult.output) {
           tpmVersion = tpmResult.output.trim();
           tpmRaw = tpmResult.output;
+          console.log('🔍 TPM version:', tpmVersion);
         } else {
           tpmRaw = `Erreur: ${tpmResult?.error || 'Aucun résultat'}`;
+          console.log('🔍 Erreur TPM:', tpmRaw);
         }
       } catch (error) {
         tpmRaw = `Exception: ${error}`;
+        console.log('🔍 Exception TPM:', error);
       }
 
-      // Vérifier la virtualisation
+      // Vérifier la virtualisation avec une commande simple
       let virtualizationEnabled = false;
       let virtualizationRaw = '';
       
       try {
+        console.log('🔍 Exécution de Get-ComputerInfo Virtualization...');
         const virtualizationResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
-          '-Command', 'Get-ComputerInfo | Select-Object -ExpandProperty HyperVRequirementVirtualizationFirmwareEnabled'
+          '-Command', 'Get-ComputerInfo | Select-Object HyperVRequirementVirtualizationFirmwareEnabled'
         ]);
+        
+        console.log('🔍 Résultat Virtualization:', virtualizationResult);
         
         if (virtualizationResult?.success) {
           virtualizationRaw = virtualizationResult.output || 'Aucun résultat';
           virtualizationEnabled = virtualizationResult.output?.includes('True') || false;
+          console.log('🔍 Virtualization enabled:', virtualizationEnabled);
         } else {
           virtualizationRaw = `Erreur: ${virtualizationResult?.error || 'Commande échouée'}`;
+          console.log('🔍 Erreur Virtualization:', virtualizationRaw);
         }
       } catch (error) {
         virtualizationRaw = `Exception: ${error}`;
+        console.log('🔍 Exception Virtualization:', error);
       }
 
       // Annuler le timeout
       clearTimeout(timeout);
+
+      console.log('🔍 Vérification terminée, mise à jour du statut...');
 
       setSecureBootStatus({
         isEnabled: isSecureBootEnabled,
@@ -153,7 +181,7 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
       // Annuler le timeout
       clearTimeout(timeout);
       
-      console.error('Erreur lors de la vérification:', error);
+      console.error('🔍 Erreur générale lors de la vérification:', error);
       setSecureBootStatus({
         isEnabled: false,
         isRunning: false,
