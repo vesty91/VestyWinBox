@@ -16,6 +16,7 @@ import logoPage1 from '../../../assets/logo-page-1.png';
 import BackupModal from '../../components/BackupModal';
 import SystemCheckModal from '../../components/SystemCheckModal';
 import CleanupModal from '../../components/CleanupModal';
+import MonitorModal from '../../components/MonitorModal';
 
 interface QuickAction {
   id: string;
@@ -58,6 +59,7 @@ const VIPDashboard: React.FC = () => {
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [isSystemCheckModalOpen, setIsSystemCheckModalOpen] = useState(false);
   const [isCleanupModalOpen, setIsCleanupModalOpen] = useState(false);
+  const [isMonitorModalOpen, setIsMonitorModalOpen] = useState(false);
 
   // Fonction pour ouvrir les paramètres de thèmes Windows
   const openThemeSettings = () => {
@@ -181,6 +183,138 @@ const VIPDashboard: React.FC = () => {
     }
   };
 
+  // Fonction pour redémarrer en mode sans échec
+  const restartSafeMode = () => {
+    try {
+      console.log('🔄 Démarrage du redémarrage en mode sans échec...');
+      
+      const confirmed = confirm(
+        '🔄 Redémarrage en Mode Sans Échec\n\n' +
+        'Cette action va redémarrer votre ordinateur en mode sans échec.\n\n' +
+        '⚠️ ATTENTION :\n' +
+        '• Votre ordinateur va redémarrer immédiatement\n' +
+        '• Vous serez en mode sans échec au prochain démarrage\n' +
+        '• Pour sortir du mode sans échec, redémarrez normalement\n\n' +
+        'Êtes-vous sûr de vouloir continuer ?'
+      );
+
+      if (confirmed) {
+        if (window.electronAPI?.executeSystemCommand) {
+          // Configurer le mode sans échec et redémarrer
+          window.electronAPI.executeSystemCommand('cmd.exe', [
+            '/c', 'bcdedit /set {current} safeboot minimal && shutdown /r /t 0'
+          ])
+          .then((result) => {
+            if (result.success) {
+              console.log('✅ Redémarrage en mode sans échec lancé');
+              alert('✅ Redémarrage en mode sans échec lancé !\n\nVotre ordinateur va redémarrer dans quelques secondes.');
+            } else {
+              console.log('❌ Erreur lors du redémarrage en mode sans échec:', result.error);
+              alert('❌ Erreur lors du redémarrage en mode sans échec.\n\nVeuillez exécuter en tant qu\'administrateur.');
+            }
+          })
+          .catch((error) => {
+            console.error('❌ Erreur lors de l\'exécution:', error);
+            alert('❌ Erreur lors de l\'exécution de la commande.');
+          });
+        } else {
+          alert('⚠️ API Electron non disponible.\n\nVeuillez exécuter manuellement :\nbcdedit /set {current} safeboot minimal && shutdown /r /t 0');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors du redémarrage en mode sans échec:', error);
+      alert('❌ Erreur lors du redémarrage en mode sans échec.');
+    }
+  };
+
+  // Fonction pour redémarrer dans le BIOS
+  const restartBIOS = () => {
+    try {
+      console.log('🔧 Démarrage du redémarrage vers le BIOS...');
+      
+      const confirmed = confirm(
+        '🔧 Redémarrage vers le BIOS\n\n' +
+        'Cette action va redémarrer votre ordinateur et accéder directement au BIOS.\n\n' +
+        '⚠️ ATTENTION :\n' +
+        '• Votre ordinateur va redémarrer immédiatement\n' +
+        '• Vous accéderez directement au BIOS/UEFI\n' +
+        '• Ne modifiez pas les paramètres BIOS sans connaissance\n\n' +
+        'Êtes-vous sûr de vouloir continuer ?'
+      );
+
+      if (confirmed) {
+        if (window.electronAPI?.executeSystemCommand) {
+          // Redémarrer vers le BIOS
+          window.electronAPI.executeSystemCommand('shutdown.exe', [
+            '/r', '/fw', '/t', '0'
+          ])
+          .then((result) => {
+            if (result.success) {
+              console.log('✅ Redémarrage vers le BIOS lancé');
+              alert('✅ Redémarrage vers le BIOS lancé !\n\nVotre ordinateur va redémarrer et accéder au BIOS.');
+            } else {
+              console.log('❌ Erreur lors du redémarrage vers le BIOS:', result.error);
+              alert('❌ Erreur lors du redémarrage vers le BIOS.\n\nVeuillez exécuter en tant qu\'administrateur.');
+            }
+          })
+          .catch((error) => {
+            console.error('❌ Erreur lors de l\'exécution:', error);
+            alert('❌ Erreur lors de l\'exécution de la commande.');
+          });
+        } else {
+          alert('⚠️ API Electron non disponible.\n\nVeuillez exécuter manuellement :\nshutdown /r /fw /t 0');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors du redémarrage vers le BIOS:', error);
+      alert('❌ Erreur lors du redémarrage vers le BIOS.');
+    }
+  };
+
+  // Fonction pour le démarrage avancé
+  const advancedStartup = () => {
+    try {
+      console.log('⚙️ Démarrage des options de démarrage avancées...');
+      
+      const confirmed = confirm(
+        '⚙️ Démarrage Avancé\n\n' +
+        'Cette action va redémarrer votre ordinateur vers les options de démarrage avancées.\n\n' +
+        '⚠️ ATTENTION :\n' +
+        '• Votre ordinateur va redémarrer immédiatement\n' +
+        '• Vous accéderez aux options de démarrage avancées\n' +
+        '• Options disponibles : Mode sans échec, Récupération, etc.\n\n' +
+        'Êtes-vous sûr de vouloir continuer ?'
+      );
+
+      if (confirmed) {
+        if (window.electronAPI?.executeSystemCommand) {
+          // Redémarrer vers les options de démarrage avancées
+          window.electronAPI.executeSystemCommand('shutdown.exe', [
+            '/r', '/o', '/f', '/t', '0'
+          ])
+          .then((result) => {
+            if (result.success) {
+              console.log('✅ Démarrage avancé lancé');
+              alert('✅ Démarrage avancé lancé !\n\nVotre ordinateur va redémarrer vers les options de démarrage avancées.');
+            } else {
+              console.log('❌ Erreur lors du démarrage avancé:', result.error);
+              alert('❌ Erreur lors du démarrage avancé.\n\nVeuillez exécuter en tant qu\'administrateur.');
+            }
+          })
+          .catch((error) => {
+            console.error('❌ Erreur lors de l\'exécution:', error);
+            alert('❌ Erreur lors de l\'exécution de la commande.');
+          });
+        } else {
+          alert('⚠️ API Electron non disponible.\n\nVeuillez exécuter manuellement :\nshutdown /r /o /f /t 0');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors du démarrage avancé:', error);
+      alert('❌ Erreur lors du démarrage avancé.');
+    }
+  };
+
   const quickActions: QuickAction[] = [
     {
       id: 'scan',
@@ -239,7 +373,7 @@ const VIPDashboard: React.FC = () => {
       icon: Activity,
       color: '#ef4444',
       gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-      action: () => console.log('Surveiller'),
+      action: () => setIsMonitorModalOpen(true),
       status: 'available'
     }
   ];
@@ -447,6 +581,10 @@ const VIPDashboard: React.FC = () => {
       <CleanupModal 
         isOpen={isCleanupModalOpen}
         onClose={() => setIsCleanupModalOpen(false)}
+      />
+      <MonitorModal 
+        isOpen={isMonitorModalOpen}
+        onClose={() => setIsMonitorModalOpen(false)}
       />
     </div>
   );
