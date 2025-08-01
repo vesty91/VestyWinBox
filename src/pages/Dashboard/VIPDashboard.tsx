@@ -14,6 +14,7 @@ import './VIPDashboard.css';
 import logoPage1 from '../../../assets/logo-page-1.png';
 import BackupModal from '../../components/BackupModal';
 import SystemCheckModal from '../../components/SystemCheckModal';
+import CleanupModal from '../../components/CleanupModal';
 
 interface QuickAction {
   id: string;
@@ -55,6 +56,7 @@ const VIPDashboard: React.FC = () => {
   const [selectedQuickAction, setSelectedQuickAction] = useState<string | null>(null);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [isSystemCheckModalOpen, setIsSystemCheckModalOpen] = useState(false);
+  const [isCleanupModalOpen, setIsCleanupModalOpen] = useState(false);
 
   // Fonction pour ouvrir les paramètres de thèmes Windows
   const openThemeSettings = () => {
@@ -140,7 +142,7 @@ const VIPDashboard: React.FC = () => {
       icon: Trash2,
       color: '#f59e0b',
       gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-      action: () => console.log('Nettoyer'),
+      action: () => setIsCleanupModalOpen(true),
       status: 'available'
     },
     {
@@ -374,6 +376,10 @@ const VIPDashboard: React.FC = () => {
       <SystemCheckModal 
         isOpen={isSystemCheckModalOpen}
         onClose={() => setIsSystemCheckModalOpen(false)}
+      />
+      <CleanupModal 
+        isOpen={isCleanupModalOpen}
+        onClose={() => setIsCleanupModalOpen(false)}
       />
     </div>
   );
