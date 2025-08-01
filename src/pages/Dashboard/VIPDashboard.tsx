@@ -65,8 +65,8 @@ const VIPDashboard: React.FC = () => {
       console.log('🔧 Ouverture des paramètres de thèmes Windows...');
       
       // Méthode 1: Utiliser shell.openExternal via Electron (recommandé)
-      if (window.electronAPI?.openExternal) {
-        window.electronAPI.openExternal('ms-settings:themes')
+      if (window.electronAPI && 'openExternal' in window.electronAPI) {
+        (window.electronAPI as any).openExternal('ms-settings:themes')
           .then((result: { success: boolean; error?: string }) => {
             if (result.success) {
               console.log('✅ Paramètres de thèmes Windows ouverts via shell.openExternal');
@@ -88,7 +88,7 @@ const VIPDashboard: React.FC = () => {
               }
             }
           })
-          .catch((error: any) => {
+          .catch((error: unknown) => {
             console.log('❌ Erreur shell.openExternal:', error);
             // Fallback vers window.open
             window.open('ms-settings:themes', '_blank');
