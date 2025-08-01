@@ -23,6 +23,7 @@ import CleanupModal from '../../components/CleanupModal';
 import MonitorModal from '../../components/MonitorModal';
 import FavoritesModal from '../../components/FavoritesModal';
 import TelemetryModal from '../../components/TelemetryModal';
+import SecureBootModal from '../../components/SecureBootModal';
 
 interface QuickAction {
   id: string;
@@ -68,6 +69,7 @@ const VIPDashboard: React.FC = () => {
   const [isMonitorModalOpen, setIsMonitorModalOpen] = useState(false);
   const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
   const [isTelemetryModalOpen, setIsTelemetryModalOpen] = useState(false);
+  const [isSecureBootModalOpen, setIsSecureBootModalOpen] = useState(false);
 
   // Fonction pour ouvrir les paramètres de thèmes Windows
   const openThemeSettings = () => {
@@ -189,99 +191,6 @@ const VIPDashboard: React.FC = () => {
     } catch (error) {
       console.error('❌ Erreur lors de la désactivation de l\'UAC:', error);
       alert('❌ Erreur lors de la désactivation de l\'UAC.');
-    }
-  };
-
-  // Fonction pour sauvegarder les favoris
-  const backupFavorites = () => {
-    try {
-      console.log('⭐ Sauvegarde des favoris Chrome et Edge...');
-      
-      if (window.electronAPI?.executeSystemCommand) {
-        // Demander le chemin de destination
-        const backupPath = window.prompt(
-          '📁 Chemin de destination pour la sauvegarde des favoris :\n\n' +
-          'Exemple : D:\\BackupFavoris\n\n' +
-          'Laissez vide pour utiliser le Bureau :',
-          'D:\\BackupFavoris'
-        );
-
-        if (backupPath) {
-          const chromeBackup = `xcopy "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\Bookmarks" "${backupPath}\\Chrome" /y`;
-          const edgeBackup = `xcopy "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\Default\\Bookmarks" "${backupPath}\\Edge" /y`;
-
-          // Exécuter les commandes de sauvegarde
-          Promise.all([
-            window.electronAPI.executeSystemCommand('cmd.exe', ['/c', chromeBackup]),
-            window.electronAPI.executeSystemCommand('cmd.exe', ['/c', edgeBackup])
-          ])
-          .then((results) => {
-            const chromeSuccess = results[0].success;
-            const edgeSuccess = results[1].success;
-            
-            if (chromeSuccess && edgeSuccess) {
-              alert('✅ Favoris sauvegardés avec succès !\n\nChrome et Edge : OK');
-            } else if (chromeSuccess) {
-              alert('⚠️ Sauvegarde partielle\n\nChrome : OK\nEdge : Échec');
-            } else if (edgeSuccess) {
-              alert('⚠️ Sauvegarde partielle\n\nChrome : Échec\nEdge : OK');
-            } else {
-              alert('❌ Échec de la sauvegarde\n\nVérifiez que les navigateurs sont fermés.');
-            }
-          })
-          .catch((error) => {
-            console.error('❌ Erreur lors de la sauvegarde:', error);
-            alert('❌ Erreur lors de la sauvegarde des favoris.');
-          });
-        }
-      } else {
-        alert('⚠️ API Electron non disponible.\n\nExécutez manuellement :\nxcopy "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\Bookmarks" "D:\\BackupChrome" /y\nxcopy "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\Default\\Bookmarks" "D:\\BackupEdge" /y');
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors de la sauvegarde des favoris:', error);
-      alert('❌ Erreur lors de la sauvegarde des favoris.');
-    }
-  };
-
-  // Fonction pour désactiver la télémétrie
-  const disableTelemetry = () => {
-    try {
-      console.log('🚫 Désactivation de la télémétrie Windows...');
-      
-      if (window.electronAPI?.executeSystemCommand) {
-        const confirmed = window.confirm(
-          '🚫 Désactiver la Télémétrie Windows\n\n' +
-          'Cette action va désactiver la collecte de données télémétriques.\n\n' +
-          '⚠️ ATTENTION :\n' +
-          '• Nécessite des privilèges administrateur\n' +
-          '• Peut affecter certaines fonctionnalités Windows\n\n' +
-          'Êtes-vous sûr de vouloir continuer ?'
-        );
-
-        if (confirmed) {
-          window.electronAPI.executeSystemCommand('cmd.exe', [
-            '/c', 'sc stop DiagTrack && sc config DiagTrack start=disabled'
-          ])
-          .then((result) => {
-            if (result.success) {
-              console.log('✅ Télémétrie désactivée avec succès');
-              alert('✅ Télémétrie Windows désactivée avec succès !\n\nLe service DiagTrack a été arrêté et désactivé.');
-            } else {
-              console.log('❌ Erreur lors de la désactivation:', result.error);
-              alert('❌ Erreur lors de la désactivation de la télémétrie.\n\nVeuillez exécuter en tant qu\'administrateur.');
-            }
-          })
-          .catch((error) => {
-            console.error('❌ Erreur lors de l\'exécution:', error);
-            alert('❌ Erreur lors de l\'exécution de la commande.');
-          });
-        }
-      } else {
-        alert('⚠️ API Electron non disponible.\n\nExécutez manuellement en tant qu\'administrateur :\nsc stop DiagTrack\nsc config DiagTrack start=disabled');
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors de la désactivation de la télémétrie:', error);
-      alert('❌ Erreur lors de la désactivation de la télémétrie.');
     }
   };
 
@@ -411,42 +320,6 @@ const VIPDashboard: React.FC = () => {
     }
   };
 
-  // Fonction pour vérifier le Secure Boot
-  const checkSecureBoot = () => {
-    try {
-      console.log('🛡️ Vérification du Secure Boot...');
-      
-      if (window.electronAPI?.executeSystemCommand) {
-        window.electronAPI.executeSystemCommand('powershell.exe', [
-          '-Command', 'Confirm-SecureBootUEFI'
-        ])
-        .then((result) => {
-          if (result.success) {
-            console.log('✅ Secure Boot vérifié avec succès');
-            const isEnabled = result.output?.includes('True');
-            if (isEnabled) {
-              alert('✅ Secure Boot UEFI : ACTIVÉ\n\nVotre système est protégé par le Secure Boot UEFI.');
-            } else {
-              alert('⚠️ Secure Boot UEFI : DÉSACTIVÉ\n\nLe Secure Boot UEFI n\'est pas activé sur votre système.');
-            }
-          } else {
-            console.log('❌ Erreur lors de la vérification:', result.error);
-            alert('❌ Erreur lors de la vérification du Secure Boot.\n\nVeuillez exécuter en tant qu\'administrateur.');
-          }
-        })
-        .catch((error) => {
-          console.error('❌ Erreur lors de l\'exécution:', error);
-          alert('❌ Erreur lors de l\'exécution de la commande.');
-        });
-      } else {
-        alert('⚠️ API Electron non disponible.\n\nExécutez manuellement en tant qu\'administrateur :\nConfirm-SecureBootUEFI');
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors de la vérification du Secure Boot:', error);
-      alert('❌ Erreur lors de la vérification du Secure Boot.');
-    }
-  };
-
   const quickActions: QuickAction[] = [
     {
       id: 'scan',
@@ -565,7 +438,7 @@ const VIPDashboard: React.FC = () => {
       icon: Lock,
       color: '#1d4ed8',
       gradient: 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)',
-      action: () => checkSecureBoot(),
+      action: () => setIsSecureBootModalOpen(true),
       status: 'available'
     }
   ];
@@ -785,6 +658,10 @@ const VIPDashboard: React.FC = () => {
       <TelemetryModal 
         isOpen={isTelemetryModalOpen}
         onClose={() => setIsTelemetryModalOpen(false)}
+      />
+      <SecureBootModal 
+        isOpen={isSecureBootModalOpen}
+        onClose={() => setIsSecureBootModalOpen(false)}
       />
     </div>
   );
