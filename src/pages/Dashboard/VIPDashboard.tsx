@@ -195,7 +195,7 @@ const VIPDashboard: React.FC = () => {
       
       if (window.electronAPI?.executeSystemCommand) {
         // Demander le chemin de destination
-        const backupPath = prompt(
+        const backupPath = window.prompt(
           '📁 Chemin de destination pour la sauvegarde des favoris :\n\n' +
           'Exemple : D:\\BackupFavoris\n\n' +
           'Laissez vide pour utiliser le Bureau :',
