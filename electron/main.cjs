@@ -41,7 +41,7 @@ function createWindow() {
       webSecurity: true,
       preload: path.join(__dirname, 'preload.cjs')
     },
-    icon: path.join(__dirname, '../assets/icon.ico'),
+    icon: path.join(__dirname, '../public/icon.png'),
     show: false,
     titleBarStyle: 'hidden',
     frame: false,
