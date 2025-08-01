@@ -86,44 +86,33 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
       try {
         console.log('🔍 Exécution de Get-ComputerInfo...');
         const uefiResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
-          '-Command', 'Get-ComputerInfo | Select-Object -ExpandProperty BiosFirmwareType'
+          '-Command', 'Get-ComputerInfo'
         ]);
         
         console.log('🔍 Résultat UEFI:', uefiResult);
         
         if (uefiResult?.success) {
           uefiRaw = uefiResult.output || '';
-          isUefiMode = uefiRaw.includes('UEFI');
+          // Chercher spécifiquement les informations de firmware
+          isUefiMode = uefiRaw.includes('UEFI') || uefiRaw.includes('Uefi');
           console.log('🔍 UEFI mode:', isUefiMode);
         } else {
-          // Fallback : essayer une commande plus simple
-          console.log('🔍 Fallback UEFI - essai commande simple...');
-          const uefiFallback = await window.electronAPI?.executeSystemCommand('powershell.exe', [
-            '-Command', 'Get-ComputerInfo'
-          ]);
-          
-          if (uefiFallback?.success) {
-            uefiRaw = uefiFallback.output || '';
-            isUefiMode = uefiRaw.includes('UEFI');
-            console.log('🔍 UEFI mode (fallback):', isUefiMode);
-          } else {
-            uefiRaw = `Erreur: ${uefiResult?.error || 'Commande échouée'}`;
-            console.log('🔍 Erreur UEFI:', uefiRaw);
-          }
+          uefiRaw = `Erreur: ${uefiResult?.error || 'Commande échouée'}`;
+          console.log('🔍 Erreur UEFI:', uefiRaw);
         }
       } catch (error) {
         uefiRaw = `Exception: ${error}`;
         console.log('🔍 Exception UEFI:', error);
       }
 
-      // Vérifier la version TPM avec une commande simple
+      // Vérifier la version TPM avec la bonne commande
       let tpmVersion = undefined;
       let tpmRaw = '';
       
       try {
-        console.log('🔍 Exécution de Get-WmiObject TPM...');
+        console.log('🔍 Exécution de Get-Tpm...');
         const tpmResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
-          '-Command', 'Get-WmiObject -Namespace "root\\CIMV2\\Security\\MicrosoftTpm" -Class "Win32_Tpm"'
+          '-Command', 'Get-Tpm'
         ]);
         
         console.log('🔍 Résultat TPM:', tpmResult);
@@ -131,7 +120,7 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
         if (tpmResult?.success && tpmResult.output) {
           tpmRaw = tpmResult.output;
           // Extraire la version TPM de la sortie
-          const versionMatch = tpmResult.output.match(/SpecVersion\s*:\s*([^\r\n]+)/);
+          const versionMatch = tpmResult.output.match(/ManufacturerVersion\s*:\s*([^\r\n]+)/);
           if (versionMatch) {
             tpmVersion = versionMatch[1].trim();
           }
@@ -160,8 +149,7 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
         if (virtualizationResult?.success) {
           virtualizationRaw = virtualizationResult.output || 'Aucun résultat';
           // Chercher les informations de virtualisation dans la sortie complète
-          virtualizationEnabled = virtualizationResult.output?.includes('True') && 
-                                 virtualizationResult.output?.includes('Virtualization') || false;
+          virtualizationEnabled = virtualizationResult.output?.includes('Virtualization') || false;
           console.log('🔍 Virtualization enabled:', virtualizationEnabled);
         } else {
           virtualizationRaw = `Erreur: ${virtualizationResult?.error || 'Commande échouée'}`;
