@@ -210,7 +210,7 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
 
       <div className="main-container">
         {/* Sidebar */}
-        <div className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+        <div className={`sidebar ${sidebarCollapsed ? 'collapsed' : 'open'}`}>
           <div className="sidebar-logo-container">
             <img 
               src={logoBarreLaterale} 
