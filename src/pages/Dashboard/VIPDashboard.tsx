@@ -7,6 +7,12 @@ import {
   Save,
   Sun,
   Unlock,
+  Star,
+  Ban,
+  HardDrive,
+  Zap,
+  Battery,
+  Lock,
   LucideIcon
 } from 'lucide-react';
 import './VIPDashboard.css';
@@ -66,7 +72,8 @@ const VIPDashboard: React.FC = () => {
       
       // Méthode 1: Utiliser shell.openExternal via Electron (recommandé)
       if (window.electronAPI && 'openExternal' in window.electronAPI) {
-        (window.electronAPI as any).openExternal('ms-settings:themes')
+        const electronAPI = window.electronAPI as typeof window.electronAPI & { openExternal: (url: string) => Promise<{ success: boolean; error?: string }> };
+        electronAPI.openExternal('ms-settings:themes')
           .then((result: { success: boolean; error?: string }) => {
             if (result.success) {
               console.log('✅ Paramètres de thèmes Windows ouverts via shell.openExternal');
@@ -181,6 +188,261 @@ const VIPDashboard: React.FC = () => {
     }
   };
 
+  // Fonction pour sauvegarder les favoris
+  const backupFavorites = () => {
+    try {
+      console.log('⭐ Sauvegarde des favoris Chrome et Edge...');
+      
+      if (window.electronAPI?.executeSystemCommand) {
+        // Demander le chemin de destination
+        const backupPath = prompt(
+          '📁 Chemin de destination pour la sauvegarde des favoris :\n\n' +
+          'Exemple : D:\\BackupFavoris\n\n' +
+          'Laissez vide pour utiliser le Bureau :',
+          'D:\\BackupFavoris'
+        );
+
+        if (backupPath) {
+          const chromeBackup = `xcopy "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\Bookmarks" "${backupPath}\\Chrome" /y`;
+          const edgeBackup = `xcopy "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\Default\\Bookmarks" "${backupPath}\\Edge" /y`;
+
+          // Exécuter les commandes de sauvegarde
+          Promise.all([
+            window.electronAPI.executeSystemCommand('cmd.exe', ['/c', chromeBackup]),
+            window.electronAPI.executeSystemCommand('cmd.exe', ['/c', edgeBackup])
+          ])
+          .then((results) => {
+            const chromeSuccess = results[0].success;
+            const edgeSuccess = results[1].success;
+            
+            if (chromeSuccess && edgeSuccess) {
+              alert('✅ Favoris sauvegardés avec succès !\n\nChrome et Edge : OK');
+            } else if (chromeSuccess) {
+              alert('⚠️ Sauvegarde partielle\n\nChrome : OK\nEdge : Échec');
+            } else if (edgeSuccess) {
+              alert('⚠️ Sauvegarde partielle\n\nChrome : Échec\nEdge : OK');
+            } else {
+              alert('❌ Échec de la sauvegarde\n\nVérifiez que les navigateurs sont fermés.');
+            }
+          })
+          .catch((error) => {
+            console.error('❌ Erreur lors de la sauvegarde:', error);
+            alert('❌ Erreur lors de la sauvegarde des favoris.');
+          });
+        }
+      } else {
+        alert('⚠️ API Electron non disponible.\n\nExécutez manuellement :\nxcopy "%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\Bookmarks" "D:\\BackupChrome" /y\nxcopy "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\Default\\Bookmarks" "D:\\BackupEdge" /y');
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la sauvegarde des favoris:', error);
+      alert('❌ Erreur lors de la sauvegarde des favoris.');
+    }
+  };
+
+  // Fonction pour désactiver la télémétrie
+  const disableTelemetry = () => {
+    try {
+      console.log('🚫 Désactivation de la télémétrie Windows...');
+      
+      if (window.electronAPI?.executeSystemCommand) {
+        const confirmed = window.confirm(
+          '🚫 Désactiver la Télémétrie Windows\n\n' +
+          'Cette action va désactiver la collecte de données télémétriques.\n\n' +
+          '⚠️ ATTENTION :\n' +
+          '• Nécessite des privilèges administrateur\n' +
+          '• Peut affecter certaines fonctionnalités Windows\n\n' +
+          'Êtes-vous sûr de vouloir continuer ?'
+        );
+
+        if (confirmed) {
+          window.electronAPI.executeSystemCommand('cmd.exe', [
+            '/c', 'sc stop DiagTrack && sc config DiagTrack start=disabled'
+          ])
+          .then((result) => {
+            if (result.success) {
+              console.log('✅ Télémétrie désactivée avec succès');
+              alert('✅ Télémétrie Windows désactivée avec succès !\n\nLe service DiagTrack a été arrêté et désactivé.');
+            } else {
+              console.log('❌ Erreur lors de la désactivation:', result.error);
+              alert('❌ Erreur lors de la désactivation de la télémétrie.\n\nVeuillez exécuter en tant qu\'administrateur.');
+            }
+          })
+          .catch((error) => {
+            console.error('❌ Erreur lors de l\'exécution:', error);
+            alert('❌ Erreur lors de l\'exécution de la commande.');
+          });
+        }
+      } else {
+        alert('⚠️ API Electron non disponible.\n\nExécutez manuellement en tant qu\'administrateur :\nsc stop DiagTrack\nsc config DiagTrack start=disabled');
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la désactivation de la télémétrie:', error);
+      alert('❌ Erreur lors de la désactivation de la télémétrie.');
+    }
+  };
+
+  // Fonction pour créer un point de restauration
+  const createRestorePoint = () => {
+    try {
+      console.log('💾 Création d\'un point de restauration système...');
+      
+      if (window.electronAPI?.executeSystemCommand) {
+        const confirmed = window.confirm(
+          '💾 Créer un Point de Restauration\n\n' +
+          'Cette action va créer un point de restauration système.\n\n' +
+          '⚠️ ATTENTION :\n' +
+          '• Nécessite des privilèges administrateur\n' +
+          '• Peut prendre quelques minutes\n\n' +
+          'Êtes-vous sûr de vouloir continuer ?'
+        );
+
+        if (confirmed) {
+          window.electronAPI.executeSystemCommand('powershell.exe', [
+            '-Command', 'Checkpoint-Computer -Description "RestaurerAvantManip" -RestorePointType "MODIFY_SETTINGS"'
+          ])
+          .then((result) => {
+            if (result.success) {
+              console.log('✅ Point de restauration créé avec succès');
+              alert('✅ Point de restauration créé avec succès !\n\nDescription : "RestaurerAvantManip"\nType : MODIFY_SETTINGS');
+            } else {
+              console.log('❌ Erreur lors de la création:', result.error);
+              alert('❌ Erreur lors de la création du point de restauration.\n\nVeuillez exécuter en tant qu\'administrateur.');
+            }
+          })
+          .catch((error) => {
+            console.error('❌ Erreur lors de l\'exécution:', error);
+            alert('❌ Erreur lors de l\'exécution de la commande.');
+          });
+        }
+      } else {
+        alert('⚠️ API Electron non disponible.\n\nExécutez manuellement en tant qu\'administrateur :\nCheckpoint-Computer -Description "RestaurerAvantManip" -RestorePointType "MODIFY_SETTINGS"');
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la création du point de restauration:', error);
+      alert('❌ Erreur lors de la création du point de restauration.');
+    }
+  };
+
+  // Fonction pour activer le GodMode
+  const enableGodMode = () => {
+    try {
+      console.log('🛡️ Activation du GodMode...');
+      
+      if (window.electronAPI?.executeSystemCommand) {
+        const confirmed = window.confirm(
+          '🛡️ Activer le GodMode\n\n' +
+          'Cette action va créer un raccourci "GodMode" sur votre Bureau.\n\n' +
+          '⚠️ ATTENTION :\n' +
+          '• Accès à toutes les options système avancées\n' +
+          '• Utilisez avec précaution\n\n' +
+          'Êtes-vous sûr de vouloir continuer ?'
+        );
+
+        if (confirmed) {
+          window.electronAPI.executeSystemCommand('cmd.exe', [
+            '/c', 'md "%USERPROFILE%\\Desktop\\GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}"'
+          ])
+          .then((result) => {
+            if (result.success) {
+              console.log('✅ GodMode activé avec succès');
+              alert('✅ GodMode activé avec succès !\n\nUn raccourci "GodMode" a été créé sur votre Bureau.\nDouble-cliquez dessus pour accéder aux options système avancées.');
+            } else {
+              console.log('❌ Erreur lors de l\'activation:', result.error);
+              alert('❌ Erreur lors de l\'activation du GodMode.\n\nLe GodMode existe peut-être déjà.');
+            }
+          })
+          .catch((error) => {
+            console.error('❌ Erreur lors de l\'exécution:', error);
+            alert('❌ Erreur lors de l\'exécution de la commande.');
+          });
+        }
+      } else {
+        alert('⚠️ API Electron non disponible.\n\nExécutez manuellement :\nmd "%USERPROFILE%\\Desktop\\GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}"');
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'activation du GodMode:', error);
+      alert('❌ Erreur lors de l\'activation du GodMode.');
+    }
+  };
+
+  // Fonction pour générer un rapport batterie
+  const generateBatteryReport = () => {
+    try {
+      console.log('🔋 Génération du rapport batterie...');
+      
+      if (window.electronAPI?.executeSystemCommand) {
+        const confirmed = window.confirm(
+          '🔋 Générer un Rapport Batterie\n\n' +
+          'Cette action va générer un rapport détaillé de la batterie.\n\n' +
+          '⚠️ ATTENTION :\n' +
+          '• Fonctionne uniquement sur les ordinateurs portables\n' +
+          '• Le rapport sera sauvegardé sur le Bureau\n\n' +
+          'Êtes-vous sûr de vouloir continuer ?'
+        );
+
+        if (confirmed) {
+          window.electronAPI.executeSystemCommand('cmd.exe', [
+            '/c', 'powercfg /batteryreport /output "%USERPROFILE%\\Desktop\\battery-report.html"'
+          ])
+          .then((result) => {
+            if (result.success) {
+              console.log('✅ Rapport batterie généré avec succès');
+              alert('✅ Rapport batterie généré avec succès !\n\nLe fichier "battery-report.html" a été créé sur votre Bureau.\nOuvrez-le dans votre navigateur pour voir les détails.');
+            } else {
+              console.log('❌ Erreur lors de la génération:', result.error);
+              alert('❌ Erreur lors de la génération du rapport batterie.\n\nVérifiez que vous êtes sur un ordinateur portable avec une batterie.');
+            }
+          })
+          .catch((error) => {
+            console.error('❌ Erreur lors de l\'exécution:', error);
+            alert('❌ Erreur lors de l\'exécution de la commande.');
+          });
+        }
+      } else {
+        alert('⚠️ API Electron non disponible.\n\nExécutez manuellement :\npowercfg /batteryreport /output "%USERPROFILE%\\Desktop\\battery-report.html"');
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la génération du rapport batterie:', error);
+      alert('❌ Erreur lors de la génération du rapport batterie.');
+    }
+  };
+
+  // Fonction pour vérifier le Secure Boot
+  const checkSecureBoot = () => {
+    try {
+      console.log('🛡️ Vérification du Secure Boot...');
+      
+      if (window.electronAPI?.executeSystemCommand) {
+        window.electronAPI.executeSystemCommand('powershell.exe', [
+          '-Command', 'Confirm-SecureBootUEFI'
+        ])
+        .then((result) => {
+          if (result.success) {
+            console.log('✅ Secure Boot vérifié avec succès');
+            const isEnabled = result.output?.includes('True');
+            if (isEnabled) {
+              alert('✅ Secure Boot UEFI : ACTIVÉ\n\nVotre système est protégé par le Secure Boot UEFI.');
+            } else {
+              alert('⚠️ Secure Boot UEFI : DÉSACTIVÉ\n\nLe Secure Boot UEFI n\'est pas activé sur votre système.');
+            }
+          } else {
+            console.log('❌ Erreur lors de la vérification:', result.error);
+            alert('❌ Erreur lors de la vérification du Secure Boot.\n\nVeuillez exécuter en tant qu\'administrateur.');
+          }
+        })
+        .catch((error) => {
+          console.error('❌ Erreur lors de l\'exécution:', error);
+          alert('❌ Erreur lors de l\'exécution de la commande.');
+        });
+      } else {
+        alert('⚠️ API Electron non disponible.\n\nExécutez manuellement en tant qu\'administrateur :\nConfirm-SecureBootUEFI');
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la vérification du Secure Boot:', error);
+      alert('❌ Erreur lors de la vérification du Secure Boot.');
+    }
+  };
+
   const quickActions: QuickAction[] = [
     {
       id: 'scan',
@@ -240,6 +502,66 @@ const VIPDashboard: React.FC = () => {
       color: '#ef4444',
       gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
       action: () => setIsMonitorModalOpen(true),
+      status: 'available'
+    },
+    {
+      id: 'favorites',
+      title: 'Sauvegarder Favoris',
+      description: 'Sauvegarder les favoris Chrome et Edge',
+      icon: Star,
+      color: '#fbbf24',
+      gradient: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+      action: () => backupFavorites(),
+      status: 'available'
+    },
+    {
+      id: 'telemetry',
+      title: 'Désactiver Télémétrie',
+      description: 'Désactiver la collecte de données Windows',
+      icon: Ban,
+      color: '#dc2626',
+      gradient: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+      action: () => disableTelemetry(),
+      status: 'available'
+    },
+    {
+      id: 'restore',
+      title: 'Point de Restauration',
+      description: 'Créer un point de restauration système',
+      icon: HardDrive,
+      color: '#059669',
+      gradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+      action: () => createRestorePoint(),
+      status: 'available'
+    },
+    {
+      id: 'godmode',
+      title: 'Activer GodMode',
+      description: 'Ajouter le raccourci GodMode sur le Bureau',
+      icon: Zap,
+      color: '#7c3aed',
+      gradient: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
+      action: () => enableGodMode(),
+      status: 'available'
+    },
+    {
+      id: 'battery',
+      title: 'Rapport Batterie',
+      description: 'Générer un rapport batterie sur le Bureau',
+      icon: Battery,
+      color: '#0891b2',
+      gradient: 'linear-gradient(135deg, #0891b2 0%, #0e7490 100%)',
+      action: () => generateBatteryReport(),
+      status: 'available'
+    },
+    {
+      id: 'secureboot',
+      title: 'Vérifier Secure Boot',
+      description: 'Vérifier l\'état du Secure Boot UEFI',
+      icon: Lock,
+      color: '#1d4ed8',
+      gradient: 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)',
+      action: () => checkSecureBoot(),
       status: 'available'
     }
   ];
@@ -334,8 +656,8 @@ const VIPDashboard: React.FC = () => {
         
         <div className="quick-actions-grid">
           {quickActions.map((action, index) => (
-              <motion.div
-                key={action.id}
+            <motion.div
+              key={action.id}
               className={`quick-action-card ${selectedQuickAction === action.id ? 'selected' : ''}`}
               style={{ background: action.gradient }}
               initial={{ opacity: 0, scale: 0.8 }}
@@ -347,25 +669,25 @@ const VIPDashboard: React.FC = () => {
               }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleQuickAction(action)}
-              >
+            >
               <div className="action-icon">
                 <action.icon size={32} />
-                </div>
-                <div className="action-content">
+              </div>
+              <div className="action-content">
                 <h3>{action.title}</h3>
                 <p>{action.description}</p>
               </div>
               <div className="action-status">
                 <div className={`status-dot ${action.status}`} />
-                </div>
-              </motion.div>
+              </div>
+            </motion.div>
           ))}
         </div>
       </motion.div>
 
       {/* System Processes & Weather */}
       <div className="bottom-section">
-      <motion.div 
+        <motion.div 
           className="processes-section"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -388,8 +710,8 @@ const VIPDashboard: React.FC = () => {
               >
                 <div className="process-info">
                   <h4>{process.name}</h4>
-              <div className="process-metrics">
-                  <span>CPU: {process.cpu}%</span>
+                  <div className="process-metrics">
+                    <span>CPU: {process.cpu}%</span>
                     <span>RAM: {process.memory}%</span>
                   </div>
                 </div>
@@ -402,13 +724,13 @@ const VIPDashboard: React.FC = () => {
                     className="priority-indicator"
                     style={{ backgroundColor: getPriorityColor(process.priority) }}
                   />
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
 
-      <motion.div 
+        <motion.div 
           className="weather-section"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -417,12 +739,12 @@ const VIPDashboard: React.FC = () => {
           <div className="section-header">
             <h2>Météo Locale</h2>
             <p>Conditions météorologiques actuelles</p>
-              </div>
+          </div>
           
           <div className="weather-card">
             <div className="weather-icon">
               <weatherData.icon size={48} />
-              </div>
+            </div>
             <div className="weather-info">
               <h3>{weatherData.temperature}°C</h3>
               <p>{weatherData.condition}</p>
@@ -430,12 +752,12 @@ const VIPDashboard: React.FC = () => {
                 <span>Humidité: {weatherData.humidity}%</span>
                 <span>Vent: {weatherData.windSpeed} km/h</span>
               </div>
-                </div>
-              </div>
-            </motion.div>
-        </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
       
-      {/* Modal de sauvegarde */}
+      {/* Modals */}
       <BackupModal 
         isOpen={isBackupModalOpen}
         onClose={() => setIsBackupModalOpen(false)}
@@ -456,4 +778,4 @@ const VIPDashboard: React.FC = () => {
   );
 };
 
-export default VIPDashboard; 
+export default VIPDashboard;
