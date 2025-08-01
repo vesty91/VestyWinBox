@@ -15,6 +15,7 @@ import logoPage1 from '../../../assets/logo-page-1.png';
 import BackupModal from '../../components/BackupModal';
 import SystemCheckModal from '../../components/SystemCheckModal';
 import CleanupModal from '../../components/CleanupModal';
+import UpdateModal from '../../components/UpdateModal';
 
 interface QuickAction {
   id: string;
@@ -57,6 +58,7 @@ const VIPDashboard: React.FC = () => {
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [isSystemCheckModalOpen, setIsSystemCheckModalOpen] = useState(false);
   const [isCleanupModalOpen, setIsCleanupModalOpen] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   // Fonction pour ouvrir les paramètres de thèmes Windows
   const openThemeSettings = () => {
@@ -162,7 +164,7 @@ const VIPDashboard: React.FC = () => {
       icon: Download,
       color: '#06b6d4',
       gradient: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
-      action: () => console.log('Mettre à jour'),
+      action: () => setIsUpdateModalOpen(true),
       status: 'available'
     },
     {
@@ -380,6 +382,10 @@ const VIPDashboard: React.FC = () => {
       <CleanupModal 
         isOpen={isCleanupModalOpen}
         onClose={() => setIsCleanupModalOpen(false)}
+      />
+      <UpdateModal 
+        isOpen={isUpdateModalOpen}
+        onClose={() => setIsUpdateModalOpen(false)}
       />
     </div>
   );
