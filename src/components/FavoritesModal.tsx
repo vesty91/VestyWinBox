@@ -31,8 +31,9 @@ const FavoritesModal: React.FC<FavoritesModalProps> = ({ isOpen, onClose }) => {
 
   const handleSelectFolder = async () => {
     try {
-      if (window.electronAPI?.selectBackupFolder) {
-        const result = await window.electronAPI.selectBackupFolder();
+      if (window.electronAPI && 'selectBackupFolder' in window.electronAPI) {
+        const electronAPI = window.electronAPI as typeof window.electronAPI & { selectBackupFolder: () => Promise<{ success: boolean; folderPath?: string; error?: string }> };
+        const result = await electronAPI.selectBackupFolder();
         if (result.success && result.folderPath) {
           setBackupPath(result.folderPath);
         }
