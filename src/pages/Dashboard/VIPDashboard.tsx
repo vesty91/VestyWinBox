@@ -5,7 +5,6 @@ import {
   Trash2,
   Shield,
   Save,
-  Sun,
   Unlock,
   Star,
   Ban,
@@ -37,32 +36,7 @@ interface QuickAction {
   status: 'available' | 'running' | 'completed' | 'error';
 }
 
-interface SystemProcess {
-  id: string;
-  name: string;
-  cpu: number;
-  memory: number;
-  status: 'running' | 'stopped' | 'error';
-  priority: 'high' | 'medium' | 'low';
-}
-
-interface WeatherData {
-  temperature: number;
-  condition: string;
-  humidity: number;
-  windSpeed: number;
-  icon: LucideIcon;
-}
-
 const VIPDashboard: React.FC = () => {
-  const [weatherData] = useState<WeatherData>({
-    temperature: 22,
-    condition: 'Ensoleillé',
-    humidity: 65,
-    windSpeed: 12,
-    icon: Sun
-  });
-
   const [selectedQuickAction, setSelectedQuickAction] = useState<string | null>(null);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [isSystemCheckModalOpen, setIsSystemCheckModalOpen] = useState(false);
@@ -99,17 +73,13 @@ const VIPDashboard: React.FC = () => {
                     }
                   });
               } else {
+                console.log('❌ API Electron non disponible, tentative window.open...');
                 window.open('ms-settings:themes', '_blank');
               }
             }
-          })
-          .catch((error: unknown) => {
-            console.log('❌ Erreur shell.openExternal:', error);
-            // Fallback vers window.open
-            window.open('ms-settings:themes', '_blank');
           });
       } else {
-        // Fallback direct vers window.open si pas d'API Electron
+        console.log('❌ API Electron non disponible, tentative window.open...');
         window.open('ms-settings:themes', '_blank');
       }
     } catch (error) {
@@ -119,202 +89,96 @@ const VIPDashboard: React.FC = () => {
     }
   };
 
-  // Fonction pour vérifier l'intégrité des fichiers système
+  // Fonction pour exécuter la vérification d'intégrité des fichiers système
   const runSystemFileChecker = () => {
-    try {
-      console.log('🔍 Ouverture du modal de vérification d\'intégrité...');
-      setIsSystemCheckModalOpen(true);
-    } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture du modal:', error);
-      alert('❌ Erreur lors de l\'ouverture du modal de vérification.');
-    }
+    console.log('🔧 Lancement de la vérification d\'intégrité des fichiers système...');
+    setIsSystemCheckModalOpen(true);
   };
 
   // Fonction pour désactiver l'UAC
   const disableUAC = () => {
-    try {
-      console.log('🔓 Démarrage de la désactivation de l\'UAC...');
+    const confirmDisable = window.confirm(
+      '⚠️ ATTENTION : Désactiver l\'UAC peut exposer votre système à des risques de sécurité.\n\n' +
+      'Cette action va :\n' +
+      '• Désactiver les invites d\'élévation\n' +
+      '• Permettre l\'exécution de programmes sans confirmation\n' +
+      '• Réduire la sécurité du système\n\n' +
+      'Êtes-vous sûr de vouloir continuer ?'
+    );
+
+    if (confirmDisable) {
+      console.log('🔧 Désactivation de l\'UAC...');
       
       if (window.electronAPI?.executeSystemCommand) {
-        // Afficher une confirmation avant de procéder
-        const confirmed = window.confirm(
-          '⚠️ ATTENTION - Désactivation de l\'UAC\n\n' +
-          'Cette action va désactiver le Contrôle de Compte Utilisateur (UAC) de Windows.\n\n' +
-          '⚠️ AVERTISSEMENTS :\n' +
-          '• Votre système sera moins sécurisé\n' +
-          '• Les applications pourront s\'exécuter avec des privilèges élevés\n' +
-          '• Redémarrage requis pour appliquer les changements\n\n' +
-          'Êtes-vous sûr de vouloir continuer ?'
-        );
-
-        if (confirmed) {
-          // Exécuter la commande pour désactiver l'UAC
-          window.electronAPI.executeSystemCommand('powershell.exe', [
-            '-Command', 
-            'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "EnableLUA" -Value 0; Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "ConsentPromptBehaviorAdmin" -Value 0; Write-Host "UAC désactivé avec succès. Redémarrage requis."'
-          ])
-          .then((result) => {
-            if (result.success) {
-              console.log('✅ UAC désactivé avec succès');
-              alert(
-                '✅ UAC désactivé avec succès !\n\n' +
-                'Les modifications ont été appliquées.\n' +
-                'Un redémarrage est requis pour que les changements prennent effet.\n\n' +
-                'Voulez-vous redémarrer maintenant ?'
-              );
-              
-              // Proposer le redémarrage
-              const restart = window.confirm('Voulez-vous redémarrer votre ordinateur maintenant ?');
-              if (restart) {
-                window.electronAPI.executeSystemCommand('shutdown.exe', ['/r', '/t', '10', '/c', 'Redémarrage pour appliquer les changements UAC']);
-              }
-            } else {
-              console.log('❌ Erreur lors de la désactivation de l\'UAC:', result.error);
-              alert('❌ Erreur lors de la désactivation de l\'UAC.\n\nVeuillez exécuter en tant qu\'administrateur.');
-            }
-          })
-          .catch((error) => {
-            console.error('❌ Erreur lors de l\'exécution:', error);
-            alert('❌ Erreur lors de l\'exécution de la commande.\n\nVeuillez exécuter en tant qu\'administrateur.');
-          });
-        }
+        // Désactiver l'UAC via PowerShell
+        window.electronAPI.executeSystemCommand('powershell.exe', [
+          '-Command', 
+          'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "EnableLUA" -Value 0'
+        ]).then((result) => {
+          if (result.success) {
+            alert('✅ UAC désactivé avec succès !\n\nUn redémarrage est recommandé pour appliquer les changements.');
+          } else {
+            alert('❌ Erreur lors de la désactivation de l\'UAC :\n' + result.error);
+          }
+        });
       } else {
-        // Fallback : instructions manuelles
-        alert(
-          '🔓 Désactivation manuelle de l\'UAC\n\n' +
-          '1. Ouvrez l\'Éditeur de registre (regedit)\n' +
-          '2. Naviguez vers : HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\n' +
-          '3. Modifiez la valeur "EnableLUA" à 0\n' +
-          '4. Modifiez la valeur "ConsentPromptBehaviorAdmin" à 0\n' +
-          '5. Redémarrez votre ordinateur\n\n' +
-          '⚠️ ATTENTION : Cette action réduit la sécurité de votre système.'
-        );
+        alert('❌ API Electron non disponible.\n\nVeuillez exécuter manuellement cette commande PowerShell en tant qu\'administrateur :\n\n' +
+              'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "EnableLUA" -Value 0');
       }
-    } catch (error) {
-      console.error('❌ Erreur lors de la désactivation de l\'UAC:', error);
-      alert('❌ Erreur lors de la désactivation de l\'UAC.');
     }
   };
 
   // Fonction pour activer le GodMode
   const enableGodMode = () => {
-    try {
-      console.log('🛡️ Activation du GodMode...');
-      
-      if (window.electronAPI?.executeSystemCommand) {
-        const confirmed = window.confirm(
-          '🛡️ Activer le GodMode\n\n' +
-          'Cette action va créer un raccourci "GodMode" sur votre Bureau.\n\n' +
-          '⚠️ ATTENTION :\n' +
-          '• Accès à toutes les options système avancées\n' +
-          '• Utilisez avec précaution\n\n' +
-          'Êtes-vous sûr de vouloir continuer ?'
-        );
-
-        if (confirmed) {
-          window.electronAPI.executeSystemCommand('cmd.exe', [
-            '/c', 'md "%USERPROFILE%\\Desktop\\GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}"'
-          ])
-          .then((result) => {
-            if (result.success) {
-              console.log('✅ GodMode activé avec succès');
-              alert('✅ GodMode activé avec succès !\n\nUn raccourci "GodMode" a été créé sur votre Bureau.\nDouble-cliquez dessus pour accéder aux options système avancées.');
-            } else {
-              console.log('❌ Erreur lors de l\'activation:', result.error);
-              alert('❌ Erreur lors de l\'activation du GodMode.\n\nLe GodMode existe peut-être déjà.');
-            }
-          })
-          .catch((error) => {
-            console.error('❌ Erreur lors de l\'exécution:', error);
-            alert('❌ Erreur lors de l\'exécution de la commande.');
-          });
+    console.log('🔧 Activation du GodMode...');
+    
+    if (window.electronAPI?.executeSystemCommand) {
+      window.electronAPI.executeSystemCommand('cmd.exe', [
+        '/c', 
+        'md "%USERPROFILE%\\Desktop\\GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}"'
+      ]).then((result) => {
+        if (result.success) {
+          alert('✅ GodMode activé avec succès !\n\nUn raccourci "GodMode" a été créé sur votre Bureau.\n\n' +
+                'Ce raccourci donne accès à toutes les options de configuration Windows avancées.');
+        } else {
+          alert('❌ Erreur lors de l\'activation du GodMode :\n' + result.error);
         }
-      } else {
-        alert('⚠️ API Electron non disponible.\n\nExécutez manuellement :\nmd "%USERPROFILE%\\Desktop\\GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}"');
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors de l\'activation du GodMode:', error);
-      alert('❌ Erreur lors de l\'activation du GodMode.');
+      });
+    } else {
+      alert('❌ API Electron non disponible.\n\nVeuillez exécuter manuellement cette commande :\n\n' +
+            'md "%USERPROFILE%\\Desktop\\GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}"');
     }
   };
 
   // Fonction pour générer un rapport batterie
   const generateBatteryReport = () => {
-    try {
-      console.log('🔋 Génération du rapport batterie...');
-      
-      if (window.electronAPI?.executeSystemCommand) {
-        const confirmed = window.confirm(
-          '🔋 Générer un Rapport Batterie\n\n' +
-          'Cette action va générer un rapport détaillé de la batterie.\n\n' +
-          '⚠️ ATTENTION :\n' +
-          '• Fonctionne uniquement sur les ordinateurs portables\n' +
-          '• Le rapport sera sauvegardé sur le Bureau\n\n' +
-          'Êtes-vous sûr de vouloir continuer ?'
-        );
-
-        if (confirmed) {
-          window.electronAPI.executeSystemCommand('cmd.exe', [
-            '/c', 'powercfg /batteryreport /output "%USERPROFILE%\\Desktop\\battery-report.html"'
-          ])
-          .then((result) => {
-            if (result.success) {
-              console.log('✅ Rapport batterie généré avec succès');
-              alert('✅ Rapport batterie généré avec succès !\n\nLe fichier "battery-report.html" a été créé sur votre Bureau.\nOuvrez-le dans votre navigateur pour voir les détails.');
-            } else {
-              console.log('❌ Erreur lors de la génération:', result.error);
-              alert('❌ Erreur lors de la génération du rapport batterie.\n\nVérifiez que vous êtes sur un ordinateur portable avec une batterie.');
-            }
-          })
-          .catch((error) => {
-            console.error('❌ Erreur lors de l\'exécution:', error);
-            alert('❌ Erreur lors de l\'exécution de la commande.');
-          });
+    console.log('🔧 Génération du rapport batterie...');
+    
+    if (window.electronAPI?.executeSystemCommand) {
+      window.electronAPI.executeSystemCommand('cmd.exe', [
+        '/c', 
+        'powercfg /batteryreport /output "%USERPROFILE%\\Desktop\\battery-report.html"'
+      ]).then((result) => {
+        if (result.success) {
+          alert('✅ Rapport batterie généré avec succès !\n\n' +
+                'Le fichier "battery-report.html" a été créé sur votre Bureau.\n\n' +
+                'Ouvrez ce fichier dans votre navigateur pour voir les détails de votre batterie.');
+        } else {
+          alert('❌ Erreur lors de la génération du rapport batterie :\n' + result.error);
         }
-      } else {
-        alert('⚠️ API Electron non disponible.\n\nExécutez manuellement :\npowercfg /batteryreport /output "%USERPROFILE%\\Desktop\\battery-report.html"');
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors de la génération du rapport batterie:', error);
-      alert('❌ Erreur lors de la génération du rapport batterie.');
+      });
+    } else {
+      alert('❌ API Electron non disponible.\n\nVeuillez exécuter manuellement cette commande :\n\n' +
+            'powercfg /batteryreport /output "%USERPROFILE%\\Desktop\\battery-report.html"');
     }
   };
 
+  // Configuration des actions rapides
   const quickActions: QuickAction[] = [
-    {
-      id: 'scan',
-      title: 'Thèmes Windows',
-      description: 'Ouvrir les paramètres de thèmes',
-      icon: Shield,
-      color: '#667eea',
-      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      action: openThemeSettings,
-      status: 'available'
-    },
-    {
-      id: 'optimize',
-      title: 'Intégrité des fichiers système',
-      description: 'Vérifier et réparer les fichiers système Windows',
-      icon: Shield,
-      color: '#10b981',
-      gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-      action: runSystemFileChecker,
-      status: 'available'
-    },
-    {
-      id: 'clean',
-      title: 'Nettoyer',
-      description: 'Libérer de l\'espace',
-      icon: Trash2,
-      color: '#f59e0b',
-      gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-      action: () => setIsCleanupModalOpen(true),
-      status: 'available'
-    },
     {
       id: 'backup',
       title: 'Sauvegarder',
-      description: 'Protection des données',
+      description: 'Sauvegarder les dossiers utilisateur',
       icon: Save,
       color: '#8b5cf6',
       gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
@@ -322,19 +186,29 @@ const VIPDashboard: React.FC = () => {
       status: 'available'
     },
     {
-      id: 'update',
-      title: 'Désactiver l\'UAC',
-      description: 'Désactiver le Contrôle de Compte Utilisateur Windows',
-      icon: Unlock,
-      color: '#06b6d4',
-      gradient: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
-      action: disableUAC,
+      id: 'systemcheck',
+      title: 'Intégrité des fichiers système',
+      description: 'Vérifier l\'intégrité des fichiers système',
+      icon: Shield,
+      color: '#10b981',
+      gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+      action: () => runSystemFileChecker(),
+      status: 'available'
+    },
+    {
+      id: 'cleanup',
+      title: 'Nettoyer',
+      description: 'Nettoyer le système',
+      icon: Trash2,
+      color: '#f59e0b',
+      gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+      action: () => setIsCleanupModalOpen(true),
       status: 'available'
     },
     {
       id: 'monitor',
       title: 'Options de Redémarrage',
-      description: 'Redémarrage avancé et mode sans échec',
+      description: 'Options de redémarrage avancées',
       icon: Activity,
       color: '#ef4444',
       gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
@@ -373,28 +247,28 @@ const VIPDashboard: React.FC = () => {
     },
     {
       id: 'godmode',
-      title: 'Activer GodMode',
-      description: 'Ajouter le raccourci GodMode sur le Bureau',
+      title: 'Activer le GodMode',
+      description: 'Créer le raccourci GodMode sur le Bureau',
       icon: Zap,
-      color: '#7c3aed',
-      gradient: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
+      color: '#f59e0b',
+      gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
       action: () => enableGodMode(),
       status: 'available'
     },
     {
       id: 'battery',
-      title: 'Rapport Batterie',
-      description: 'Générer un rapport batterie sur le Bureau',
+      title: 'Générer un rapport batterie',
+      description: 'Créer un rapport détaillé de la batterie',
       icon: Battery,
-      color: '#0891b2',
-      gradient: 'linear-gradient(135deg, #0891b2 0%, #0e7490 100%)',
+      color: '#10b981',
+      gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
       action: () => generateBatteryReport(),
       status: 'available'
     },
     {
       id: 'secureboot',
       title: 'Vérifier Secure Boot',
-      description: 'Vérifier l\'état du Secure Boot UEFI',
+      description: 'Vérifier le statut Secure Boot',
       icon: Lock,
       color: '#1d4ed8',
       gradient: 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)',
@@ -403,36 +277,10 @@ const VIPDashboard: React.FC = () => {
     }
   ];
 
-  const systemProcesses: SystemProcess[] = [
-    { id: '1', name: 'VestyWinBox', cpu: 15, memory: 25, status: 'running', priority: 'high' },
-    { id: '2', name: 'Chrome', cpu: 8, memory: 18, status: 'running', priority: 'medium' },
-    { id: '3', name: 'Discord', cpu: 5, memory: 12, status: 'running', priority: 'medium' },
-    { id: '4', name: 'Steam', cpu: 3, memory: 8, status: 'running', priority: 'low' },
-    { id: '5', name: 'Windows Defender', cpu: 2, memory: 6, status: 'running', priority: 'high' }
-  ];
-
   const handleQuickAction = (action: QuickAction) => {
     setSelectedQuickAction(action.id);
     action.action();
     setTimeout(() => setSelectedQuickAction(null), 2000);
-  };
-
-  const getProcessStatusColor = (status: string) => {
-    switch (status) {
-      case 'running': return '#10b981';
-      case 'stopped': return '#6b7280';
-      case 'error': return '#ef4444';
-      default: return '#6b7280';
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return '#ef4444';
-      case 'medium': return '#f59e0b';
-      case 'low': return '#10b981';
-      default: return '#6b7280';
-    }
   };
 
   return (
@@ -521,78 +369,6 @@ const VIPDashboard: React.FC = () => {
           ))}
         </div>
       </motion.div>
-
-      {/* System Processes & Weather */}
-      <div className="bottom-section">
-      <motion.div 
-          className="processes-section"
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 1.0 }}
-        >
-          <div className="section-header">
-            <h2>Processus Système</h2>
-            <p>Gestion des processus en cours</p>
-          </div>
-          
-          <div className="processes-list">
-            {systemProcesses.map((process, index) => (
-              <motion.div
-                key={process.id}
-                className="process-item"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ scale: 1.02 }}
-              >
-                <div className="process-info">
-                  <h4>{process.name}</h4>
-              <div className="process-metrics">
-                  <span>CPU: {process.cpu}%</span>
-                    <span>RAM: {process.memory}%</span>
-                  </div>
-                </div>
-                <div className="process-status">
-                  <div 
-                    className={`status-indicator ${process.status}`}
-                    style={{ backgroundColor: getProcessStatusColor(process.status) }}
-                  />
-                  <div 
-                    className="priority-indicator"
-                    style={{ backgroundColor: getPriorityColor(process.priority) }}
-                  />
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
-      <motion.div 
-          className="weather-section"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-        >
-          <div className="section-header">
-            <h2>Météo Locale</h2>
-            <p>Conditions météorologiques actuelles</p>
-              </div>
-          
-          <div className="weather-card">
-            <div className="weather-icon">
-              <weatherData.icon size={48} />
-              </div>
-            <div className="weather-info">
-              <h3>{weatherData.temperature}°C</h3>
-              <p>{weatherData.condition}</p>
-              <div className="weather-details">
-                <span>Humidité: {weatherData.humidity}%</span>
-                <span>Vent: {weatherData.windSpeed} km/h</span>
-              </div>
-                </div>
-              </div>
-            </motion.div>
-        </div>
       
       {/* Modals */}
       <BackupModal 
