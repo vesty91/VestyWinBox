@@ -41,10 +41,19 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
       message: 'Vérification du Secure Boot en cours...'
     });
 
+    // Timeout pour éviter les boucles infinies
+    const timeout = setTimeout(() => {
+      setSecureBootStatus({
+        isEnabled: false,
+        isRunning: false,
+        message: 'Timeout - Vérification trop longue',
+        error: 'La vérification a pris trop de temps'
+      });
+    }, 30000); // 30 secondes
+
     try {
-      // Vérifier le Secure Boot avec plusieurs méthodes
+      // Vérifier le Secure Boot avec une commande simple
       let isSecureBootEnabled = false;
-      let secureBootOutput = '';
       let secureBootRaw = '';
 
       try {
@@ -53,37 +62,17 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
         ]);
         
         if (secureBootResult?.success) {
-          secureBootOutput = secureBootResult.output || '';
-          secureBootRaw = `Méthode 1: ${secureBootOutput}`;
-          isSecureBootEnabled = secureBootOutput.includes('True');
+          secureBootRaw = secureBootResult.output || '';
+          isSecureBootEnabled = secureBootRaw.includes('True');
+        } else {
+          secureBootRaw = `Erreur: ${secureBootResult?.error || 'Commande échouée'}`;
         }
       } catch (error) {
-        console.log('Méthode 1 échouée, tentative méthode 2...');
-        secureBootRaw = 'Méthode 1: Échec';
+        secureBootRaw = `Exception: ${error}`;
       }
 
-      // Méthode de fallback pour Secure Boot
-      if (!secureBootOutput) {
-        try {
-          const fallbackResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
-            '-Command', 'Get-ItemProperty -Path "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\SecureBoot\\State" -Name "UEFISecureBootEnabled" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty UEFISecureBootEnabled'
-          ]);
-          
-          if (fallbackResult?.success && fallbackResult.output) {
-            secureBootRaw += `\nMéthode 2: ${fallbackResult.output}`;
-            isSecureBootEnabled = fallbackResult.output.trim() === '1';
-          } else {
-            secureBootRaw += '\nMéthode 2: Aucun résultat';
-          }
-        } catch (error) {
-          console.log('Méthode 2 échouée, tentative méthode 3...');
-          secureBootRaw += '\nMéthode 2: Échec';
-        }
-      }
-
-      // Vérifier le mode UEFI avec plusieurs méthodes
+      // Vérifier le mode UEFI
       let isUefiMode = false;
-      let uefiOutput = '';
       let uefiRaw = '';
 
       try {
@@ -92,37 +81,19 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
         ]);
         
         if (uefiResult?.success) {
-          uefiOutput = uefiResult.output || '';
-          uefiRaw = `Méthode 1: ${uefiOutput}`;
-          isUefiMode = uefiOutput.includes('UEFI');
+          uefiRaw = uefiResult.output || '';
+          isUefiMode = uefiRaw.includes('UEFI');
+        } else {
+          uefiRaw = `Erreur: ${uefiResult?.error || 'Commande échouée'}`;
         }
       } catch (error) {
-        console.log('Vérification UEFI méthode 1 échouée...');
-        uefiRaw = 'Méthode 1: Échec';
-      }
-
-      // Méthode de fallback pour UEFI
-      if (!uefiOutput) {
-        try {
-          const fallbackUefiResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
-            '-Command', 'Get-WmiObject -Class Win32_ComputerSystem | Select-Object -ExpandProperty BootupState'
-          ]);
-          
-          if (fallbackUefiResult?.success && fallbackUefiResult.output) {
-            uefiRaw += `\nMéthode 2: ${fallbackUefiResult.output}`;
-            isUefiMode = fallbackUefiResult.output.includes('Normal boot');
-          } else {
-            uefiRaw += '\nMéthode 2: Aucun résultat';
-          }
-        } catch (error) {
-          console.log('Vérification UEFI méthode 2 échouée...');
-          uefiRaw += '\nMéthode 2: Échec';
-        }
+        uefiRaw = `Exception: ${error}`;
       }
 
       // Vérifier la version TPM
       let tpmVersion = undefined;
       let tpmRaw = '';
+      
       try {
         const tpmResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
           '-Command', 'Get-WmiObject -Namespace "root\\CIMV2\\Security\\MicrosoftTpm" -Class "Win32_Tpm" | Select-Object -ExpandProperty SpecVersion'
@@ -132,48 +103,33 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
           tpmVersion = tpmResult.output.trim();
           tpmRaw = tpmResult.output;
         } else {
-          tpmRaw = 'Aucun résultat';
+          tpmRaw = `Erreur: ${tpmResult?.error || 'Aucun résultat'}`;
         }
       } catch (error) {
-        console.log('Vérification TPM échouée...');
-        tpmRaw = 'Échec';
+        tpmRaw = `Exception: ${error}`;
       }
 
       // Vérifier la virtualisation
       let virtualizationEnabled = false;
       let virtualizationRaw = '';
+      
       try {
         const virtualizationResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
           '-Command', 'Get-ComputerInfo | Select-Object -ExpandProperty HyperVRequirementVirtualizationFirmwareEnabled'
         ]);
         
         if (virtualizationResult?.success) {
-          virtualizationRaw = `Méthode 1: ${virtualizationResult.output || 'Aucun résultat'}`;
+          virtualizationRaw = virtualizationResult.output || 'Aucun résultat';
           virtualizationEnabled = virtualizationResult.output?.includes('True') || false;
+        } else {
+          virtualizationRaw = `Erreur: ${virtualizationResult?.error || 'Commande échouée'}`;
         }
       } catch (error) {
-        console.log('Vérification virtualisation échouée...');
-        virtualizationRaw = 'Méthode 1: Échec';
+        virtualizationRaw = `Exception: ${error}`;
       }
 
-      // Méthode de fallback pour la virtualisation
-      if (!virtualizationEnabled) {
-        try {
-          const fallbackVirtResult = await window.electronAPI?.executeSystemCommand('powershell.exe', [
-            '-Command', 'Get-WmiObject -Class Msvm_VirtualSystemSettingData -Namespace "root\\virtualization\\v2" -ErrorAction SilentlyContinue'
-          ]);
-          
-          if (fallbackVirtResult?.success) {
-            virtualizationRaw += '\nMéthode 2: Virtualisation détectée';
-            virtualizationEnabled = true;
-          } else {
-            virtualizationRaw += '\nMéthode 2: Aucun résultat';
-          }
-        } catch (error) {
-          console.log('Vérification virtualisation méthode 2 échouée...');
-          virtualizationRaw += '\nMéthode 2: Échec';
-        }
-      }
+      // Annuler le timeout
+      clearTimeout(timeout);
 
       setSecureBootStatus({
         isEnabled: isSecureBootEnabled,
@@ -194,6 +150,9 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
       });
 
     } catch (error) {
+      // Annuler le timeout
+      clearTimeout(timeout);
+      
       console.error('Erreur lors de la vérification:', error);
       setSecureBootStatus({
         isEnabled: false,
