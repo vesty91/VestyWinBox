@@ -1,125 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   Activity, 
-  Folder, 
-  Database, 
   Thermometer,
   Zap,
   Trash2,
   Shield,
-  Settings,
   Download,
   Save,
-  AlertTriangle,
-  Package,
-  Star,
-  Rocket,
-  Target,
-  TrendingUp,
-  Clock,
-  CheckCircle,
-  Play,
-  Pause,
   RefreshCw,
   Wifi,
   HardDrive,
   Cpu,
   MemoryStick,
-  Monitor,
-  Smartphone,
-  Globe,
-  Lock,
-  Unlock,
-  Eye,
-  EyeOff,
   Bell,
   BellOff,
   Sun,
   Moon,
-  Palette,
-  Sparkles,
-  Award,
-  Trophy,
-  Medal,
-  Heart,
-  Lightning,
-  Wind,
-  Cloud,
-  CloudRain,
-  CloudLightning,
-  CloudSnow,
-  CloudFog,
-  CloudDrizzle,
-  CloudHail,
-  CloudMist,
-  CloudSleet,
-  CloudHaze,
-  CloudSmog,
-  CloudDust,
-  CloudAsh,
-  CloudSmoke,
-  CloudFunnel,
-  CloudTornado,
-  CloudHurricane,
-  CloudTyphoon,
-  CloudCyclone,
-  CloudMonsoon,
-  CloudSquall,
-  CloudGale,
-  CloudStorm,
-  CloudThunder,
-  CloudRainbow,
-  CloudSun,
-  CloudMoon,
-  CloudSunRain,
-  CloudMoonRain,
-  CloudSunLightning,
-  CloudMoonLightning,
-  CloudSunSnow,
-  CloudMoonSnow,
-  CloudSunFog,
-  CloudMoonFog,
-  CloudSunHaze,
-  CloudMoonHaze,
-  CloudSunMist,
-  CloudMoonMist,
-  CloudSunDrizzle,
-  CloudMoonDrizzle,
-  CloudSunHail,
-  CloudMoonHail,
-  CloudSunSleet,
-  CloudMoonSleet,
-  CloudSunSmog,
-  CloudMoonSmog,
-  CloudSunDust,
-  CloudMoonDust,
-  CloudSunAsh,
-  CloudMoonAsh,
-  CloudSunSmoke,
-  CloudMoonSmoke,
-  CloudSunFunnel,
-  CloudMoonFunnel,
-  CloudSunTornado,
-  CloudMoonTornado,
-  CloudSunHurricane,
-  CloudMoonHurricane,
-  CloudSunTyphoon,
-  CloudMoonTyphoon,
-  CloudSunCyclone,
-  CloudMoonCyclone,
-  CloudSunMonsoon,
-  CloudMoonMonsoon,
-  CloudSunSquall,
-  CloudMoonSquall,
-  CloudSunGale,
-  CloudMoonGale,
-  CloudSunStorm,
-  CloudMoonStorm,
-  CloudSunThunder,
-  CloudMoonThunder,
-  CloudSunRainbow,
-  CloudMoonRainbow,
   Battery
 } from 'lucide-react';
 import './VIPDashboard.css';
@@ -176,7 +73,7 @@ const VIPDashboard: React.FC = () => {
     uptime: '0j 0h 0m'
   });
 
-  const [weatherData, setWeatherData] = useState<WeatherData>({
+  const [weatherData] = useState<WeatherData>({
     temperature: 22,
     condition: 'Ensoleillé',
     humidity: 65,
@@ -188,15 +85,73 @@ const VIPDashboard: React.FC = () => {
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
   const [selectedQuickAction, setSelectedQuickAction] = useState<string | null>(null);
 
+  // Fonction pour ouvrir les paramètres de thèmes Windows via PowerShell
+  const openThemeSettingsWithPowerShell = () => {
+    try {
+      // Méthode 1: PowerShell avec Start-Process
+      if (window.electronAPI?.executeSystemCommand) {
+        window.electronAPI.executeSystemCommand('powershell.exe', ['-Command', 'Start-Process "ms-settings:themes"'])
+          .then((result) => {
+            if (result.success) {
+              console.log('✅ Paramètres de thèmes Windows ouverts via PowerShell');
+            } else {
+              console.log('❌ Erreur PowerShell, tentative cmd...');
+              // Fallback vers cmd
+              window.electronAPI.executeSystemCommand('cmd.exe', ['/c', 'start', 'ms-settings:themes'])
+                .then((cmdResult) => {
+                  if (cmdResult.success) {
+                    console.log('✅ Paramètres de thèmes Windows ouverts via cmd');
+                  } else {
+                    console.log('❌ Erreur cmd, tentative navigateur...');
+                    // Dernier fallback : ouvrir dans le navigateur
+                    window.open('ms-settings:themes', '_blank');
+                  }
+                });
+            }
+          });
+      } else {
+        // Si pas d'Electron, essayer directement le protocole
+        window.open('ms-settings:themes', '_blank');
+      }
+    } catch (error) {
+      console.log('❌ Erreur lors de l\'ouverture des paramètres de thèmes:', error);
+      // Dernier recours : message à l'utilisateur
+      alert('Impossible d\'ouvrir les paramètres de thèmes Windows automatiquement. Veuillez les ouvrir manuellement.');
+    }
+  };
+
   const quickActions: QuickAction[] = [
     {
       id: 'scan',
-      title: 'Scan Rapide',
-      description: 'Analyse complète du système',
+      title: 'Thèmes Windows',
+      description: 'Ouvrir les paramètres de thèmes',
       icon: Shield,
       color: '#667eea',
       gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      action: () => console.log('Scan rapide'),
+      action: () => {
+        console.log('🔧 Ouverture des paramètres de thèmes Windows...');
+        
+        // Méthode 1: Electron (si disponible)
+        if (window.electronAPI?.executeSystemCommand) {
+          // Utiliser le protocole ms-settings:themes pour ouvrir les paramètres de thèmes Windows
+          window.electronAPI.executeSystemCommand('start', ['ms-settings:themes'])
+            .then((result) => {
+              if (result.success) {
+                console.log('✅ Paramètres de thèmes Windows ouverts via Electron');
+              } else {
+                console.log('❌ Erreur Electron, tentative PowerShell...');
+                openThemeSettingsWithPowerShell();
+              }
+            })
+            .catch((error) => {
+              console.log('❌ Erreur Electron:', error);
+              openThemeSettingsWithPowerShell();
+            });
+        } else {
+          // Méthode 2: PowerShell (fallback)
+          openThemeSettingsWithPowerShell();
+        }
+      },
       status: 'available'
     },
     {
@@ -262,7 +217,7 @@ const VIPDashboard: React.FC = () => {
   useEffect(() => {
     // Simulation des données système en temps réel
     const interval = setInterval(() => {
-      setSystemStats(prev => ({
+      setSystemStats({
         cpu: Math.floor(Math.random() * 40) + 20,
         disk: Math.floor(Math.random() * 30) + 10,
         ram: Math.floor(Math.random() * 50) + 30,
@@ -271,7 +226,7 @@ const VIPDashboard: React.FC = () => {
         gpu: Math.floor(Math.random() * 60) + 20,
         battery: Math.floor(Math.random() * 40) + 60,
         uptime: '2j 14h 32m'
-      }));
+      });
     }, 3000);
 
     return () => clearInterval(interval);
@@ -281,15 +236,6 @@ const VIPDashboard: React.FC = () => {
     setSelectedQuickAction(action.id);
     action.action();
     setTimeout(() => setSelectedQuickAction(null), 2000);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'success': return '#10b981';
-      case 'warning': return '#f59e0b';
-      case 'error': return '#ef4444';
-      default: return '#6b7280';
-    }
   };
 
   const getProcessStatusColor = (status: string) => {
@@ -350,44 +296,6 @@ const VIPDashboard: React.FC = () => {
           >
             <h1>Bienvenue dans VestyWinBox</h1>
             <p>Tableau de bord principal pour la gestion avancée de votre système Windows</p>
-          </motion.div>
-
-          {/* Statistiques */}
-          <motion.div 
-            className="hero-stats"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-            <div className="stat-card">
-              <div className="stat-icon">
-                <Clock />
-              </div>
-              <div className="stat-info">
-                <span className="stat-value">{systemStats.uptime}</span>
-                <span className="stat-label">Temps de fonctionnement</span>
-              </div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-icon">
-                <Trophy />
-              </div>
-              <div className="stat-info">
-                <span className="stat-value">98%</span>
-                <span className="stat-label">Performance système</span>
-              </div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-icon">
-                <Shield />
-              </div>
-              <div className="stat-info">
-                <span className="stat-value">Sécurisé</span>
-                <span className="stat-label">Statut de sécurité</span>
-              </div>
-            </div>
           </motion.div>
         </div>
       </motion.div>
