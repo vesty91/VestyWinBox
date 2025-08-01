@@ -336,7 +336,7 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
                           </div>
                           <div 
                             className="detail-value"
-                            style={{ color: getStatusColor(secureBootStatus.details.virtualizationEnabled) }}
+                            style={{ color: getStatusColor(secureBootStatus.details.virtualizationEnabled || false) }}
                           >
                             {secureBootStatus.details.virtualizationEnabled ? 'Activée' : 'Désactivée'}
                           </div>
@@ -407,6 +407,35 @@ const SecureBootModal: React.FC<SecureBootModalProps> = ({ isOpen, onClose }) =>
                               <div className="debug-item">
                                 <strong>Virtualisation (brut):</strong>
                                 <pre>{secureBootStatus.debugInfo.virtualizationRaw || 'Aucune donnée'}</pre>
+                              </div>
+                            </div>
+                          </details>
+                        </div>
+                      )}
+
+                      {/* Section diagnostic toujours visible après vérification */}
+                      {!secureBootStatus.isRunning && (
+                        <div className="debug-section">
+                          <details>
+                            <summary className="debug-summary">
+                              🔍 Informations de diagnostic (cliquez pour voir)
+                            </summary>
+                            <div className="debug-content">
+                              <div className="debug-item">
+                                <strong>Secure Boot (brut):</strong>
+                                <pre>{secureBootStatus.debugInfo?.secureBootRaw || 'Aucune donnée'}</pre>
+                              </div>
+                              <div className="debug-item">
+                                <strong>UEFI (brut):</strong>
+                                <pre>{secureBootStatus.debugInfo?.uefiRaw || 'Aucune donnée'}</pre>
+                              </div>
+                              <div className="debug-item">
+                                <strong>TPM (brut):</strong>
+                                <pre>{secureBootStatus.debugInfo?.tpmRaw || 'Aucune donnée'}</pre>
+                              </div>
+                              <div className="debug-item">
+                                <strong>Virtualisation (brut):</strong>
+                                <pre>{secureBootStatus.debugInfo?.virtualizationRaw || 'Aucune donnée'}</pre>
                               </div>
                             </div>
                           </details>
