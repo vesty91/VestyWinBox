@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Menu, 
-  Crown, 
-  User,
   Settings,
   Activity,
-  LogOut,
   Minimize2 as MinimizeIcon,
   Maximize2,
   X as CloseIcon
 } from 'lucide-react';
 import './VIPLayout.css';
+import logoBarreLaterale from '../../../assets/logo-barre-laterale.png';
+import Footer from './Footer';
 
 interface VIPLayoutProps {
   children: React.ReactNode;
@@ -21,23 +20,6 @@ interface VIPLayoutProps {
 const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChange }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [systemInfo, setSystemInfo] = useState({
-    cpu: '45%',
-    ram: '8.2/16 GB',
-    status: 'Système OK'
-  });
-
-  // Simuler les données système
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSystemInfo({
-        cpu: `${Math.floor(Math.random() * 30) + 20}%`,
-        ram: `${(Math.random() * 8 + 4).toFixed(1)}/16 GB`,
-        status: 'Système OK'
-      });
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Fonctions réelles pour les contrôles de fenêtre
   const handleMinimize = () => {
@@ -89,14 +71,6 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
     }
   };
 
-  // Fonction de déconnexion
-  const handleLogout = () => {
-    console.log('🚪 Déconnexion...');
-    if (window.confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
-      alert('👋 Déconnexion réussie !');
-    }
-  };
-
   // Fonction pour gérer le menu mobile
   const handleMobileMenuToggle = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -143,26 +117,19 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
           >
             <Menu size={20} />
           </button>
-          
+        </div>
+
+        <div className="top-bar-center">
           <div className="app-brand">
-            <Crown className="brand-icon" size={24} />
+            <img 
+              src={logoBarreLaterale} 
+              alt="VestyWinBox Logo" 
+              className="top-bar-logo"
+            />
             <span className="brand-text">VestyWinBox</span>
             <div className="brand-badge">
               <span>PRO</span>
             </div>
-          </div>
-        </div>
-
-        <div className="top-bar-center">
-          <div className="quick-actions">
-            <button className="action-btn scan-btn" onClick={handleQuickScan}>
-              <Activity size={16} />
-              <span>Scan Rapide</span>
-            </button>
-            <button className="action-btn optimize-btn" onClick={handleOptimize}>
-              <Settings size={16} />
-              <span>Optimiser</span>
-            </button>
           </div>
         </div>
 
@@ -210,7 +177,14 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
           <div className="mobile-menu-overlay" onClick={handleMobileMenuToggle}>
             <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
               <div className="mobile-menu-header">
-                <h3>Menu</h3>
+                <div className="mobile-menu-brand">
+                  <img 
+                    src={logoBarreLaterale} 
+                    alt="VestyWinBox Logo" 
+                    className="mobile-menu-logo"
+                  />
+                  <h3>VestyWinBox</h3>
+                </div>
                 <button 
                   onClick={handleMobileMenuToggle}
                   title="Fermer le menu"
@@ -237,18 +211,14 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
       <div className="main-container">
         {/* Sidebar */}
         <div className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
-          <div className="sidebar-header">
-            <div className="sidebar-brand">
-              <Settings size={20} />
-              {!sidebarCollapsed && (
-                <>
-                  <span className="brand-name">VestyWinBox</span>
-                  <span className="brand-subtitle">Gestion Système</span>
-                </>
-              )}
-            </div>
+          <div className="sidebar-logo-container">
+            <img 
+              src={logoBarreLaterale} 
+              alt="VestyWinBox Logo" 
+              className="sidebar-logo"
+            />
           </div>
-
+          
           <div className="sidebar-content">
             <div className="nav-section">
               <div className="nav-section-title">
@@ -269,40 +239,6 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
               </div>
             </div>
           </div>
-
-          <div className="sidebar-footer">
-            <div className="system-status-sidebar">
-              <div className="status-indicator">
-                <div className="status-dot"></div>
-                <span>{systemInfo.status}</span>
-              </div>
-              <div className="system-metrics">
-                <div className="metric">
-                  <span>CPU: {systemInfo.cpu}</span>
-                </div>
-                <div className="metric">
-                  <span>RAM: {systemInfo.ram}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="user-profile">
-              <div className="user-avatar">
-                <User size={20} />
-              </div>
-              {!sidebarCollapsed && (
-                <div className="user-info">
-                  <div className="user-name">Administrateur</div>
-                  <div className="user-role">Admin Système</div>
-                </div>
-              )}
-            </div>
-            
-            <button className="logout-btn" onClick={handleLogout}>
-              <LogOut size={16} />
-              {!sidebarCollapsed && <span>Déconnexion</span>}
-            </button>
-          </div>
         </div>
 
         {/* Main Content */}
@@ -312,6 +248,7 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
