@@ -99,6 +99,40 @@ const VIPDashboard: React.FC = () => {
     }
   };
 
+  // Fonction pour vérifier l'intégrité des fichiers système
+  const runSystemFileChecker = () => {
+    try {
+      console.log('🔍 Démarrage de la vérification de l\'intégrité des fichiers système...');
+      
+      if (window.electronAPI?.executeSystemCommand) {
+        // Exécuter sfc /scannow avec élévation de privilèges
+        window.electronAPI.executeSystemCommand('powershell.exe', [
+          '-Command', 
+          'Start-Process cmd -ArgumentList "/c sfc /scannow" -Verb RunAs -WindowStyle Hidden'
+        ])
+        .then((result) => {
+          if (result.success) {
+            console.log('✅ Vérification de l\'intégrité des fichiers système lancée avec succès');
+            alert('🔍 Vérification de l\'intégrité des fichiers système lancée.\n\nCette opération peut prendre plusieurs minutes. Vous recevrez une notification une fois terminée.');
+          } else {
+            console.log('❌ Erreur lors du lancement de sfc /scannow:', result.error);
+            alert('❌ Erreur lors du lancement de la vérification.\n\nVeuillez exécuter manuellement "sfc /scannow" en tant qu\'administrateur.');
+          }
+        })
+        .catch((error) => {
+          console.error('❌ Erreur lors de l\'exécution:', error);
+          alert('❌ Erreur lors de l\'exécution de la commande.\n\nVeuillez exécuter manuellement "sfc /scannow" en tant qu\'administrateur.');
+        });
+      } else {
+        // Fallback : ouvrir une invite de commande avec la commande
+        alert('🔍 Pour vérifier l\'intégrité des fichiers système :\n\n1. Ouvrez une invite de commande en tant qu\'administrateur\n2. Tapez : sfc /scannow\n3. Attendez la fin de la vérification');
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la vérification de l\'intégrité:', error);
+      alert('❌ Erreur lors de la vérification.\n\nVeuillez exécuter manuellement "sfc /scannow" en tant qu\'administrateur.');
+    }
+  };
+
   const quickActions: QuickAction[] = [
     {
       id: 'scan',
@@ -112,12 +146,12 @@ const VIPDashboard: React.FC = () => {
     },
     {
       id: 'optimize',
-      title: 'Optimiser',
-      description: 'Performance maximale',
-      icon: Zap,
+      title: 'Intégrité des fichiers système',
+      description: 'Vérifier et réparer les fichiers système Windows',
+      icon: Shield,
       color: '#10b981',
       gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-      action: () => console.log('Optimiser'),
+      action: runSystemFileChecker,
       status: 'available'
     },
     {
