@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Activity, 
   Trash2,
@@ -11,7 +11,11 @@ import {
   Zap,
   Battery,
   Lock,
-  LucideIcon
+  LucideIcon,
+  Sparkles,
+  TrendingUp,
+  Clock,
+  Users
 } from 'lucide-react';
 import './VIPDashboard.css';
 import logoPage1 from '../../../assets/logo-page-1.png';
@@ -33,6 +37,8 @@ interface QuickAction {
   gradient: string;
   action: () => void;
   status: 'available' | 'running' | 'completed' | 'error';
+  category?: string;
+  priority?: 'high' | 'medium' | 'low';
 }
 
 const VIPDashboard: React.FC = () => {
@@ -45,6 +51,34 @@ const VIPDashboard: React.FC = () => {
   const [isTelemetryModalOpen, setIsTelemetryModalOpen] = useState(false);
   const [isSecureBootModalOpen, setIsSecureBootModalOpen] = useState(false);
   const [isRestorePointModalOpen, setIsRestorePointModalOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [systemStats, setSystemStats] = useState({
+    cpu: 0,
+    memory: 0,
+    disk: 0,
+    network: 0
+  });
+
+  // Mise à jour de l'heure en temps réel
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Simulation des statistiques système
+  useEffect(() => {
+    const statsTimer = setInterval(() => {
+      setSystemStats({
+        cpu: Math.floor(Math.random() * 30) + 20,
+        memory: Math.floor(Math.random() * 40) + 30,
+        disk: Math.floor(Math.random() * 20) + 10,
+        network: Math.floor(Math.random() * 50) + 20
+      });
+    }, 3000);
+    return () => clearInterval(statsTimer);
+  }, []);
 
   // Fonction pour exécuter la vérification d'intégrité des fichiers système
   const runSystemFileChecker = () => {
@@ -97,7 +131,7 @@ const VIPDashboard: React.FC = () => {
     }
   };
 
-  // Configuration des actions rapides
+  // Configuration des actions rapides avec catégories et priorités
   const quickActions: QuickAction[] = [
     {
       id: 'backup',
@@ -107,7 +141,9 @@ const VIPDashboard: React.FC = () => {
       color: '#8b5cf6',
       gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
       action: () => setIsBackupModalOpen(true),
-      status: 'available'
+      status: 'available',
+      category: 'Sécurité',
+      priority: 'high'
     },
     {
       id: 'systemcheck',
@@ -117,7 +153,9 @@ const VIPDashboard: React.FC = () => {
       color: '#10b981',
       gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
       action: () => runSystemFileChecker(),
-      status: 'available'
+      status: 'available',
+      category: 'Maintenance',
+      priority: 'high'
     },
     {
       id: 'cleanup',
@@ -127,7 +165,9 @@ const VIPDashboard: React.FC = () => {
       color: '#f59e0b',
       gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
       action: () => setIsCleanupModalOpen(true),
-      status: 'available'
+      status: 'available',
+      category: 'Maintenance',
+      priority: 'medium'
     },
     {
       id: 'monitor',
@@ -137,7 +177,9 @@ const VIPDashboard: React.FC = () => {
       color: '#ef4444',
       gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
       action: () => setIsMonitorModalOpen(true),
-      status: 'available'
+      status: 'available',
+      category: 'Système',
+      priority: 'high'
     },
     {
       id: 'favorites',
@@ -147,7 +189,9 @@ const VIPDashboard: React.FC = () => {
       color: '#fbbf24',
       gradient: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
       action: () => setIsFavoritesModalOpen(true),
-      status: 'available'
+      status: 'available',
+      category: 'Données',
+      priority: 'medium'
     },
     {
       id: 'telemetry',
@@ -157,7 +201,9 @@ const VIPDashboard: React.FC = () => {
       color: '#dc2626',
       gradient: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
       action: () => setIsTelemetryModalOpen(true),
-      status: 'available'
+      status: 'available',
+      category: 'Sécurité',
+      priority: 'medium'
     },
     {
       id: 'restore',
@@ -167,7 +213,9 @@ const VIPDashboard: React.FC = () => {
       color: '#059669',
       gradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
       action: () => setIsRestorePointModalOpen(true),
-      status: 'available'
+      status: 'available',
+      category: 'Sécurité',
+      priority: 'high'
     },
     {
       id: 'godmode',
@@ -177,7 +225,9 @@ const VIPDashboard: React.FC = () => {
       color: '#f59e0b',
       gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
       action: () => enableGodMode(),
-      status: 'available'
+      status: 'available',
+      category: 'Système',
+      priority: 'low'
     },
     {
       id: 'battery',
@@ -187,7 +237,9 @@ const VIPDashboard: React.FC = () => {
       color: '#10b981',
       gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
       action: () => generateBatteryReport(),
-      status: 'available'
+      status: 'available',
+      category: 'Diagnostic',
+      priority: 'low'
     },
     {
       id: 'secureboot',
@@ -197,7 +249,9 @@ const VIPDashboard: React.FC = () => {
       color: '#1d4ed8',
       gradient: 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)',
       action: () => setIsSecureBootModalOpen(true),
-      status: 'available'
+      status: 'available',
+      category: 'Sécurité',
+      priority: 'medium'
     }
   ];
 
@@ -207,8 +261,46 @@ const VIPDashboard: React.FC = () => {
     setTimeout(() => setSelectedQuickAction(null), 2000);
   };
 
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return '#ef4444';
+      case 'medium': return '#f59e0b';
+      case 'low': return '#10b981';
+      default: return '#6b7280';
+    }
+  };
+
   return (
     <div className="vip-dashboard">
+      {/* Effet de particules en arrière-plan */}
+      <div className="particles-background">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="particle"
+            initial={{ 
+              x: Math.random() * window.innerWidth,
+              y: window.innerHeight + 100,
+              opacity: 0
+            }}
+            animate={{
+              y: -100,
+              opacity: [0, 1, 0],
+              scale: [0, 1, 0]
+            }}
+            transition={{
+              duration: Math.random() * 10 + 10,
+              repeat: Infinity,
+              delay: Math.random() * 5
+            }}
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`
+            }}
+          />
+        ))}
+      </div>
+
       {/* Header Hero Section */}
       <motion.div 
         className="dashboard-hero"
@@ -217,7 +309,7 @@ const VIPDashboard: React.FC = () => {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="hero-content">
-          {/* Logo Central */}
+          {/* Logo Central avec effet de brillance */}
           <motion.div 
             className="hero-logo-section"
             initial={{ opacity: 0, scale: 0.8 }}
@@ -229,24 +321,105 @@ const VIPDashboard: React.FC = () => {
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
+              whileHover={{ 
+                scale: 1.05,
+                rotate: 5,
+                transition: { duration: 0.3 }
+              }}
             >
               <img 
                 src={logoPage1} 
                 alt="VestyWinBox Logo" 
                 className="dashboard-logo"
               />
+              <motion.div
+                className="logo-shine"
+                initial={{ x: -100, opacity: 0 }}
+                animate={{ x: 100, opacity: [0, 1, 0] }}
+                transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+              />
             </motion.div>
-      </motion.div>
+          </motion.div>
 
-          {/* Titre Principal */}
-      <motion.div 
+          {/* Titre Principal avec effet de typewriter */}
+          <motion.div 
             className="hero-title-section"
             initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <h1>Bienvenue dans VestyWinBox</h1>
-            <p>Tableau de bord principal pour la gestion avancée de votre système Windows</p>
+            <motion.h1
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.6 }}
+            >
+              Bienvenue dans VestyWinBox
+              <motion.span
+                className="sparkle-icon"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              >
+                <Sparkles size={40} />
+              </motion.span>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.8 }}
+            >
+              Tableau de bord principal pour la gestion avancée de votre système Windows
+            </motion.p>
+          </motion.div>
+
+          {/* Statistiques système en temps réel */}
+          <motion.div
+            className="system-stats"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1 }}
+          >
+            <div className="stats-grid">
+              <motion.div 
+                className="stat-item"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+              >
+                <TrendingUp size={20} />
+                <span>CPU: {systemStats.cpu}%</span>
+              </motion.div>
+              <motion.div 
+                className="stat-item"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+              >
+                <HardDrive size={20} />
+                <span>RAM: {systemStats.memory}%</span>
+              </motion.div>
+              <motion.div 
+                className="stat-item"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Activity size={20} />
+                <span>DISK: {systemStats.disk}%</span>
+              </motion.div>
+              <motion.div 
+                className="stat-item"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Users size={20} />
+                <span>NET: {systemStats.network}Mb</span>
+              </motion.div>
+            </div>
+            <motion.div 
+              className="current-time"
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <Clock size={16} />
+              <span>{currentTime.toLocaleTimeString()}</span>
+            </motion.div>
           </motion.div>
         </div>
       </motion.div>
@@ -259,38 +432,95 @@ const VIPDashboard: React.FC = () => {
         transition={{ duration: 0.8, delay: 0.6 }}
       >
         <div className="section-header">
-          <h2>Actions Rapides</h2>
-          <p>Accédez rapidement aux fonctionnalités essentielles</p>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+          >
+            Actions Rapides
+            <motion.span
+              className="header-sparkle"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+            >
+              <Sparkles size={24} />
+            </motion.span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1 }}
+          >
+            Accédez rapidement aux fonctionnalités essentielles
+          </motion.p>
         </div>
         
         <div className="quick-actions-grid">
-          {quickActions.map((action, index) => (
+          <AnimatePresence>
+            {quickActions.map((action, index) => (
               <motion.div
                 key={action.id}
-              className={`quick-action-card ${selectedQuickAction === action.id ? 'selected' : ''}`}
-              style={{ background: action.gradient }}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: `0 20px 40px ${action.color}40`
-              }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleQuickAction(action)}
-            >
-              <div className="action-icon">
-                <action.icon size={32} />
+                className={`quick-action-card ${selectedQuickAction === action.id ? 'selected' : ''}`}
+                style={{ background: action.gradient }}
+                initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.5, 
+                  delay: index * 0.1,
+                  type: "spring",
+                  stiffness: 100
+                }}
+                whileHover={{ 
+                  scale: 1.05,
+                  boxShadow: `0 20px 40px ${action.color}40`,
+                  transition: { duration: 0.3 }
+                }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleQuickAction(action)}
+                layout
+              >
+                {/* Indicateur de priorité */}
+                {action.priority && (
+                  <motion.div
+                    className="priority-indicator"
+                    style={{ backgroundColor: getPriorityColor(action.priority) }}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: index * 0.1 + 0.5 }}
+                  />
+                )}
+
+                <div className="action-icon">
+                  <motion.div
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    <action.icon size={32} />
+                  </motion.div>
                 </div>
+                
                 <div className="action-content">
-                <h3>{action.title}</h3>
-                <p>{action.description}</p>
-              </div>
-              <div className="action-status">
-                <div className={`status-dot ${action.status}`} />
+                  <h3>{action.title}</h3>
+                  <p>{action.description}</p>
+                  {action.category && (
+                    <span className="action-category">{action.category}</span>
+                  )}
                 </div>
+                
+                <div className="action-status">
+                  <div className={`status-dot ${action.status}`} />
+                </div>
+
+                {/* Effet de brillance au survol */}
+                <motion.div
+                  className="card-shine"
+                  initial={{ x: -100, opacity: 0 }}
+                  whileHover={{ x: 100, opacity: [0, 1, 0] }}
+                  transition={{ duration: 0.6 }}
+                />
               </motion.div>
-          ))}
+            ))}
+          </AnimatePresence>
         </div>
       </motion.div>
       
