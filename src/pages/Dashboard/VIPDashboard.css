@@ -171,61 +171,46 @@
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Statistiques système en temps réel */
-.system-stats {
+/* Affichage de l'heure actuelle */
+.current-time-display {
   margin-top: 2rem;
-  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.time-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  font-weight: 500;
-  font-size: 0.9rem;
   transition: all 0.3s ease;
 }
 
-.stat-item:hover {
-  background: rgba(255, 255, 255, 0.15);
+.time-container:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
 }
 
-.stat-item svg {
-  color: #10b981;
-  filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.5));
-}
-
-.current-time {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.current-time svg {
+.time-container svg {
   color: #fbbf24;
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6));
+}
+
+.time-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
 }
 
 /* Section des actions rapides */
@@ -494,10 +479,6 @@
   .hero-title-section h1 {
     font-size: 3rem;
   }
-  
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 @media (max-width: 1024px) {
@@ -514,8 +495,8 @@
     font-size: 2rem;
   }
   
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .time-text {
+    font-size: 1.25rem;
   }
 }
 
@@ -546,8 +527,12 @@
     font-size: 1.75rem;
   }
   
-  .stats-grid {
-    grid-template-columns: 1fr;
+  .time-text {
+    font-size: 1.1rem;
+  }
+  
+  .time-container {
+    padding: 0.75rem 1.5rem;
   }
 }
 
@@ -580,6 +565,14 @@
   
   .action-content p {
     font-size: 0.85rem;
+  }
+  
+  .time-text {
+    font-size: 1rem;
+  }
+  
+  .time-container {
+    padding: 0.5rem 1rem;
   }
 }
 
