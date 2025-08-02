@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, CheckCircle, AlertCircle, X, Clock, Activity } from 'lucide-react';
+import { Shield, CheckCircle, AlertCircle, X, Clock, Activity, Zap, FileCheck, Settings } from 'lucide-react';
 import './SystemCheckModal.css';
 
 interface SystemCheckModalProps {
@@ -99,7 +99,6 @@ const SystemCheckModal: React.FC<SystemCheckModalProps> = ({ isOpen, onClose }) 
           currentStep: step.step,
           message: step.message
         }));
-        
         addLog(`📋 ${step.step}`);
         currentStepIndex++;
       } else {
@@ -108,25 +107,18 @@ const SystemCheckModal: React.FC<SystemCheckModalProps> = ({ isOpen, onClose }) 
           ...prev,
           isRunning: false
         }));
-        addLog('✅ Vérification d\'intégrité terminée avec succès');
-        
-        // Fermer automatiquement après 3 secondes
-        setTimeout(() => {
-          onClose();
-        }, 3000);
+        addLog('✅ Vérification d\'intégrité terminée avec succès !');
       }
-    }, 3000); // Chaque étape dure 3 secondes
+    }, 2000);
   };
 
   const addLog = (message: string) => {
-    const timestamp = new Date().toLocaleTimeString();
-    setLogs(prev => [...prev, `[${timestamp}] ${message}`]);
+    setLogs(prev => [...prev, `${new Date().toLocaleTimeString()} - ${message}`]);
   };
 
   const handleClose = () => {
     if (!checkProgress.isRunning) {
       onClose();
-      // Reset state
       setCheckProgress({
         isRunning: false,
         progress: 0,
@@ -155,14 +147,16 @@ const SystemCheckModal: React.FC<SystemCheckModalProps> = ({ isOpen, onClose }) 
             exit={{ scale: 0.8, opacity: 0, y: 50 }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
-            <div className="system-check-modal-header">
-              <div className="system-check-modal-title">
-                <Shield className="system-check-icon" />
+            {/* Header avec design moderne */}
+            <div className="systemcheck-modal-header">
+              <div className="systemcheck-modal-title">
+                <div className="systemcheck-icon">
+                  <Shield size={24} />
+                </div>
                 <h2>Vérification d'Intégrité des Fichiers Système</h2>
               </div>
               {!checkProgress.isRunning && (
-                <button className="system-check-modal-close" onClick={handleClose}>
+                <button className="systemcheck-modal-close" onClick={handleClose}>
                   <X size={20} />
                 </button>
               )}
@@ -172,65 +166,133 @@ const SystemCheckModal: React.FC<SystemCheckModalProps> = ({ isOpen, onClose }) 
             <div className="system-check-modal-content">
               {!checkProgress.isRunning && checkProgress.progress === 0 ? (
                 <>
-                  {/* Informations avant démarrage */}
-                  <div className="check-info-section">
-                    <h3>À propos de cette vérification</h3>
-                    <div className="info-cards">
-                      <div className="info-card">
-                        <Clock size={20} />
-                        <div>
-                          <h4>Durée estimée</h4>
-                          <p>5-10 minutes selon votre système</p>
-                        </div>
+                  {/* Section d'introduction avec design moderne */}
+                  <motion.div 
+                    className="intro-section"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <div className="intro-header">
+                      <div className="intro-icon">
+                        <Zap size={32} />
                       </div>
-                      <div className="info-card">
-                        <Shield size={20} />
-                        <div>
-                          <h4>Ce qui sera vérifié</h4>
-                          <p>Tous les fichiers système Windows protégés</p>
-                        </div>
+                      <h3>Protection Avancée du Système</h3>
+                      <p>Cette vérification analyse et répare automatiquement tous les fichiers système Windows corrompus pour maintenir la stabilité de votre ordinateur.</p>
+                    </div>
+                  </motion.div>
+
+                  {/* Cartes d'information avec design moderne */}
+                  <motion.div 
+                    className="info-cards"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <motion.div 
+                      className="info-card"
+                      whileHover={{ scale: 1.02, y: -5 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <div className="card-icon">
+                        <Clock size={24} />
                       </div>
-                      <div className="info-card">
-                        <Activity size={20} />
-                        <div>
-                          <h4>Impact sur le système</h4>
-                          <p>Légère utilisation CPU, pas d'interruption</p>
-                        </div>
+                      <h4>Durée Estimée</h4>
+                      <p>5-10 minutes selon votre système</p>
+                    </motion.div>
+
+                    <motion.div 
+                      className="info-card"
+                      whileHover={{ scale: 1.02, y: -5 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <div className="card-icon">
+                        <FileCheck size={24} />
+                      </div>
+                      <h4>Fichiers Vérifiés</h4>
+                      <p>Tous les fichiers système Windows protégés</p>
+                    </motion.div>
+
+                    <motion.div 
+                      className="info-card"
+                      whileHover={{ scale: 1.02, y: -5 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <div className="card-icon">
+                        <Activity size={24} />
+                      </div>
+                      <h4>Impact Système</h4>
+                      <p>Légère utilisation CPU, pas d'interruption</p>
+                    </motion.div>
+                  </motion.div>
+
+                  {/* Section d'instructions avec design moderne */}
+                  <motion.div 
+                    className="instructions-section"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <div className="instructions-header">
+                      <Settings size={20} />
+                      <h4>Instructions Importantes</h4>
+                    </div>
+                    <div className="instructions-list">
+                      <div className="instruction-item">
+                        <CheckCircle size={16} />
+                        <span>La vérification s'exécute en arrière-plan</span>
+                      </div>
+                      <div className="instruction-item">
+                        <CheckCircle size={16} />
+                        <span>Vous pouvez continuer à utiliser votre ordinateur</span>
+                      </div>
+                      <div className="instruction-item">
+                        <CheckCircle size={16} />
+                        <span>Les fichiers corrompus seront automatiquement réparés</span>
+                      </div>
+                      <div className="instruction-item warning">
+                        <AlertCircle size={16} />
+                        <span>Ne redémarrez pas pendant la vérification</span>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
 
-                  {/* Instructions */}
-                  <div className="check-instructions">
-                    <h3>Instructions importantes</h3>
-                    <ul>
-                      <li>✅ La vérification s'exécute en arrière-plan</li>
-                      <li>✅ Vous pouvez continuer à utiliser votre ordinateur</li>
-                      <li>✅ Les fichiers corrompus seront automatiquement réparés</li>
-                      <li>⚠️ Ne redémarrez pas pendant la vérification</li>
-                    </ul>
-                  </div>
-
-                  {/* Bouton de démarrage */}
-                  <div className="check-actions">
-                    <button
+                  {/* Bouton de démarrage avec design moderne */}
+                  <motion.div 
+                    className="check-actions"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <motion.button
                       className="start-check-btn"
                       onClick={startSystemCheck}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <Shield size={16} />
-                      Démarrer la Vérification
-                    </button>
-                  </div>
+                      <Shield size={20} />
+                      <span>Démarrer la Vérification</span>
+                    </motion.button>
+                  </motion.div>
                 </>
               ) : (
                 <>
-                  {/* Barre de progression */}
-                  <div className="check-progress-section">
+                  {/* Section de progression avec design moderne */}
+                  <motion.div 
+                    className="check-progress-section"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
                     <div className="progress-header">
-                      <h3>Vérification en cours...</h3>
-                      <span className="progress-percentage">
+                      <div className="progress-title">
+                        <div className="progress-icon">
+                          <Activity size={24} />
+                        </div>
+                        <h3>Vérification en cours...</h3>
+                      </div>
+                      <div className="progress-percentage">
                         {Math.round(checkProgress.progress)}%
-                      </span>
+                      </div>
                     </div>
                     
                     <div className="progress-bar-container">
@@ -238,8 +300,9 @@ const SystemCheckModal: React.FC<SystemCheckModalProps> = ({ isOpen, onClose }) 
                         className="progress-bar"
                         initial={{ width: 0 }}
                         animate={{ width: `${checkProgress.progress}%` }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
                       />
+                      <div className="progress-glow" />
                     </div>
                     
                     <div className="progress-details">
@@ -249,39 +312,63 @@ const SystemCheckModal: React.FC<SystemCheckModalProps> = ({ isOpen, onClose }) 
                       <p className="progress-message">
                         {checkProgress.message}
                       </p>
-                      <p className="estimated-time">
-                        ⏱️ Temps restant estimé : {checkProgress.estimatedTime}
-                      </p>
+                      <div className="progress-info">
+                        <Clock size={16} />
+                        <span>Temps restant estimé : {checkProgress.estimatedTime}</span>
+                      </div>
                       {checkProgress.error && (
-                        <p className="progress-error">
+                        <div className="progress-error">
                           <AlertCircle size={16} />
-                          {checkProgress.error}
-                        </p>
+                          <span>{checkProgress.error}</span>
+                        </div>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
 
-                  {/* Logs en temps réel */}
-                  <div className="check-logs-section">
-                    <h3>Journal de la vérification</h3>
+                  {/* Logs en temps réel avec design moderne */}
+                  <motion.div 
+                    className="check-logs-section"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <div className="logs-header">
+                      <FileCheck size={20} />
+                      <h4>Journal de la Vérification</h4>
+                    </div>
                     <div className="logs-container">
                       {logs.map((log, index) => (
-                        <div key={index} className="log-entry">
+                        <motion.div 
+                          key={index} 
+                          className="log-entry"
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                        >
                           {log}
-                        </div>
+                        </motion.div>
                       ))}
                     </div>
-                  </div>
+                  </motion.div>
 
-                  {/* Message de fin */}
+                  {/* Message de fin avec design moderne */}
                   {!checkProgress.isRunning && checkProgress.progress === 100 && (
-                    <div className="check-success">
-                      <CheckCircle className="success-icon" />
-                      <p>Vérification d'intégrité terminée avec succès!</p>
-                      <p className="success-details">
-                        Tous les fichiers système ont été vérifiés et réparés si nécessaire.
-                      </p>
-                    </div>
+                    <motion.div 
+                      className="check-success"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <div className="success-icon">
+                        <CheckCircle size={48} />
+                      </div>
+                      <h3>Vérification Terminée !</h3>
+                      <p>Tous les fichiers système ont été vérifiés et réparés si nécessaire.</p>
+                      <div className="success-details">
+                        <span>✅ Intégrité des fichiers confirmée</span>
+                        <span>✅ Système optimisé et sécurisé</span>
+                      </div>
+                    </motion.div>
                   )}
                 </>
               )}
