@@ -6,6 +6,7 @@ import PortableAppsPage from './pages/PortableApps/PortableAppsPage';
 import NasExplorer from './pages/NasExplorer/NasExplorer';
 import FileConverter from './pages/FileConverter/FileConverter';
 import AnalyticsPage from './pages/Analytics/AnalyticsPage';
+import GodModePage from './pages/GodMode/GodModePage';
 import './styles/globals.css';
 
 const App: React.FC = () => {
@@ -29,6 +30,8 @@ const App: React.FC = () => {
         return <FileConverter />;
       case 'analytics':
         return <AnalyticsPage />;
+      case 'godmode':
+        return <GodModePage />;
         default:
         return <VIPDashboard />;
     }

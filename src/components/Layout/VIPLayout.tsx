@@ -9,7 +9,8 @@ import {
   HardDrive,
   Wifi,
   Battery,
-  Thermometer
+  Thermometer,
+  Zap
 } from 'lucide-react';
 import './VIPLayout.css';
 import logoBarreLaterale from '../../../assets/logo-barre-laterale.png';
@@ -112,6 +113,11 @@ const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChang
     {
       id: 'analytics',
       label: 'Analytics'
+    },
+    {
+      id: 'godmode',
+      label: 'GodMode',
+      featured: true
     }
   ];
 
