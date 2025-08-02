@@ -13,9 +13,7 @@ import {
   Lock,
   LucideIcon,
   Sparkles,
-  TrendingUp,
-  Clock,
-  Users
+  Clock
 } from 'lucide-react';
 import './VIPDashboard.css';
 import logoPage1 from '../../../assets/logo-page-1.png';
@@ -52,12 +50,6 @@ const VIPDashboard: React.FC = () => {
   const [isSecureBootModalOpen, setIsSecureBootModalOpen] = useState(false);
   const [isRestorePointModalOpen, setIsRestorePointModalOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [systemStats, setSystemStats] = useState({
-    cpu: 0,
-    memory: 0,
-    disk: 0,
-    network: 0
-  });
 
   // Mise à jour de l'heure en temps réel
   useEffect(() => {
@@ -65,19 +57,6 @@ const VIPDashboard: React.FC = () => {
       setCurrentTime(new Date());
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
-
-  // Simulation des statistiques système
-  useEffect(() => {
-    const statsTimer = setInterval(() => {
-      setSystemStats({
-        cpu: Math.floor(Math.random() * 30) + 20,
-        memory: Math.floor(Math.random() * 40) + 30,
-        disk: Math.floor(Math.random() * 20) + 10,
-        network: Math.floor(Math.random() * 50) + 20
-      });
-    }, 3000);
-    return () => clearInterval(statsTimer);
   }, []);
 
   // Fonction pour exécuter la vérification d'intégrité des fichiers système
@@ -371,54 +350,20 @@ const VIPDashboard: React.FC = () => {
             </motion.p>
           </motion.div>
 
-          {/* Statistiques système en temps réel */}
+          {/* Heure actuelle */}
           <motion.div
-            className="system-stats"
+            className="current-time-display"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
           >
-            <div className="stats-grid">
-              <motion.div 
-                className="stat-item"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.2 }}
-              >
-                <TrendingUp size={20} />
-                <span>CPU: {systemStats.cpu}%</span>
-              </motion.div>
-              <motion.div 
-                className="stat-item"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.2 }}
-              >
-                <HardDrive size={20} />
-                <span>RAM: {systemStats.memory}%</span>
-              </motion.div>
-              <motion.div 
-                className="stat-item"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Activity size={20} />
-                <span>DISK: {systemStats.disk}%</span>
-              </motion.div>
-              <motion.div 
-                className="stat-item"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Users size={20} />
-                <span>NET: {systemStats.network}Mb</span>
-              </motion.div>
-            </div>
             <motion.div 
-              className="current-time"
+              className="time-container"
               animate={{ opacity: [0.7, 1, 0.7] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              <Clock size={16} />
-              <span>{currentTime.toLocaleTimeString()}</span>
+              <Clock size={24} />
+              <span className="time-text">{currentTime.toLocaleTimeString()}</span>
             </motion.div>
           </motion.div>
         </div>
