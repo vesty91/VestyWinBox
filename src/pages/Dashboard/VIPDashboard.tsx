@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  LucideIcon,
   Sparkles,
   Clock
 } from 'lucide-react';
@@ -28,6 +27,9 @@ import FavoritesModal from '../../components/FavoritesModal';
 import TelemetryModal from '../../components/TelemetryModal';
 import SecureBootModal from '../../components/SecureBootModal';
 import RestorePointModal from '../../components/RestorePointModal';
+import GodModeModal from '../../components/GodModeModal';
+import BatteryReportModal from '../../components/BatteryReportModal';
+import UACModal from '../../components/UACModal';
 
 interface QuickAction {
   id: string;
@@ -52,6 +54,9 @@ const VIPDashboard: React.FC = () => {
   const [isTelemetryModalOpen, setIsTelemetryModalOpen] = useState(false);
   const [isSecureBootModalOpen, setIsSecureBootModalOpen] = useState(false);
   const [isRestorePointModalOpen, setIsRestorePointModalOpen] = useState(false);
+  const [isGodModeModalOpen, setIsGodModeModalOpen] = useState(false);
+  const [isBatteryReportModalOpen, setIsBatteryReportModalOpen] = useState(false);
+  const [isUACModalOpen, setIsUACModalOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // Mise à jour de l'heure en temps réel
@@ -71,46 +76,19 @@ const VIPDashboard: React.FC = () => {
   // Fonction pour activer le GodMode
   const enableGodMode = () => {
     console.log('🔧 Activation du GodMode...');
-    
-    if (window.electronAPI?.executeSystemCommand) {
-      window.electronAPI.executeSystemCommand('cmd.exe', [
-        '/c', 
-        'md "%USERPROFILE%\\Desktop\\GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}"'
-      ]).then((result) => {
-        if (result.success) {
-          alert('✅ GodMode activé avec succès !\n\nUn raccourci "GodMode" a été créé sur votre Bureau.\n\n' +
-                'Ce raccourci donne accès à toutes les options de configuration Windows avancées.');
-        } else {
-          alert('❌ Erreur lors de l\'activation du GodMode :\n' + result.error);
-        }
-      });
-    } else {
-      alert('❌ API Electron non disponible.\n\nVeuillez exécuter manuellement cette commande :\n\n' +
-            'md "%USERPROFILE%\\Desktop\\GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}"');
-    }
+    setIsGodModeModalOpen(true);
   };
 
   // Fonction pour générer un rapport batterie
   const generateBatteryReport = () => {
     console.log('🔧 Génération du rapport batterie...');
-    
-    if (window.electronAPI?.executeSystemCommand) {
-      window.electronAPI.executeSystemCommand('cmd.exe', [
-        '/c', 
-        'powercfg /batteryreport /output "%USERPROFILE%\\Desktop\\battery-report.html"'
-      ]).then((result) => {
-        if (result.success) {
-          alert('✅ Rapport batterie généré avec succès !\n\n' +
-                'Le fichier "battery-report.html" a été créé sur votre Bureau.\n\n' +
-                'Ouvrez ce fichier dans votre navigateur pour voir les détails de votre batterie.');
-        } else {
-          alert('❌ Erreur lors de la génération du rapport batterie :\n' + result.error);
-        }
-      });
-    } else {
-      alert('❌ API Electron non disponible.\n\nVeuillez exécuter manuellement cette commande :\n\n' +
-            'powercfg /batteryreport /output "%USERPROFILE%\\Desktop\\battery-report.html"');
-    }
+    setIsBatteryReportModalOpen(true);
+  };
+
+  // Fonction pour désactiver l'UAC
+  const disableUAC = () => {
+    console.log('🔧 Désactivation de l\'UAC...');
+    setIsUACModalOpen(true);
   };
 
   // Configuration des actions rapides avec icônes personnalisées
@@ -234,6 +212,18 @@ const VIPDashboard: React.FC = () => {
       status: 'available',
       category: 'Sécurité',
       priority: 'medium'
+    },
+    {
+      id: 'uac',
+      title: 'Désactiver l\'UAC',
+      description: 'Désactiver le Contrôle de Compte Utilisateur',
+      icon: iconSecureBoot, // Utilise l'icône Secure Boot temporairement
+      color: '#dc2626',
+      gradient: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+      action: () => disableUAC(),
+      status: 'available',
+      category: 'Sécurité',
+      priority: 'high'
     }
   ];
 
@@ -509,6 +499,18 @@ const VIPDashboard: React.FC = () => {
       <RestorePointModal 
         isOpen={isRestorePointModalOpen}
         onClose={() => setIsRestorePointModalOpen(false)}
+      />
+      <GodModeModal 
+        isOpen={isGodModeModalOpen}
+        onClose={() => setIsGodModeModalOpen(false)}
+      />
+      <BatteryReportModal 
+        isOpen={isBatteryReportModalOpen}
+        onClose={() => setIsBatteryReportModalOpen(false)}
+      />
+      <UACModal 
+        isOpen={isUACModalOpen}
+        onClose={() => setIsUACModalOpen(false)}
       />
     </div>
   );

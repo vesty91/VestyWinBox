@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { 
   HardDrive, 
   Network, 
-  Upload,
+  Upload, 
   Download,
   Share2,
   Search,
