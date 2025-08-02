@@ -1,67 +1,47 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import VIPLayout from './components/Layout/VIPLayout';
-import VIPDashboard from './pages/Dashboard/VIPDashboard';
+import Dashboard from './pages/Dashboard/VIPDashboard';
 import AnalyticsPage from './pages/Analytics/AnalyticsPage';
 import SoftwarePage from './pages/Software/SoftwarePage';
 import PortableAppsPage from './pages/PortableApps/PortableAppsPage';
 import FileConverter from './pages/FileConverter/FileConverter';
 import NASExplorerPage from './pages/NasExplorer/NASExplorerPage';
 import GodModePage from './pages/GodMode/GodModePage';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { ToastProvider } from './contexts/ToastContext';
-import './App.css';
+import { ToastProvider } from './components/ui/toast';
+import './styles/globals.css';
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<string>('dashboard');
+  const [currentPage, setCurrentPage] = useState('dashboard');
 
-  const renderPage = (page: string) => {
-    switch (page) {
+  const renderPage = () => {
+    switch (currentPage) {
       case 'dashboard':
-        return <VIPDashboard />;
+        return <Dashboard />;
       case 'analytics':
         return <AnalyticsPage />;
       case 'software':
         return <SoftwarePage />;
-      case 'portableapps':
+      case 'portable-apps':
         return <PortableAppsPage />;
-      case 'fileconverter':
+      case 'file-converter':
         return <FileConverter />;
-      case 'nasexplorer':
+      case 'nas-explorer':
         return <NASExplorerPage />;
       case 'godmode':
         return <GodModePage />;
       default:
-        return <VIPDashboard />;
+        return <Dashboard />;
     }
   };
 
   return (
-    <ThemeProvider>
-      <ToastProvider>
-        <div className="app">
-          <VIPLayout currentPage={currentPage} onPageChange={setCurrentPage}>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentPage}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ 
-                  duration: 0.3,
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 30
-                }}
-                className="page-content"
-              >
-                {renderPage(currentPage)}
-              </motion.div>
-            </AnimatePresence>
-          </VIPLayout>
-        </div>
-      </ToastProvider>
-    </ThemeProvider>
+    <ToastProvider>
+      <div className="app">
+        <VIPLayout currentPage={currentPage} onPageChange={setCurrentPage}>
+          {renderPage()}
+        </VIPLayout>
+      </div>
+    </ToastProvider>
   );
 };
 
