@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { LucideIcon, Play, Copy } from 'lucide-react';
 import { SystemService } from '../../services/SystemService';
 

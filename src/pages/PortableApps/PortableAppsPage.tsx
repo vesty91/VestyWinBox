@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
@@ -35,10 +35,6 @@ const PortableAppsPage: React.FC = () => {
     loadPortableApps();
   }, []);
 
-  useEffect(() => {
-    filterAndSortApps();
-  }, [portableApps, selectedCategory, searchQuery, sortBy]);
-
   const loadPortableApps = async () => {
     setLoading(true);
     try {
@@ -50,7 +46,7 @@ const PortableAppsPage: React.FC = () => {
     setLoading(false);
   };
 
-  const filterAndSortApps = () => {
+  const filterAndSortApps = useCallback(() => {
     let filtered = portableApps;
 
     // Filtrer par catégorie
@@ -78,7 +74,11 @@ const PortableAppsPage: React.FC = () => {
     });
 
     setFilteredApps(filtered);
-  };
+  }, [portableApps, selectedCategory, searchQuery, sortBy]);
+
+  useEffect(() => {
+    filterAndSortApps();
+  }, [filterAndSortApps]);
 
   const handleLaunch = async (app: Tool) => {
     console.log('▶️ Lancement de:', app.name);

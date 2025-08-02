@@ -1,50 +1,57 @@
-// Types globaux pour les APIs DOM
+// Déclarations de types globales pour VestyWinBox
+
+// API Electron
 declare global {
+  interface Window {
+    electronAPI: {
+      launchExecutable: (path: string) => Promise<{ success: boolean; error?: string }>;
+      executeSystemCommand: (command: string, args?: string[]) => Promise<{ success: boolean; output?: string; error?: string; stderr?: string }>;
+      selectBackupFolder: () => Promise<{ success: boolean; path?: string; error?: string }>;
+      backupUserFolders: (sourcePaths: string[], destinationPath: string) => Promise<{ success: boolean; error?: string }>;
+      openExternal: (url: string) => Promise<{ success: boolean; error?: string }>;
+    };
+  }
+
+  // Types pour les APIs Web
   interface File {
     name: string;
-    size: number;
     type: string;
-    lastModified: number;
+    size: number;
+    arrayBuffer(): Promise<ArrayBuffer>;
+    slice(start?: number, end?: number): File;
   }
 
   interface FileReader {
-    readAsText(file: File): void;
+    readAsArrayBuffer(blob: Blob): void;
     readAsDataURL(blob: Blob): void;
-    result: string | null;
-    onload: ((this: FileReader, ev: ProgressEvent<FileReader>) => void) | null;
-    onerror: ((this: FileReader, ev: ProgressEvent<FileReader>) => void) | null;
+    result: string | ArrayBuffer | null;
+    onload: ((this: FileReader, ev: Event) => void) | null;
+    onerror: ((this: FileReader, ev: Event) => void) | null;
   }
 
   var FileReader: {
+    prototype: FileReader;
     new(): FileReader;
   };
 
-  interface ProgressEvent<T = EventTarget> extends Event {
-    readonly lengthComputable: boolean;
-    readonly loaded: number;
-    readonly total: number;
+  // Types pour les éléments DOM
+  interface HTMLInputElement extends HTMLElement {
+    files: FileList | null;
+    value: string;
   }
 
-  // Types pour l'API Electron
-  interface ElectronAPI {
-    minimizeWindow: () => void;
-    maximizeWindow: () => void;
-    closeWindow: () => void;
-    onMaximize: (callback: () => void) => void;
-    onUnmaximize: (callback: () => void) => void;
-    getVersion: () => Promise<string>;
-    getPlatform: () => Promise<string>;
-    showNotification: (title: string, body: string) => void;
-    openExternal: (url: string) => Promise<{ success: boolean; error?: string }>;
-    getSystemInfo: () => Promise<any>;
-    launchExecutable: (filePath: string) => Promise<{ success: boolean; message?: string; error?: string }>;
-    executeSystemCommand: (command: string, args?: string[]) => Promise<{ success: boolean; output?: string; error?: string }>;
-    selectBackupFolder: () => Promise<{ success: boolean; folderPath?: string; error?: string }>;
-    backupUserFolders: (destinationPath: string) => Promise<{ success: boolean; message?: string; error?: string; progress?: number }>;
+  interface FileList {
+    readonly length: number;
+    item(index: number): File | null;
+    [index: number]: File;
   }
 
-  interface Window {
-    electronAPI?: ElectronAPI;
+  interface DataTransfer {
+    files: FileList;
+  }
+
+  interface DragEvent extends Event {
+    dataTransfer: DataTransfer;
   }
 }
 

@@ -1,36 +1,43 @@
 import React, { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import './FileUploader.css';
 
 interface FileUploaderProps {
-  selectedFile: File | null;
   onFileSelect: (file: File) => void;
+  selectedFile: File | null;
 }
 
-const FileUploader: React.FC<FileUploaderProps> = ({ selectedFile, onFileSelect }) => {
-  const [isDragActive, setIsDragActive] = useState(false);
+const FileUploader: React.FC<FileUploaderProps> = ({
+  onFileSelect,
+  selectedFile
+}) => {
+  const [isDragOver, setIsDragOver] = useState(false);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0) {
-      onFileSelect(acceptedFiles[0]);
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      onFileSelect(files[0]);
     }
   }, [onFileSelect]);
 
-  const { getRootProps, getInputProps, isDragReject } = useDropzone({
-    onDrop,
-    accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp', '.ico'],
-      'application/x-msdownload': ['.exe'],
-      'text/*': ['.txt', '.md'],
-      'application/pdf': ['.pdf'],
-      'audio/*': ['.mp3', '.wav', '.ogg', '.flac'],
-      'video/*': ['.mp4', '.avi', '.mkv', '.mov']
-    },
-    multiple: false,
-    onDragEnter: () => setIsDragActive(true),
-    onDragLeave: () => setIsDragActive(false),
-    onDropAccepted: () => setIsDragActive(false),
-    onDropRejected: () => setIsDragActive(false)
-  });
+  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      onFileSelect(files[0]);
+    }
+  }, [onFileSelect]);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
@@ -80,10 +87,16 @@ const FileUploader: React.FC<FileUploaderProps> = ({ selectedFile, onFileSelect 
       <h3>📁 Sélectionner un fichier</h3>
       
       <div 
-        {...getRootProps()} 
-        className={`dropzone ${isDragActive ? 'drag-active' : ''} ${isDragReject ? 'drag-reject' : ''}`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        className={`dropzone ${isDragOver ? 'drag-over' : ''}`}
       >
-        <input {...getInputProps()} />
+        <input 
+          type="file" 
+          onChange={handleFileInput} 
+          accept=".png,.jpg,.jpeg,.gif,.bmp,.webp,.ico,.exe,.txt,.md,.pdf,.mp3,.wav,.ogg,.flac,.mp4,.avi,.mkv,.mov"
+        />
         
         {selectedFile ? (
           <div className="selected-file">
