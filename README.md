@@ -1,155 +1,366 @@
-# VestyWinBox
+# 🚀 VestyWinBox - Application de Gestion Système Windows Premium
 
-Application de gestion système Windows avec interface moderne et fonctionnalités avancées.
+## 📋 Vue d'ensemble
 
-## 🚀 Fonctionnalités
+VestyWinBox est une application de gestion système Windows moderne développée avec **Electron**, **React**, **TypeScript** et **Framer Motion**. Elle offre une interface utilisateur premium avec des fonctionnalités avancées de gestion système, des animations fluides et un design professionnel.
 
-- **Dashboard** : Vue d'ensemble du système avec métriques en temps réel
-- **Gestionnaire d'outils** : Lancement d'applications système
-- **Terminal intégré** : Interface de ligne de commande avec commandes rapides
-- **Gestionnaire Chocolatey** : Installation et gestion de packages
-- **Explorateur NAS** : Gestion des partages réseau
-- **Benchmark WinSAT** : Affichage des scores de performance système
-- **Journal d'activité** : Suivi des actions utilisateur
+## ✨ Fonctionnalités Principales
 
-## 🛠️ Technologies
+### 🎯 Dashboard Interactif
+- **Tuiles d'action rapide** avec animations et effets visuels
+- **Sauvegarde automatique** des dossiers utilisateur
+- **Intégrité des fichiers système** (SFC /scannow)
+- **Nettoyage système** avec options configurables
+- **Désactivation UAC** avec avertissements de sécurité
+- **Options de redémarrage avancées** (Safe Mode, BIOS, Advanced Startup)
 
-- **Frontend** : React 18 + TypeScript + Vite
-- **Desktop** : Electron 30
-- **Styling** : TailwindCSS
-- **Icons** : Lucide React
-- **Build** : Electron Builder
+### ⚡ GodMode - Super Panneau de Contrôle
+- **30+ outils système Windows** organisés par catégories
+- **Recherche et filtrage** en temps réel
+- **Design glassmorphism** avec animations fluides
+- **Indicateurs de priorité** et permissions administrateur
+- **Exécution directe** des commandes système
 
-## 📦 Installation
+### 📊 Analytics & Rapports
+- **Métriques de performance** en temps réel
+- **Composant BackgroundGradient** avec animations
+- **Cartes HeroUI** intégrées
+- **Activité système** et logs détaillés
+- **Graphiques interactifs** et visualisations
+
+### 🛠️ Gestion des Applications
+- **Applications portables** avec lancement direct
+- **Logiciels installés** avec gestion complète
+- **Interface moderne** avec recherche et tri
+- **Catégorisation automatique** des outils
+
+## 🎨 Design & Thèmes
+
+### Thèmes Premium
+1. **Gold VIP** : Thème doré premium avec effets métalliques
+2. **Violet Neon** : Thème violet néon avec effets lumineux
+3. **RGB Gaming** : Thème RGB dynamique avec animations
+
+### Effets Visuels
+- **Glassmorphism** : Effets de verre et transparence
+- **Animations Framer Motion** : Transitions fluides et naturelles
+- **Gradients animés** : Arrière-plans dynamiques
+- **Effets de hover** : Interactions visuelles avancées
+- **Particules flottantes** : Ambiance immersive
+
+## 🧪 Tests & Qualité
+
+### Tests Unitaires
+```bash
+# Lancer tous les tests
+npm test
+
+# Tests en mode watch
+npm run test:watch
+
+# Couverture de code
+npm run test:coverage
+
+# Tests spécifiques
+npm test -- --run AnalyticsPage
+```
+
+### Couverture de Tests
+- **Composants React** : Tests de rendu et interactions
+- **Logique métier** : Validation des fonctionnalités
+- **Gestion d'erreurs** : Tests de robustesse
+- **Performance** : Tests de chargement et optimisation
+
+## 🚀 Optimisation des Performances
+
+### Lazy Loading
+- **Chargement différé** des pages et composants
+- **Code splitting** automatique par routes
+- **Cache intelligent** des composants chargés
+- **Optimisation des images** avec préchargement
+
+### Mémoisation
+- **useMemo** pour les calculs coûteux
+- **useCallback** pour les fonctions optimisées
+- **React.memo** pour les composants purs
+- **Cache des données** système
+
+## 🐛 Gestion d'Erreurs Robuste
+
+### Système de Logging
+```typescript
+import { logger } from './utils/logger';
+
+// Logs structurés
+logger.info('Opération réussie', 'system', { data: result });
+logger.error('Erreur critique', 'error', { error: err });
+logger.debug('Debug info', 'debug', { context: data });
+```
+
+### Types d'Erreurs
+- **SYSTEM_COMMAND** : Erreurs de commandes système
+- **NETWORK** : Erreurs réseau
+- **VALIDATION** : Erreurs de validation
+- **PERMISSION** : Erreurs de permissions
+- **RESOURCE** : Erreurs de ressources
+- **UNKNOWN** : Erreurs inconnues
+
+### Gestion Automatique
+- **Boundary d'erreurs React** pour capturer les erreurs UI
+- **Gestion des promesses rejetées** non gérées
+- **Logs détaillés** avec contexte et stack traces
+- **Notifications utilisateur** appropriées
+
+## 📚 Documentation Technique
+
+### Architecture
+```
+VestyWinBox-New/
+├── electron/                 # Processus principal Electron
+│   ├── main.cjs             # Point d'entrée principal
+│   └── preload.cjs          # Script de préchargement
+├── src/                     # Code source React
+│   ├── components/          # Composants réutilisables
+│   │   ├── ui/             # Composants UI de base
+│   │   └── Layout/         # Composants de mise en page
+│   ├── pages/              # Pages de l'application
+│   ├── services/           # Services métier
+│   ├── types/              # Définitions TypeScript
+│   ├── utils/              # Utilitaires (logger, erreurs)
+│   └── test/               # Configuration des tests
+├── public/                 # Assets statiques
+├── assets/                 # Ressources (icônes, images)
+└── docs/                   # Documentation
+```
+
+### API Electron
+```typescript
+interface ElectronAPI {
+  executeSystemCommand(command: string, args?: string[]): Promise<{
+    success: boolean;
+    stdout?: string;
+    stderr?: string;
+    error?: string;
+  }>;
+  
+  openExternal(url: string): Promise<{
+    success: boolean;
+    error?: string;
+  }>;
+  
+  selectBackupFolder(): Promise<{
+    success: boolean;
+    folderPath?: string;
+    error?: string;
+  }>;
+  
+  backupUserFolders(sourceFolders: string[], destination: string): Promise<{
+    success: boolean;
+    progress?: number;
+    error?: string;
+  }>;
+}
+```
+
+## 🔧 Installation & Configuration
 
 ### Prérequis
-- Node.js 18+ 
-- npm ou yarn
-- Windows 10/11
+- **Node.js 18+**
+- **npm ou yarn**
+- **Windows 10/11** (pour les fonctionnalités système)
 
-### Installation locale
+### Installation
 ```bash
 # Cloner le repository
-git clone [url-du-repo]
-cd vestywinbox
+git clone https://github.com/vesty91/VestyWinBox.git
+cd VestyWinBox-New
 
 # Installer les dépendances
 npm install
 
 # Lancer en mode développement
-npm run dev:electron
+npm run dev
 
-# Construire l'application
+# Build pour production
+npm run build
+
+# Lancer l'application Electron
+npm run electron:dev
+```
+
+### Scripts Disponibles
+```bash
+# Développement
+npm run dev              # Serveur de développement Vite
+npm run electron:dev     # Electron en mode développement
+npm run build            # Build de production
+npm run preview          # Prévisualisation du build
+
+# Tests
+npm test                 # Tests unitaires
+npm run test:watch       # Tests en mode watch
+npm run test:coverage    # Couverture de code
+npm run test:ui          # Interface de tests
+
+# Qualité de code
+npm run lint             # Vérification ESLint
+npm run lint:fix         # Correction automatique ESLint
+npm run type-check       # Vérification TypeScript
+
+# Build & Distribution
+npm run electron:build   # Build Electron
+npm run dist             # Création de l'installateur
+npm run clean            # Nettoyage des fichiers temporaires
+```
+
+## 🎯 Utilisation
+
+### Dashboard Principal
+1. **Sauvegarder** : Sauvegarde automatique des dossiers utilisateur
+2. **Intégrité** : Vérification de l'intégrité des fichiers système
+3. **Nettoyer** : Nettoyage système avec options configurables
+4. **UAC** : Désactivation du contrôle de compte utilisateur
+5. **Redémarrage** : Options de redémarrage avancées
+
+### Actions Rapides
+- **Sauvegarder Favoris** : Sauvegarde des favoris navigateurs
+- **Désactiver Télémétrie** : Désactivation de la collecte de données
+- **Point de Restauration** : Création de points de restauration
+- **Activer GodMode** : Activation du mode GodMode Windows
+- **Rapport Batterie** : Génération de rapports de batterie
+- **Vérifier Secure Boot** : Vérification du Secure Boot
+
+### GodMode
+- **Recherche** : Filtrer les outils par nom ou catégorie
+- **Catégories** : Système & Sécurité, Réseau & Internet, etc.
+- **Exécution** : Clic pour lancer directement les outils
+- **Indicateurs** : Priorité et permissions administrateur
+
+## 🔒 Sécurité
+
+### Bonnes Pratiques
+- **Validation des entrées** utilisateur
+- **Sanitisation** des commandes système
+- **Gestion sécurisée** des permissions
+- **Communication IPC** chiffrée
+
+### Permissions
+- **Vérification** des droits administrateur
+- **Gestion** des UAC prompts
+- **Isolation** des processus
+
+## 📊 Monitoring & Analytics
+
+### Métriques de Performance
+- **Temps de chargement** des pages
+- **Utilisation mémoire** en temps réel
+- **Performance** des animations
+- **Temps de réponse** des commandes système
+
+### Logs Détaillés
+- **Logs structurés** avec timestamps
+- **Catégorisation** des événements
+- **Données de performance** système
+- **Export** des logs en JSON/texte
+
+## 🚀 Déploiement
+
+### Build de Production
+```bash
+# Build optimisé
+npm run build
+
+# Package Electron
+npm run electron:build
+
+# Création de l'installateur
 npm run dist
 ```
 
-## 🎯 Scripts disponibles
-
-- `npm run dev` : Lance le serveur de développement Vite
-- `npm run dev:electron` : Lance l'app Electron en mode développement
-- `npm run build` : Construit l'application pour la production
-- `npm run dist` : Crée l'exécutable Windows
-- `npm run lint` : Vérifie le code avec ESLint
-- `npm run clean` : Nettoie les fichiers de build
-
-## 🏗️ Structure du projet
-
-```
-vestywinbox/
-├── src/
-│   ├── components/     # Composants réutilisables
-│   ├── pages/         # Pages de l'application
-│   ├── services/      # Services système
-│   ├── context/       # Contextes React
-│   └── App.tsx        # Composant principal
-├── assets/            # Ressources (icônes, outils)
-├── electron.cjs       # Processus principal Electron
-├── preload.cjs        # Script de préchargement
-└── dist/              # Fichiers de build
+### Configuration Electron Builder
+```json
+{
+  "build": {
+    "appId": "com.vestywinbox.app",
+    "productName": "VestyWinBox",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "public/icon.png"
+    }
+  }
+}
 ```
 
-## 🔧 Configuration
+## 🤝 Contribution
 
-L'application utilise plusieurs fichiers de configuration :
+### Guidelines
+1. **Respecter** les conventions de code
+2. **Ajouter des tests** pour les nouvelles fonctionnalités
+3. **Documenter** les changements
+4. **Suivre** le workflow Git
 
-- `electron.cjs` : Configuration Electron et gestionnaires IPC
-- `preload.cjs` : API sécurisée pour le renderer process
-- `tailwind.config.js` : Configuration TailwindCSS
-- `vite.config.ts` : Configuration Vite
-
-## 📝 Journal d'activité
-
-L'application enregistre automatiquement les actions utilisateur dans :
+### Structure des Commits
 ```
-%APPDATA%/vestywinbox/activity-log.json
+feat: nouvelle fonctionnalité
+fix: correction de bug
+docs: documentation
+style: formatage
+refactor: refactorisation
+test: tests
+chore: maintenance
 ```
 
-## 🚨 Sécurité
+## 📈 Roadmap
 
-- Context isolation activée
-- Node integration désactivée
-- API sécurisée via contextBridge
-- Validation des entrées utilisateur
+### Fonctionnalités Futures
+- [ ] **Support multi-plateforme** (macOS, Linux)
+- [ ] **Plugins système** extensibles
+- [ ] **API REST** pour intégrations
+- [ ] **Mode sombre/clair** automatique
+- [ ] **Synchronisation cloud** des paramètres
+
+### Optimisations Planifiées
+- [ ] **Web Workers** pour les tâches lourdes
+- [ ] **Cache intelligent** des données système
+- [ ] **Compression** des assets
+- [ ] **Optimisation** des animations
+
+## 📞 Support
+
+### Contact
+- **Développeur** : Vesty
+- **Repository** : https://github.com/vesty91/VestyWinBox
+- **Issues** : https://github.com/vesty91/VestyWinBox/issues
+
+### Ressources
+- [Documentation Electron](https://www.electronjs.org/docs)
+- [Documentation React](https://react.dev)
+- [Documentation TypeScript](https://www.typescriptlang.org/docs)
+- [Documentation Framer Motion](https://www.framer.com/motion)
 
 ## 📄 Licence
 
-Projet privé - Tous droits réservés
+Ce projet est sous licence **MIT**. Voir le fichier `LICENSE` pour plus de détails.
 
-## 👨‍💻 Développement
+---
 
-Pour contribuer au projet :
+## 🎉 Félicitations !
 
-1. Fork le repository
-2. Créer une branche feature
-3. Commiter les changements
-4. Pousser vers la branche
-5. Créer une Pull Request
+Vous avez maintenant une application de gestion système Windows moderne, robuste et performante avec :
 
-## 🐛 Support
+✅ **Tests unitaires complets**  
+✅ **Documentation technique détaillée**  
+✅ **Optimisation des performances** (lazy loading)  
+✅ **Gestion d'erreurs robuste**  
+✅ **Logs détaillés** pour le debugging  
+✅ **Interface utilisateur premium**  
+✅ **Architecture scalable**  
 
-Pour signaler un bug ou demander une fonctionnalité, veuillez créer une issue sur GitHub.
-
-## ✅ **ERREUR DE LINTER CORRIGÉE !**
-
-### ** CORRECTION APPORTÉE :**
-
-#### ** Problème identifié :**
-- ❌ **Erreur** : `'prompt' is not defined`
-- ✅ **Solution** : Remplacement de `prompt` par `window.prompt`
-
-#### ** Modification effectuée :**
-```typescript
-// Avant
-const backupPath = prompt(...);
-
-// Après  
-const backupPath = window.prompt(...);
-```
-
-### ** RÉSULTAT :**
-- ✅ **Build réussi** : Compilation sans erreurs
-- ✅ **Code propre** : Plus d'erreurs de linter
-- ✅ **Fonctionnalité maintenue** : La tuile "Sauvegarder Favoris" fonctionne correctement
-- ✅ **Push GitHub** : `db37855`
-
-### ** FONCTIONNALITÉ "SAUVEGARDER FAVORIS" :**
-
-#### **⭐ Interface utilisateur :**
-- **Demande de chemin** : `window.prompt` pour saisir le dossier de destination
-- **Exemple fourni** : `D:\BackupFavoris`
-- **Fallback** : Bureau si aucun chemin n'est spécifié
-
-#### **📁 Commandes exécutées :**
-```batch
-xcopy "%LOCALAPPDATA%\Google\Chrome\User Data\Default\Bookmarks" "D:\BackupFavoris\Chrome" /y
-xcopy "%LOCALAPPDATA%\Microsoft\Edge\User Data\Default\Bookmarks" "D:\BackupFavoris\Edge" /y
-```
-
-#### **✅ Feedback utilisateur :**
-- **Succès complet** : "Chrome et Edge : OK"
-- **Succès partiel** : Indication de quel navigateur a réussi
-- **Échec** : Instructions pour fermer les navigateurs
-
-**L'erreur de linter a été corrigée et toutes les 6 nouvelles tuiles fonctionnent parfaitement !** 🎉✨
-
-**L'application est maintenant prête pour les tests utilisateur !** 🚀🧪
+**VestyWinBox** est prêt pour la production ! 🚀

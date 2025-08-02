@@ -1,47 +1,46 @@
 import React, { useState } from 'react';
 import VIPLayout from './components/Layout/VIPLayout';
-import Dashboard from './pages/Dashboard/VIPDashboard';
-import AnalyticsPage from './pages/Analytics/AnalyticsPage';
+import VIPDashboard from './pages/Dashboard/VIPDashboard';
 import SoftwarePage from './pages/Software/SoftwarePage';
 import PortableAppsPage from './pages/PortableApps/PortableAppsPage';
+import NasExplorer from './pages/NasExplorer/NasExplorer';
 import FileConverter from './pages/FileConverter/FileConverter';
-import NASExplorerPage from './pages/NasExplorer/NASExplorerPage';
+import AnalyticsPage from './pages/Analytics/AnalyticsPage';
 import GodModePage from './pages/GodMode/GodModePage';
-import { ToastProvider } from './components/ui/toast';
 import './styles/globals.css';
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const [activePage, setActivePage] = useState('dashboard');
+
+  const handlePageChange = (page: string) => {
+    setActivePage(page);
+  };
 
   const renderPage = () => {
-    switch (currentPage) {
-      case 'dashboard':
-        return <Dashboard />;
-      case 'analytics':
-        return <AnalyticsPage />;
+      switch (activePage) {
+        case 'dashboard':
+        return <VIPDashboard />;
       case 'software':
         return <SoftwarePage />;
-      case 'portable-apps':
+        case 'portable':
         return <PortableAppsPage />;
-      case 'file-converter':
+        case 'nas':
+          return <NasExplorer />;
+      case 'converter':
         return <FileConverter />;
-      case 'nas-explorer':
-        return <NASExplorerPage />;
+      case 'analytics':
+        return <AnalyticsPage />;
       case 'godmode':
         return <GodModePage />;
-      default:
-        return <Dashboard />;
+        default:
+        return <VIPDashboard />;
     }
   };
 
   return (
-    <ToastProvider>
-      <div className="app">
-        <VIPLayout currentPage={currentPage} onPageChange={setCurrentPage}>
-          {renderPage()}
-        </VIPLayout>
-      </div>
-    </ToastProvider>
+    <VIPLayout activePage={activePage} onPageChange={handlePageChange}>
+      {renderPage()}
+    </VIPLayout>
   );
 };
 
