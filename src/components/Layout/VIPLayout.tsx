@@ -1,268 +1,129 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { 
-  Menu, 
-  Minimize2 as MinimizeIcon,
-  Maximize2,
-  X as CloseIcon,
-  Cpu,
-  MemoryStick,
-  HardDrive,
-  Wifi,
-  Battery,
-  Thermometer,
-  Zap
+  Home, 
+  BarChart3, 
+  Package, 
+  FolderOpen, 
+  FileText, 
+  Database, 
+  Zap,
+  Settings
 } from 'lucide-react';
+import ThemeToggle from '../ui/ThemeToggle';
 import './VIPLayout.css';
-import logoBarreLaterale from '../../../assets/logo-barre-laterale.png';
-import Footer from './Footer';
 
 interface VIPLayoutProps {
   children: React.ReactNode;
-  activePage: string;
-  onPageChange?: (page: string) => void;
+  currentPage: string;
+  onPageChange: (page: string) => void;
 }
 
-const VIPLayout: React.FC<VIPLayoutProps> = ({ children, activePage, onPageChange }) => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [systemMetrics, setSystemMetrics] = useState({
-    cpu: 45,
-    ram: 62,
-    disk: 28,
-    network: 78,
-    battery: 85,
-    temp: 42
-  });
-
-  // Simulation des métriques système en temps réel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSystemMetrics({
-        cpu: Math.floor(Math.random() * 40) + 20,
-        ram: Math.floor(Math.random() * 50) + 30,
-        disk: Math.floor(Math.random() * 30) + 10,
-        network: Math.floor(Math.random() * 100) + 50,
-        battery: Math.floor(Math.random() * 40) + 60,
-        temp: Math.floor(Math.random() * 20) + 25
-      });
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // Fonctions réelles pour les contrôles de fenêtre
-  const handleMinimize = () => {
-    if (window.electronAPI?.minimizeWindow) {
-      window.electronAPI.minimizeWindow();
-    } else {
-      console.log('Minimize window');
-    }
-  };
-
-  const handleMaximize = () => {
-    if (window.electronAPI?.maximizeWindow) {
-      window.electronAPI.maximizeWindow();
-    } else {
-      console.log('Maximize window');
-    }
-  };
-
-  const handleClose = () => {
-    if (window.electronAPI?.closeWindow) {
-      window.electronAPI.closeWindow();
-    } else {
-      console.log('Close window');
-    }
-  };
-
-  // Fonction de navigation
-  const handleNavigation = (pageId: string) => {
-    console.log('🧭 Navigation vers:', pageId);
-    if (onPageChange) {
-      onPageChange(pageId);
-    }
-  };
-
-  // Fonction pour gérer le menu mobile
-  const handleMobileMenuToggle = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
-
+const VIPLayout: React.FC<VIPLayoutProps> = ({ children, currentPage, onPageChange }) => {
   const menuItems = [
-    {
-      id: 'dashboard',
-      label: 'Accueil',
-      featured: true
-    },
-    {
-      id: 'portable',
-      label: 'Apps Portable'
-    },
-    {
-      id: 'software',
-      label: 'Logiciels'
-    },
-    {
-      id: 'nas',
-      label: 'NAS'
-    },
-    {
-      id: 'converter',
-      label: 'Convertisseur'
-    },
-    {
-      id: 'analytics',
-      label: 'Analytics'
-    },
-    {
-      id: 'godmode',
-      label: 'GodMode',
-      featured: true
-    }
-  ];
-
-  const metrics = [
-    { icon: Cpu, value: systemMetrics.cpu, label: 'CPU', unit: '%', color: '#667eea' },
-    { icon: MemoryStick, value: systemMetrics.ram, label: 'RAM', unit: '%', color: '#10b981' },
-    { icon: HardDrive, value: systemMetrics.disk, label: 'DISK', unit: '%', color: '#f59e0b' },
-    { icon: Wifi, value: systemMetrics.network, label: 'NET', unit: 'Mbps', color: '#8b5cf6' },
-    { icon: Battery, value: systemMetrics.battery, label: 'BAT', unit: '%', color: '#06b6d4' },
-    { icon: Thermometer, value: systemMetrics.temp, label: 'TEMP', unit: '°C', color: '#ef4444' }
+    { id: 'dashboard', label: 'Accueil', icon: Home, featured: true },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3, featured: false },
+    { id: 'software', label: 'Logiciels', icon: Package, featured: false },
+    { id: 'portableapps', label: 'Apps Portable', icon: FolderOpen, featured: false },
+    { id: 'fileconverter', label: 'Convertisseur', icon: FileText, featured: false },
+    { id: 'nasexplorer', label: 'NAS Explorer', icon: Database, featured: false },
+    { id: 'godmode', label: 'GodMode', icon: Zap, featured: true },
   ];
 
   return (
-    <div className="vip-layout desktop-pro">
-      {/* Top Bar */}
-      <div className="top-bar">
-        <div className="top-bar-left">
-          <button 
-            className="sidebar-toggle"
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            title="Réduire/Étendre la sidebar"
-            aria-label="Réduire/Étendre la sidebar"
+    <div className="vip-layout">
+      {/* Sidebar */}
+      <motion.aside 
+        className="vip-sidebar"
+        initial={{ x: -300 }}
+        animate={{ x: 0 }}
+        transition={{ duration: 0.5, type: "spring" }}
+      >
+        <div className="sidebar-header">
+          <motion.div 
+            className="logo-container"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
           >
-            <Menu size={20} />
-          </button>
-        </div>
-
-        {/* Métriques Système dans le Header */}
-        <div className="header-metrics">
-          {metrics.map((metric) => (
-            <span key={metric.label} className="metric-text" data-metric={metric.label}>
-              {metric.label} : {metric.value}{metric.unit}
-            </span>
-          ))}
-        </div>
-
-        <div className="top-bar-right">
-          {/* Menu Burger pour Mobile */}
-          <button 
-            className="mobile-menu-toggle"
-            onClick={handleMobileMenuToggle}
-            title="Menu"
-            aria-label="Menu"
-          >
-            <Menu size={20} />
-          </button>
-
-          <div className="window-controls">
-            <button 
-              className="window-control minimize" 
-              onClick={handleMinimize}
-              title="Minimiser"
-              aria-label="Minimiser"
-            >
-              <MinimizeIcon size={16} />
-            </button>
-            <button 
-              className="window-control maximize" 
-              onClick={handleMaximize}
-              title="Maximiser"
-              aria-label="Maximiser"
-            >
-              <Maximize2 size={16} />
-            </button>
-            <button 
-              className="window-control close" 
-              onClick={handleClose}
-              title="Fermer"
-              aria-label="Fermer"
-            >
-              <CloseIcon size={16} />
-            </button>
-          </div>
-        </div>
-
-        {/* Menu Mobile Overlay */}
-        {mobileMenuOpen && (
-          <div className="mobile-menu-overlay" onClick={handleMobileMenuToggle}>
-            <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
-              <div className="mobile-menu-header">
-                <div className="mobile-menu-brand">
-                  <img 
-                    src={logoBarreLaterale} 
-                    alt="VestyWinBox Logo" 
-                    className="mobile-menu-logo"
-                  />
-                  <h3>VestyWinBox</h3>
-                </div>
-                <button 
-                  onClick={handleMobileMenuToggle}
-                  title="Fermer le menu"
-                  aria-label="Fermer le menu"
-                >
-                  <CloseIcon size={20} />
-                </button>
-              </div>
-              <div className="mobile-menu-content">
-                {/* Menu items supprimés - plus de boutons d'action */}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="main-container">
-        {/* Sidebar */}
-        <div className={`sidebar ${sidebarCollapsed ? 'collapsed' : 'open'}`}>
-          <div className="sidebar-logo-container">
             <img 
-              src={logoBarreLaterale} 
+              src="/logo-barre-laterale.png" 
               alt="VestyWinBox Logo" 
               className="sidebar-logo"
             />
-          </div>
+          </motion.div>
+          <h1 className="sidebar-title">VestyWinBox</h1>
+        </div>
 
-          <div className="sidebar-content">
-            <div className="nav-section">
-              <div className="nav-section-title">
-                <span>NAVIGATION</span>
-              </div>
-              <div className="nav-items">
-                {menuItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className={`nav-item ${activePage === item.id ? 'active' : ''} ${item.featured ? 'featured' : ''}`}
-                    onClick={() => handleNavigation(item.id)}
-                  >
-                    <div className="nav-item-text">
-                      {item.label}
-                    </div>
+        <nav className="sidebar-nav">
+          <ul className="nav-list">
+            {menuItems.map((item, index) => (
+              <motion.li 
+                key={item.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ 
+                  duration: 0.3, 
+                  delay: index * 0.1,
+                  type: "spring",
+                  stiffness: 300
+                }}
+              >
+                <motion.button
+                  className={`nav-item ${currentPage === item.id ? 'active' : ''} ${item.featured ? 'featured' : ''}`}
+                  onClick={() => onPageChange(item.id)}
+                  whileHover={{ 
+                    scale: 1.05,
+                    x: 5,
+                    transition: { type: "spring", stiffness: 400 }
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="nav-icon">
+                    <item.icon size={20} />
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+                  <span className="nav-label">{item.label}</span>
+                  {item.featured && (
+                    <motion.div 
+                      className="featured-badge"
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        opacity: [0.7, 1, 0.7]
+                      }}
+                      transition={{ 
+                        duration: 2, 
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                  )}
+                </motion.button>
+              </motion.li>
+            ))}
+          </ul>
+        </nav>
 
-        {/* Main Content */}
-        <div className="main-content">
-          <div className="page-content">
-            {children}
-          </div>
+        <div className="sidebar-footer">
+          <motion.div
+            className="theme-toggle-container"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+          >
+            <ThemeToggle />
+          </motion.div>
         </div>
-      </div>
-      <Footer />
+      </motion.aside>
+
+      {/* Main Content */}
+      <motion.main 
+        className="vip-main"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        {children}
+      </motion.main>
     </div>
   );
 };
