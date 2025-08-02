@@ -29,23 +29,23 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Header Moderne */
+/* Header Moderne avec titre et bouton alignés */
 .systemcheck-modal-header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   padding: 32px 32px 0 32px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   margin-bottom: 32px;
-  position: relative;
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+  position: relative;
 }
 
 .systemcheck-modal-title {
   display: flex;
   align-items: center;
   gap: 16px;
-  justify-content: center;
+  flex: 1;
 }
 
 .systemcheck-icon {
@@ -58,6 +58,7 @@
     0 0 0 1px rgba(16, 185, 129, 0.2);
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .systemcheck-icon::before {
@@ -82,32 +83,41 @@
   font-size: 1.75rem;
   font-weight: 700;
   margin: 0;
-  text-align: center;
   background: linear-gradient(135deg, #f8fafc 0%, #cbd5e1 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  flex: 1;
 }
 
 .systemcheck-modal-close {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #94a3b8;
-  padding: 10px;
+  padding: 12px;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  position: absolute;
-  right: 32px;
-  top: 32px;
   backdrop-filter: blur(10px);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
 }
 
 .systemcheck-modal-close:hover {
   background: rgba(255, 255, 255, 0.2);
   color: #f8fafc;
   transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.systemcheck-modal-close:active {
+  transform: scale(0.95);
 }
 
 .system-check-modal-content {

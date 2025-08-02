@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, CheckCircle, AlertCircle, X, Clock, Activity, Zap, FileCheck, Settings } from 'lucide-react';
 import './SystemCheckModal.css';
@@ -147,7 +147,7 @@ const SystemCheckModal: React.FC<SystemCheckModalProps> = ({ isOpen, onClose }) 
             exit={{ scale: 0.8, opacity: 0, y: 50 }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header avec design moderne */}
+            {/* Header moderne avec titre et bouton de fermeture alignés */}
             <div className="systemcheck-modal-header">
               <div className="systemcheck-modal-title">
                 <div className="systemcheck-icon">
@@ -156,7 +156,12 @@ const SystemCheckModal: React.FC<SystemCheckModalProps> = ({ isOpen, onClose }) 
                 <h2>Vérification d'Intégrité des Fichiers Système</h2>
               </div>
               {!checkProgress.isRunning && (
-                <button className="systemcheck-modal-close" onClick={handleClose}>
+                <button 
+                  className="systemcheck-modal-close" 
+                  onClick={handleClose}
+                  title="Fermer la fenêtre"
+                  aria-label="Fermer la fenêtre"
+                >
                   <X size={20} />
                 </button>
               )}
