@@ -210,6 +210,56 @@
   }
 }
 
+/* Background Gradient Section */
+.background-gradient-section {
+  margin-bottom: var(--space-3xl);
+  background: var(--gradient-card);
+  backdrop-filter: var(--blur-xl);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-3xl);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.background-gradient-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--vip-amber-gradient);
+  animation: shimmer 3s ease-in-out infinite;
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.6);
+}
+
+.background-gradient-container {
+  margin-top: var(--space-2xl);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+/* Responsive pour Background Gradient */
+@media (max-width: 768px) {
+  .background-gradient-section {
+    padding: var(--space-2xl);
+  }
+  
+  .background-gradient-container {
+    min-height: 250px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .background-gradient-container {
+    min-height: 280px;
+  }
+}
+
 /* Section Titles */
 .section-title {
   display: flex;
