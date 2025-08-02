@@ -1,10 +1,13 @@
 import { logger } from './LoggerService';
 
+// Service de conversion de fichiers
+// Gère la conversion entre différents formats de fichiers
+
 export interface ConversionResult {
   success: boolean;
   outputPath?: string;
   error?: string;
-  fileSize?: number;
+  dataUrl?: string;
 }
 
 export interface ConversionOptions {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
@@ -35,10 +35,6 @@ const SoftwarePage: React.FC = () => {
     loadLogiciels();
   }, []);
 
-  useEffect(() => {
-    filterAndSortLogiciels();
-  }, [logiciels, selectedCategory, searchQuery, sortBy]);
-
   const loadLogiciels = async () => {
     setLoading(true);
     try {
@@ -50,7 +46,7 @@ const SoftwarePage: React.FC = () => {
     setLoading(false);
   };
 
-  const filterAndSortLogiciels = () => {
+  const filterAndSortLogiciels = useCallback(() => {
     let filtered = logiciels;
 
     // Filtrer par catégorie
@@ -78,7 +74,11 @@ const SoftwarePage: React.FC = () => {
     });
 
     setFilteredLogiciels(filtered);
-  };
+  }, [logiciels, selectedCategory, searchQuery, sortBy]);
+
+  useEffect(() => {
+    filterAndSortLogiciels();
+  }, [filterAndSortLogiciels]);
 
   const handleLaunch = async (logiciel: Tool) => {
     console.log('▶️ Lancement de:', logiciel.name);

@@ -5,7 +5,6 @@ import {
   Trash2,
   Shield,
   Save,
-  Unlock,
   Star,
   Ban,
   HardDrive,
@@ -47,85 +46,10 @@ const VIPDashboard: React.FC = () => {
   const [isSecureBootModalOpen, setIsSecureBootModalOpen] = useState(false);
   const [isRestorePointModalOpen, setIsRestorePointModalOpen] = useState(false);
 
-  // Fonction pour ouvrir les paramètres de thèmes Windows
-  const openThemeSettings = () => {
-    try {
-      console.log('🔧 Ouverture des paramètres de thèmes Windows...');
-      
-      // Méthode 1: Utiliser shell.openExternal via Electron (recommandé)
-      if (window.electronAPI && 'openExternal' in window.electronAPI) {
-        const electronAPI = window.electronAPI as typeof window.electronAPI & { openExternal: (url: string) => Promise<{ success: boolean; error?: string }> };
-        electronAPI.openExternal('ms-settings:themes')
-          .then((result: { success: boolean; error?: string }) => {
-            if (result.success) {
-              console.log('✅ Paramètres de thèmes Windows ouverts via shell.openExternal');
-            } else {
-              console.log('❌ Erreur shell.openExternal, tentative cmd...');
-              // Fallback vers cmd
-              if (window.electronAPI?.executeSystemCommand) {
-                window.electronAPI.executeSystemCommand('cmd.exe', ['/c', 'start', 'ms-settings:themes'])
-                  .then((cmdResult) => {
-                    if (cmdResult.success) {
-                      console.log('✅ Paramètres de thèmes Windows ouverts via cmd');
-                    } else {
-                      console.log('❌ Erreur cmd, tentative window.open...');
-                      window.open('ms-settings:themes', '_blank');
-                    }
-                  });
-              } else {
-                console.log('❌ API Electron non disponible, tentative window.open...');
-                window.open('ms-settings:themes', '_blank');
-              }
-            }
-          });
-      } else {
-        console.log('❌ API Electron non disponible, tentative window.open...');
-        window.open('ms-settings:themes', '_blank');
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors de l\'ouverture des paramètres de thèmes:', error);
-      // Fallback final
-      window.open('ms-settings:themes', '_blank');
-    }
-  };
-
   // Fonction pour exécuter la vérification d'intégrité des fichiers système
   const runSystemFileChecker = () => {
     console.log('🔧 Lancement de la vérification d\'intégrité des fichiers système...');
     setIsSystemCheckModalOpen(true);
-  };
-
-  // Fonction pour désactiver l'UAC
-  const disableUAC = () => {
-    const confirmDisable = window.confirm(
-      '⚠️ ATTENTION : Désactiver l\'UAC peut exposer votre système à des risques de sécurité.\n\n' +
-      'Cette action va :\n' +
-      '• Désactiver les invites d\'élévation\n' +
-      '• Permettre l\'exécution de programmes sans confirmation\n' +
-      '• Réduire la sécurité du système\n\n' +
-      'Êtes-vous sûr de vouloir continuer ?'
-    );
-
-    if (confirmDisable) {
-      console.log('🔧 Désactivation de l\'UAC...');
-      
-      if (window.electronAPI?.executeSystemCommand) {
-        // Désactiver l'UAC via PowerShell
-        window.electronAPI.executeSystemCommand('powershell.exe', [
-          '-Command', 
-          'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "EnableLUA" -Value 0'
-        ]).then((result) => {
-          if (result.success) {
-            alert('✅ UAC désactivé avec succès !\n\nUn redémarrage est recommandé pour appliquer les changements.');
-          } else {
-            alert('❌ Erreur lors de la désactivation de l\'UAC :\n' + result.error);
-          }
-        });
-      } else {
-        alert('❌ API Electron non disponible.\n\nVeuillez exécuter manuellement cette commande PowerShell en tant qu\'administrateur :\n\n' +
-              'Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System" -Name "EnableLUA" -Value 0');
-      }
-    }
   };
 
   // Fonction pour activer le GodMode

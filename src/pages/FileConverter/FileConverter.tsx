@@ -1,6 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { Download, FolderOpen, FileText, Image, X } from 'lucide-react';
 import FileUploader from './FileUploader';
 import ConversionOptions from './ConversionOptions';
 import ConversionProgress from './ConversionProgress';
@@ -22,32 +20,23 @@ export interface ConversionTask {
 }
 
 export const FileConverter: React.FC = () => {
-  // eslint-disable-next-line @typescript-eslint/no-undef
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [targetFormat, setTargetFormat] = useState<string>('');
   const [conversionTasks, setConversionTasks] = useState<ConversionTask[]>([]);
   const [isConverting, setIsConverting] = useState(false);
   const conversionService = FileConversionService.getInstance();
 
-  // eslint-disable-next-line @typescript-eslint/no-undef
   const handleFileSelect = useCallback((file: File) => {
     setSelectedFile(file);
-    // logger.info(`Fichier sélectionné: ${file.name}`, { size: file.size, type: file.type }, 'FILE_CONVERTER'); // Removed logger
   }, []);
 
   const handleFormatSelect = useCallback((format: string) => {
     setTargetFormat(format);
-    // logger.debug(`Format cible sélectionné: ${format}`, null, 'FILE_CONVERTER'); // Removed logger
   }, []);
 
   const startConversion = useCallback(async () => {
     if (!selectedFile || !targetFormat) {
-      // addNotification({ // Removed addNotification
-      //   type: 'error',
-      //   title: 'Erreur',
-      //   message: 'Veuillez sélectionner un fichier et un format cible'
-      // });
-      alert('Veuillez sélectionner un fichier et un format cible'); // Replaced addNotification
+      alert('Veuillez sélectionner un fichier et un format cible');
       return;
     }
 
@@ -81,14 +70,8 @@ export const FileConverter: React.FC = () => {
             : t
         ));
         
-        // addNotification({ // Removed addNotification
-        //   type: 'success',
-        //   title: 'Conversion réussie',
-        //   message: `${selectedFile.name} a été converti en ${targetFormat}`
-        // });
-        alert(`${selectedFile.name} a été converti en ${targetFormat}`); // Replaced addNotification
+        alert(`${selectedFile.name} a été converti en ${targetFormat}`);
 
-        // logger.info(`Conversion réussie: ${selectedFile.name} -> ${targetFormat}`, null, 'FILE_CONVERTER'); // Removed logger
       } else {
         setConversionTasks(prev => prev.map(t => 
           t.id === taskId 
@@ -96,32 +79,18 @@ export const FileConverter: React.FC = () => {
             : t
         ));
         
-        // addNotification({ // Removed addNotification
-        //   type: 'error',
-        //   title: 'Erreur de conversion',
-        //   message: result.error || 'Une erreur est survenue lors de la conversion'
-        // });
-        alert(result.error || 'Une erreur est survenue lors de la conversion'); // Replaced addNotification
+        alert(`Erreur lors de la conversion: ${result.error}`);
       }
     } catch (error) {
       setConversionTasks(prev => prev.map(t => 
         t.id === taskId 
-          ? { ...t, status: 'error', error: 'Erreur inconnue' }
+          ? { ...t, status: 'error', error: error instanceof Error ? error.message : 'Erreur inconnue' }
           : t
       ));
       
-      // addNotification({ // Removed addNotification
-      //   type: 'error',
-      //   title: 'Erreur de conversion',
-      //   message: 'Une erreur est survenue lors de la conversion'
-      // });
-      alert('Une erreur est survenue lors de la conversion'); // Replaced addNotification
-
-      // logger.error(`Erreur de conversion: ${error}`, null, 'FILE_CONVERTER'); // Removed logger
+      alert(`Erreur lors de la conversion: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
     } finally {
       setIsConverting(false);
-      setSelectedFile(null);
-      setTargetFormat('');
     }
   }, [selectedFile, targetFormat, conversionService]);
 
@@ -182,25 +151,8 @@ export const FileConverter: React.FC = () => {
           link.click();
           URL.revokeObjectURL(url);
           
-          // addNotification({ // Removed addNotification
-          //   type: 'success',
-          //   title: 'Image téléchargée',
-          //   message: `L'image a été convertie et téléchargée en ${task.targetFormat.toUpperCase()}`
-          // });
-          alert(`L'image a été convertie et téléchargée en ${task.targetFormat.toUpperCase()}`); // Replaced addNotification
-          
-          // logger.info(`Image téléchargée: ${task.result}`, { // Removed logger
-          //   originalFile: task.fileName,
-          //   targetFormat: task.targetFormat,
-          //   size: blob.size 
-          // }, 'FILE_CONVERTER');
         } catch {
-          // addNotification({ // Removed addNotification
-          //   type: 'error',
-          //   title: 'Erreur de téléchargement',
-          //   message: 'Impossible de télécharger l\'image convertie'
-          // });
-          alert('Impossible de télécharger l\'image convertie'); // Replaced addNotification
+          alert('Impossible de télécharger l\'image convertie');
         }
         
       } else {
@@ -265,39 +217,16 @@ export const FileConverter: React.FC = () => {
         // Nettoyer l'URL
         URL.revokeObjectURL(url);
         
-        // addNotification({ // Removed addNotification
-        //   type: 'success',
-        //   title: 'Téléchargement',
-        //   message: `${task.result} a été téléchargé dans votre dossier Downloads`
-        // });
-        alert(`${task.result} a été téléchargé dans votre dossier Downloads`); // Replaced addNotification
-        
-        // logger.info(`Fichier téléchargé: ${task.result}`, { // Removed logger
-        //   originalFile: task.fileName,
-        //   targetFormat: task.targetFormat,
-        //   size: blob.size 
-        // }, 'FILE_CONVERTER');
       }
     }
-  }, []); // Removed addNotification from dependency array
+  }, []);
 
   const openOutputDirectory = useCallback(async () => {
     try {
       await conversionService.openOutputDirectory();
-      // addNotification({ // Removed addNotification
-      //   type: 'success',
-      //   title: 'Dossier ouvert',
-      //   message: 'Le dossier de conversions a été ouvert'
-      // });
-      alert('Le dossier de conversions a été ouvert'); // Replaced addNotification
+      alert('Le dossier de conversions a été ouvert');
     } catch {
-      // Gérer l'erreur silencieusement ou logger
-      // addNotification({ // Removed addNotification
-      //   type: 'error',
-      //   title: 'Erreur',
-      //   message: 'Impossible d\'ouvrir le dossier de conversions'
-      // });
-      alert('Impossible d\'ouvrir le dossier de conversions'); // Replaced addNotification
+      alert('Impossible d\'ouvrir le dossier de conversions');
     }
   }, [conversionService]);
 

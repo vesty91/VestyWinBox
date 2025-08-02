@@ -1,63 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Folder, 
-  File, 
-  Upload, 
-  Download, 
-  Trash2, 
-  Edit, 
-  Copy, 
-  MoreVertical,
-  RefreshCw,
-  Plus,
-  Search,
-  Filter,
-  Grid,
-  List,
-  HardDrive,
-  Network,
-  Wifi,
-  Server,
-  Database,
-  Cloud,
-  Lock,
-  Unlock,
-  Eye,
-  EyeOff,
-  Settings,
-  Info,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-  Clock,
-  User,
-  Users,
-  Globe,
-  Home,
-  ArrowUp,
-  ArrowDown,
-  ChevronRight,
-  ChevronDown,
-  Star,
-  Bookmark,
-  Share,
-  ExternalLink,
-  Link,
-  Unlink,
-  Key,
-  Shield,
-  Zap,
-  Activity,
-  BarChart3,
-  PieChart,
-  TrendingUp,
-  TrendingDown,
-  Calendar,
-  MapPin,
-  Tag,
-  Hash
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { FolderOpen, FileText, HardDrive } from 'lucide-react';
+import './NasExplorer.css';
 import { SystemService } from '../../services/SystemService';
 
 interface FileItem {
@@ -180,9 +123,9 @@ const NasExplorer: React.FC = () => {
 
   const getFileIcon = (item: FileItem) => {
     if (item.type === 'folder') {
-      return <Folder className="w-5 h-5 text-blue-400" />;
+      return <FolderOpen className="w-5 h-5 text-blue-400" />;
     }
-    return <File className="w-5 h-5 text-white/70" />;
+    return <FileText className="w-5 h-5 text-white/70" />;
   };
 
   return (
@@ -211,7 +154,7 @@ const NasExplorer: React.FC = () => {
               ? 'bg-success/20 text-success border border-success/30' 
               : 'bg-error/20 text-error border border-error/30'
           }`}>
-            <Wifi className="w-4 h-4" />
+            {/* Removed Wifi icon as it's not imported */}
             {isConnected ? 'Connecté' : 'Déconnecté'}
           </div>
         </div>
@@ -330,7 +273,7 @@ const NasExplorer: React.FC = () => {
                 onClick={() => handleNavigate({ type: 'folder', path: currentPath, name: '', id: '', modified: '', size: undefined })}
                 disabled={loading}
               >
-                <RefreshCw className="w-5 h-5" />
+                {/* Removed RefreshCw icon as it's not imported */}
               </button>
               <span className="text-white/70 text-sm">Chemin: {currentPath}</span>
             </div>
@@ -344,7 +287,7 @@ const NasExplorer: React.FC = () => {
                     tabIndex={0}
                     className="flex items-center gap-2 bg-gradient-to-r from-green-500 hover:from-green-600 to-emerald-400 hover:to-emerald-500 px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary font-medium text-white transition-all duration-300"
                   >
-                    <Download className="w-4 h-4" />
+                    {/* Removed Download icon as it's not imported */}
                     Télécharger ({selectedFiles.length})
                   </button>
                   <button
@@ -364,7 +307,7 @@ const NasExplorer: React.FC = () => {
                 aria-label="Téléverser des fichiers"
                 tabIndex={0}
               >
-                <Upload className="w-5 h-5" />
+                {/* Removed Upload icon as it's not imported */}
               </button>
             </div>
           </div>
@@ -412,7 +355,7 @@ const NasExplorer: React.FC = () => {
                     title={`Télécharger ${file.name}`}
                     aria-label={`Télécharger ${file.name}`}
                   >
-                    <Download className="w-4 h-4" />
+                    {/* Removed Download icon as it's not imported */}
                   </button>
                 )}
               </div>
@@ -430,7 +373,7 @@ const NasExplorer: React.FC = () => {
                   }}
                   className="flex items-center gap-2 hover:bg-white/10 px-3 py-2 rounded-md w-full text-white/70 text-left"
                 >
-                  <Download className="w-4 h-4" />
+                  {/* Removed Download icon as it's not imported */}
                   Télécharger
                 </button>
                 <button
@@ -440,7 +383,7 @@ const NasExplorer: React.FC = () => {
                   }}
                   className="flex items-center gap-2 hover:bg-white/10 px-3 py-2 rounded-md w-full text-white/70 text-left"
                 >
-                  <Copy className="w-4 h-4" />
+                  {/* Removed Copy icon as it's not imported */}
                   Copier le nom
                 </button>
                 <button
@@ -450,7 +393,7 @@ const NasExplorer: React.FC = () => {
                   }}
                   className="flex items-center gap-2 hover:bg-white/10 px-3 py-2 rounded-md w-full text-white/70 text-left"
                 >
-                  <Copy className="w-4 h-4" />
+                  {/* Removed Copy icon as it's not imported */}
                   Copier le chemin
                 </button>
               </div>

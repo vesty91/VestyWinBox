@@ -30,7 +30,7 @@ const MonitorModal: React.FC<MonitorModalProps> = ({ isOpen, onClose }) => {
       console.log('🔄 Démarrage du redémarrage en mode sans échec...');
       setButtonStates(prev => ({ ...prev, safeMode: 'running' }));
       
-      const confirmed = confirm(
+      const confirmed = window.confirm(
         '🔄 Redémarrage en Mode Sans Échec\n\n' +
         'Cette action va redémarrer votre ordinateur en mode sans échec.\n\n' +
         '⚠️ ATTENTION :\n' +
@@ -82,7 +82,7 @@ const MonitorModal: React.FC<MonitorModalProps> = ({ isOpen, onClose }) => {
       console.log('🔧 Démarrage du redémarrage vers le BIOS...');
       setButtonStates(prev => ({ ...prev, bios: 'running' }));
       
-      const confirmed = confirm(
+      const confirmed = window.confirm(
         '🔧 Redémarrage vers le BIOS\n\n' +
         'Cette action va redémarrer votre ordinateur et accéder directement au BIOS.\n\n' +
         '⚠️ ATTENTION :\n' +
@@ -134,7 +134,7 @@ const MonitorModal: React.FC<MonitorModalProps> = ({ isOpen, onClose }) => {
       console.log('⚙️ Démarrage des options de démarrage avancées...');
       setButtonStates(prev => ({ ...prev, advanced: 'running' }));
       
-      const confirmed = confirm(
+      const confirmed = window.confirm(
         '⚙️ Démarrage Avancé\n\n' +
         'Cette action va redémarrer votre ordinateur vers les options de démarrage avancées.\n\n' +
         '⚠️ ATTENTION :\n' +

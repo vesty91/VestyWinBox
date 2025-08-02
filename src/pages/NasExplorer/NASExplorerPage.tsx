@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Network, 
-  Folder, 
-  File, 
   HardDrive, 
-  Upload, 
+  Network, 
+  Upload,
   Download,
+  Share2,
   Search,
-  Settings,
   Plus,
-  Trash2,
-  Share2
+  Folder,
+  File,
+  Trash2
 } from 'lucide-react';
 import './NASExplorerPage.css';
 
 const NASExplorerPage: React.FC = () => {
-  const [currentPath, setCurrentPath] = useState('/');
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
 
   const handleFileSelect = (fileName: string) => {
