@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Activity, 
-  Trash2,
-  Shield,
-  Save,
-  Star,
-  Ban,
-  HardDrive,
-  Zap,
-  Battery,
-  Lock,
   LucideIcon,
   Sparkles,
   Clock
 } from 'lucide-react';
 import './VIPDashboard.css';
 import logoPage1 from '../../../assets/logo-page-1.png';
+
+// Import des icônes personnalisées
+import iconSauvegarde from '../../../assets/tools/icons/icon-page-accueil/sauvegarde.png';
+import iconIntegrite from '../../../assets/tools/icons/icon-page-accueil/Intégrité.png';
+import iconNettoyage from '../../../assets/tools/icons/icon-page-accueil/netoyage.png';
+import iconRedemarrer from '../../../assets/tools/icons/icon-page-accueil/redemarer.png';
+import iconFavoris from '../../../assets/tools/icons/icon-page-accueil/favoris.png';
+import iconTelemetrie from '../../../assets/tools/icons/icon-page-accueil/telemetrie.png';
+import iconRestauration from '../../../assets/tools/icons/icon-page-accueil/Restauration.png';
+import iconGodMode from '../../../assets/tools/icons/icon-page-accueil/GodMode-removebg-preview.png';
+import iconBatterie from '../../../assets/tools/icons/icon-page-accueil/batrie.png';
+import iconSecureBoot from '../../../assets/tools/icons/icon-page-accueil/secure-boot.png';
+
 import BackupModal from '../../components/BackupModal';
 import SystemCheckModal from '../../components/SystemCheckModal';
 import CleanupModal from '../../components/CleanupModal';
@@ -30,7 +33,7 @@ interface QuickAction {
   id: string;
   title: string;
   description: string;
-  icon: LucideIcon;
+  icon: string;
   color: string;
   gradient: string;
   action: () => void;
@@ -110,13 +113,13 @@ const VIPDashboard: React.FC = () => {
     }
   };
 
-  // Configuration des actions rapides avec catégories et priorités
+  // Configuration des actions rapides avec icônes personnalisées
   const quickActions: QuickAction[] = [
     {
       id: 'backup',
       title: 'Sauvegarder',
       description: 'Sauvegarder les dossiers utilisateur',
-      icon: Save,
+      icon: iconSauvegarde,
       color: '#8b5cf6',
       gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
       action: () => setIsBackupModalOpen(true),
@@ -128,7 +131,7 @@ const VIPDashboard: React.FC = () => {
       id: 'systemcheck',
       title: 'Intégrité des fichiers système',
       description: 'Vérifier l\'intégrité des fichiers système',
-      icon: Shield,
+      icon: iconIntegrite,
       color: '#10b981',
       gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
       action: () => runSystemFileChecker(),
@@ -140,7 +143,7 @@ const VIPDashboard: React.FC = () => {
       id: 'cleanup',
       title: 'Nettoyer',
       description: 'Nettoyer le système',
-      icon: Trash2,
+      icon: iconNettoyage,
       color: '#f59e0b',
       gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
       action: () => setIsCleanupModalOpen(true),
@@ -152,7 +155,7 @@ const VIPDashboard: React.FC = () => {
       id: 'monitor',
       title: 'Options de Redémarrage',
       description: 'Options de redémarrage avancées',
-      icon: Activity,
+      icon: iconRedemarrer,
       color: '#ef4444',
       gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
       action: () => setIsMonitorModalOpen(true),
@@ -164,7 +167,7 @@ const VIPDashboard: React.FC = () => {
       id: 'favorites',
       title: 'Sauvegarder Favoris',
       description: 'Sauvegarder les favoris Chrome et Edge',
-      icon: Star,
+      icon: iconFavoris,
       color: '#fbbf24',
       gradient: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
       action: () => setIsFavoritesModalOpen(true),
@@ -176,7 +179,7 @@ const VIPDashboard: React.FC = () => {
       id: 'telemetry',
       title: 'Désactiver Télémétrie',
       description: 'Désactiver la collecte de données Windows',
-      icon: Ban,
+      icon: iconTelemetrie,
       color: '#dc2626',
       gradient: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
       action: () => setIsTelemetryModalOpen(true),
@@ -188,7 +191,7 @@ const VIPDashboard: React.FC = () => {
       id: 'restore',
       title: 'Point de Restauration',
       description: 'Créer un point de restauration système',
-      icon: HardDrive,
+      icon: iconRestauration,
       color: '#059669',
       gradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
       action: () => setIsRestorePointModalOpen(true),
@@ -200,7 +203,7 @@ const VIPDashboard: React.FC = () => {
       id: 'godmode',
       title: 'Activer le GodMode',
       description: 'Créer le raccourci GodMode sur le Bureau',
-      icon: Zap,
+      icon: iconGodMode,
       color: '#f59e0b',
       gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
       action: () => enableGodMode(),
@@ -212,7 +215,7 @@ const VIPDashboard: React.FC = () => {
       id: 'battery',
       title: 'Générer un rapport batterie',
       description: 'Créer un rapport détaillé de la batterie',
-      icon: Battery,
+      icon: iconBatterie,
       color: '#10b981',
       gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
       action: () => generateBatteryReport(),
@@ -224,7 +227,7 @@ const VIPDashboard: React.FC = () => {
       id: 'secureboot',
       title: 'Vérifier Secure Boot',
       description: 'Vérifier le statut Secure Boot',
-      icon: Lock,
+      icon: iconSecureBoot,
       color: '#1d4ed8',
       gradient: 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)',
       action: () => setIsSecureBootModalOpen(true),
@@ -437,10 +440,15 @@ const VIPDashboard: React.FC = () => {
 
                 <div className="action-icon">
                   <motion.div
-                    whileHover={{ rotate: 360 }}
+                    className="icon-container"
+                    whileHover={{ rotate: 360, scale: 1.1 }}
                     transition={{ duration: 0.6 }}
                   >
-                    <action.icon size={32} />
+                    <img 
+                      src={action.icon} 
+                      alt={action.title}
+                      className="custom-icon"
+                    />
                   </motion.div>
                 </div>
                 
