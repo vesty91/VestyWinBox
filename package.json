@@ -41,6 +41,7 @@
     }
   },
   "dependencies": {
+    "@heroui/react": "^2.8.2",
     "basic-ftp": "^5.0.5",
     "framer-motion": "^12.23.6",
     "lucide-react": "^0.344.0",

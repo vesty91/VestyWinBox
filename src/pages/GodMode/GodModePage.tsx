@@ -26,7 +26,8 @@ import {
   Gamepad2,
   Gauge,
   CheckCircle,
-  Info
+  Info,
+  LucideIcon
 } from 'lucide-react';
 import './GodModePage.css';
 
@@ -35,7 +36,7 @@ interface GodModeCard {
   title: string;
   description: string;
   category: string;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  icon: LucideIcon;
   command: string;
   color: string;
   gradient: string;

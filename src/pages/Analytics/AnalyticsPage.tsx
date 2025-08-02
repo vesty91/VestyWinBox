@@ -14,7 +14,20 @@ import {
   Zap,
   Shield
 } from 'lucide-react';
+import { Spacer, Card } from "@heroui/react";
 import './AnalyticsPage.css';
+
+// Composant CustomCard avec HeroUI
+const CustomCard = () => (
+  <Card className="space-y-5 p-4 w-[200px]" radius="2xl">
+    <div className="bg-default-300 rounded-lg h-24" />
+    <div className="space-y-3">
+      <div className="bg-default-200 rounded-lg w-3/5 h-3" />
+      <div className="bg-default-200 rounded-lg w-4/5 h-3" />
+      <div className="bg-default-300 rounded-lg w-2/5 h-3" />
+    </div>
+  </Card>
+);
 
 const AnalyticsPage: React.FC = () => {
   const [analyticsData, setAnalyticsData] = useState({
@@ -172,12 +185,35 @@ const AnalyticsPage: React.FC = () => {
         </div>
       </motion.div>
 
+      {/* HeroUI Custom Cards Section */}
+      <motion.div 
+        className="heroui-cards-section"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+      >
+        <h2 className="section-title">
+          <Target size={24} />
+          Cartes HeroUI
+        </h2>
+        
+        <div className="heroui-cards-container">
+          <div className="flex">
+            <CustomCard />
+            <Spacer x={4} />
+            <CustomCard />
+            <Spacer x={4} />
+            <CustomCard />
+          </div>
+        </div>
+      </motion.div>
+
       {/* Performance Overview */}
       <motion.div 
         className="performance-overview"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
       >
         <h2 className="section-title">
           <Activity size={24} />
@@ -252,7 +288,7 @@ const AnalyticsPage: React.FC = () => {
         className="metrics-section"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
       >
         <h2 className="section-title">
           <Target size={24} />
@@ -283,7 +319,7 @@ const AnalyticsPage: React.FC = () => {
         className="activity-section"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.3 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
       >
         <h2 className="section-title">
           <Clock size={24} />
