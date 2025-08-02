@@ -3,43 +3,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import AnalyticsPage from '../AnalyticsPage';
 
-// Mock pour les données d'analytics
-const mockAnalyticsData = {
-  systemPerformance: {
-    cpu: 45,
-    memory: 68,
-    disk: 32,
-    network: 85
-  },
-  trends: {
-    cpu: 'up',
-    memory: 'down',
-    disk: 'up',
-    network: 'up'
-  },
-  recentActivity: [
-    {
-      id: 1,
-      type: 'system',
-      message: 'Mise à jour système terminée',
-      time: '2 min',
-      icon: 'Shield',
-      status: 'success'
-    }
-  ],
-  metrics: [
-    {
-      id: 1,
-      title: 'Temps de réponse',
-      value: '12ms',
-      change: '+2.3%',
-      trend: 'up',
-      icon: 'Clock',
-      color: 'emerald'
-    }
-  ]
-};
-
 describe('AnalyticsPage', () => {
   beforeEach(() => {
     // Reset des mocks

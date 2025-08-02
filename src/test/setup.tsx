@@ -2,6 +2,11 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import React from 'react';
 
+// Déclaration globale pour TypeScript
+declare global {
+  var ResizeObserver: typeof ResizeObserver;
+}
+
 // Mock pour window.electronAPI
 Object.defineProperty(window, 'electronAPI', {
   value: {
@@ -16,10 +21,12 @@ Object.defineProperty(window, 'electronAPI', {
 // Mock pour Framer Motion
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => React.createElement('div', props, children),
-    button: ({ children, ...props }: any) => React.createElement('button', props, children),
+    div: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => 
+      React.createElement('div', props, children),
+    button: ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => 
+      React.createElement('button', props, children),
   },
-  AnimatePresence: ({ children }: any) => children,
+  AnimatePresence: ({ children }: React.PropsWithChildren<Record<string, unknown>>) => children,
 }));
 
 // Mock pour les icônes Lucide
@@ -44,7 +51,7 @@ vi.mock('lucide-react', () => ({
 // Mock pour HeroUI
 vi.mock('@heroui/react', () => ({
   Spacer: ({ x }: { x: number }) => React.createElement('div', { style: { width: `${x * 0.25}rem` } }),
-  Card: ({ children, className, radius }: any) => 
+  Card: ({ children, className, radius }: React.PropsWithChildren<{ className?: string; radius?: string }>) => 
     React.createElement('div', { className: `card ${className} radius-${radius}` }, children),
 }));
 

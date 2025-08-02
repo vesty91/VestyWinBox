@@ -16,8 +16,8 @@
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "test:ui": "vitest --ui",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint src --ext ts,tsx --fix",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
     "type-check": "tsc --noEmit",
     "clean": "rimraf dist build node_modules/.cache",
     "postbuild": "robocopy assets dist/assets /E /NFL /NDL /NJH /NJS /NC /NS /NP"
@@ -46,6 +46,7 @@
     "electron": "^27.1.3",
     "electron-builder": "^24.6.4",
     "eslint": "^8.53.0",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
     "jsdom": "^22.1.0",

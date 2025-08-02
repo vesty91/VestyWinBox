@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 
 // Composant de chargement optimisé
-const LoadingSpinner = () => (
+const LoadingSpinner: React.FC = () => (
   <div className="loading-spinner">
     <div className="spinner"></div>
     <p>Chargement...</p>

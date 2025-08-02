@@ -14,8 +14,8 @@ export interface LogEntry {
   message: string;
   timestamp: Date;
   category: string;
-  data?: any;
-  context?: Record<string, any>;
+  data?: unknown;
+  context?: Record<string, unknown>;
   performance?: {
     duration?: number;
     memory?: number;
@@ -66,23 +66,23 @@ export class Logger {
   }
 
   // Méthodes de log principales
-  debug(message: string, category: string = 'debug', data?: any, context?: Record<string, any>): void {
+  debug(message: string, category: string = 'debug', data?: unknown, context?: Record<string, unknown>): void {
     this.log(LogLevel.DEBUG, message, category, data, context);
   }
 
-  info(message: string, category: string = 'info', data?: any, context?: Record<string, any>): void {
+  info(message: string, category: string = 'info', data?: unknown, context?: Record<string, unknown>): void {
     this.log(LogLevel.INFO, message, category, data, context);
   }
 
-  warn(message: string, category: string = 'warn', data?: any, context?: Record<string, any>): void {
+  warn(message: string, category: string = 'warn', data?: unknown, context?: Record<string, unknown>): void {
     this.log(LogLevel.WARN, message, category, data, context);
   }
 
-  error(message: string, category: string = 'error', data?: any, context?: Record<string, any>): void {
+  error(message: string, category: string = 'error', data?: unknown, context?: Record<string, unknown>): void {
     this.log(LogLevel.ERROR, message, category, data, context);
   }
 
-  critical(message: string, category: string = 'critical', data?: any, context?: Record<string, any>): void {
+  critical(message: string, category: string = 'critical', data?: unknown, context?: Record<string, unknown>): void {
     this.log(LogLevel.CRITICAL, message, category, data, context);
   }
 
@@ -91,8 +91,8 @@ export class Logger {
     level: LogLevel,
     message: string,
     category: string,
-    data?: any,
-    context?: Record<string, any>
+    data?: unknown,
+    context?: Record<string, unknown>
   ): void {
     if (level < this.config.level) return;
 
@@ -133,7 +133,7 @@ export class Logger {
     }
 
     if (this.config.enableFile) {
-      this.outputToFile(entry, formattedMessage);
+      this.outputToFile(entry);
     }
 
     if (this.config.enableRemote) {
@@ -181,7 +181,7 @@ export class Logger {
   }
 
   // Sortie fichier (simulation)
-  private outputToFile(entry: LogEntry, formattedMessage: string): void {
+  private outputToFile(entry: LogEntry): void {
     // Dans un environnement Electron, on pourrait écrire dans un fichier
     // Pour l'instant, on simule avec localStorage
     try {
@@ -201,7 +201,7 @@ export class Logger {
 
   // Performance monitoring
   startPerformanceMark(name: string): void {
-    this.performanceMarks.set(name, performance.now());
+    this.performanceMarks.set(name, window.performance.now());
     this.debug(`Performance mark started: ${name}`, 'performance');
   }
 
@@ -212,7 +212,7 @@ export class Logger {
       return null;
     }
 
-    const duration = performance.now() - startTime;
+    const duration = window.performance.now() - startTime;
     this.performanceMarks.delete(name);
     
     this.info(`Performance mark ended: ${name}`, 'performance', { duration });
@@ -240,8 +240,8 @@ export class Logger {
 
   // Données de performance système
   private getPerformanceData(): LogEntry['performance'] {
-    if ('performance' in window && 'memory' in performance) {
-      const memory = (performance as any).memory;
+    if ('performance' in window && 'memory' in window.performance) {
+      const memory = (window.performance as unknown as { memory: { usedJSHeapSize: number } }).memory;
       return {
         memory: memory.usedJSHeapSize,
         cpu: this.estimateCPUUsage()
@@ -322,7 +322,7 @@ export class Logger {
   }
 
   // Logs spécifiques pour les composants React
-  logComponentLifecycle(componentName: string, lifecycle: string, props?: any): void {
+  logComponentLifecycle(componentName: string, lifecycle: string, props?: unknown): void {
     this.debug(
       `Component ${lifecycle}: ${componentName}`,
       'react',
@@ -331,7 +331,7 @@ export class Logger {
   }
 
   // Logs pour les commandes système
-  logSystemCommand(command: string, args?: string[], result?: any): void {
+  logSystemCommand(command: string, args?: string[], result?: unknown): void {
     this.info(
       `Commande système exécutée: ${command}`,
       'system',
@@ -340,7 +340,7 @@ export class Logger {
   }
 
   // Logs pour les erreurs utilisateur
-  logUserError(error: Error, context?: Record<string, any>): void {
+  logUserError(error: Error, context?: Record<string, unknown>): void {
     this.error(
       `Erreur utilisateur: ${error.message}`,
       'user',
@@ -377,7 +377,7 @@ export const useLogger = () => {
 };
 
 // Décorateur pour mesurer automatiquement les performances
-export const withPerformanceLogging = <T extends (...args: any[]) => any>(
+export const withPerformanceLogging = <T extends (...args: unknown[]) => unknown>(
   name: string,
   fn: T
 ): T => {

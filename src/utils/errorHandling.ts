@@ -21,10 +21,10 @@ export interface AppError {
   type: ErrorType;
   severity: ErrorSeverity;
   message: string;
-  details?: any;
+  details?: unknown;
   timestamp: Date;
   stack?: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
 // Classe principale de gestion d'erreurs
@@ -48,8 +48,8 @@ export class ErrorHandler {
     type: ErrorType,
     message: string,
     severity: ErrorSeverity = ErrorSeverity.MEDIUM,
-    details?: any,
-    context?: Record<string, any>
+    details?: unknown,
+    context?: Record<string, unknown>
   ): AppError {
     const error: AppError = {
       id: this.generateErrorId(),
@@ -170,7 +170,7 @@ export class ErrorHandler {
 export const executeSystemCommandWithErrorHandling = async (
   command: string,
   args?: string[]
-): Promise<{ success: boolean; result?: any; error?: AppError }> {
+): Promise<{ success: boolean; result?: unknown; error?: AppError }> => {
   const errorHandler = ErrorHandler.getInstance();
   
   try {
@@ -204,13 +204,13 @@ export const executeSystemCommandWithErrorHandling = async (
     
     return { success: false, error: appError };
   }
-}
+};
 
 // Wrapper pour les opérations de sauvegarde
 export const backupOperationWithErrorHandling = async (
-  operation: () => Promise<any>,
+  operation: () => Promise<unknown>,
   context: string
-): Promise<{ success: boolean; result?: any; error?: AppError }> {
+): Promise<{ success: boolean; result?: unknown; error?: AppError }> => {
   const errorHandler = ErrorHandler.getInstance();
   
   try {
@@ -227,18 +227,18 @@ export const backupOperationWithErrorHandling = async (
     
     return { success: false, error: appError };
   }
-}
+};
 
 // Validation des entrées utilisateur
 export const validateUserInput = (
-  input: any,
+  input: unknown,
   rules: {
     required?: boolean;
     type?: string;
     minLength?: number;
     maxLength?: number;
     pattern?: RegExp;
-    custom?: (value: any) => boolean;
+    custom?: (value: unknown) => boolean;
   }
 ): { valid: boolean; errors: string[] } => {
   const errors: string[] = [];
@@ -302,7 +302,7 @@ export const validateUserInput = (
     
     return { valid: false, errors: ['Erreur de validation'] };
   }
-}
+};
 
 // Gestionnaire d'erreurs global pour les promesses non gérées
 export const setupGlobalErrorHandling = (): void => {
