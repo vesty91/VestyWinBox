@@ -148,3 +148,34 @@ public/
 
 # Local development
 .local/
+
+# Large files that exceed GitHub limits (>100MB)
+*.exe
+*.msi
+*.dmg
+*.pkg
+*.deb
+*.rpm
+*.AppImage
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.tar.bz2
+*.iso
+
+# Specific large files
+**/VMware.Workstation.exe
+**/Virtual.Box.exe
+**/VS-Code.exe
+**/CursorUserSetup-x64-*.exe
+**/KVRT.exe
+**/AIDA.64.exe
+**/O.C.C.T.exe
+**/Git-*.exe
+**/Performance.Test.exe
+**/MSI.Afterburner.exe
+
+# Large portable apps
+**/Apps portable/**/*.exe
+**/logiciels/**/*.exe
