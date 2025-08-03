@@ -339,15 +339,15 @@ const VIPDashboard: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.8 }}
             >
-          Tableau de bord principal pour la gestion avancée de votre système Windows
+              Tableau de bord principal pour la gestion avancée de votre système Windows
             </motion.p>
-      </motion.div>
+          </motion.div>
 
           {/* Heure actuelle */}
-      <motion.div 
+          <motion.div
             className="current-time-display"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
           >
             <motion.div 
@@ -461,12 +461,12 @@ const VIPDashboard: React.FC = () => {
                   whileHover={{ x: 100, opacity: [0, 1, 0] }}
                   transition={{ duration: 0.6 }}
                 />
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
           </AnimatePresence>
         </div>
       </motion.div>
-
+      
       {/* Modals */}
       <BackupModal 
         isOpen={isBackupModalOpen}
