@@ -47,7 +47,7 @@ import './AnalyticsPage.css';
 
 // Composant CustomCard avec HeroUI
 const CustomCard = () => (
-  <Card className="space-y-5 p-4 w-[200px]" radius="2xl">
+  <Card className="space-y-5 p-4 w-[200px]" radius="lg">
     <div className="bg-default-300 rounded-lg h-24" />
     <div className="space-y-3">
       <div className="bg-default-200 rounded-lg w-3/5 h-3" />
@@ -422,6 +422,8 @@ const AnalyticsPage: React.FC = () => {
               value={timeRange} 
               onChange={(e) => setTimeRange(e.target.value)}
               className="time-select"
+              title="Sélectionner la période d'analyse"
+              aria-label="Période d'analyse"
             >
               {timeRanges.map(range => (
                 <option key={range.value} value={range.value}>

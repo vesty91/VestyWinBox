@@ -1,36 +1,14 @@
-# Logs
-logs
-*.log
+# Dependencies
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-lerna-debug.log*
-
-# Dependencies
-node_modules
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # Build outputs
-dist
-dist-ssr
-build
-out
-*.local
-
-# Electron
-app/
-release/
-*.dmg
-*.exe
-*.deb
-*.rpm
-*.AppImage
-win-unpacked/
-mac/
-linux/
+dist/
+build/
+out/
 
 # Environment variables
 .env
@@ -39,55 +17,102 @@ linux/
 .env.test.local
 .env.production.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
 # OS generated files
-Thumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 ehthumbs.db
-Desktop.ini
+Thumbs.db
+desktop.ini
 
-# Temporary files
-*.tmp
-*.temp
-.cache
-.vite
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
 
 # Coverage directory used by tools like istanbul
-coverage
+coverage/
 *.lcov
 
 # nyc test coverage
-.nyc_output
+.nyc_output/
 
-# Electron Builder
-builder-debug.yml
-builder-effective-config.yaml
-*.blockmap
+# Dependency directories
+jspm_packages/
 
-# Activity logs
-activity-log.json
+# Optional npm cache directory
+.npm
 
-# PortableApps cache and logs
-**/LOG/*.log
-**/*.cache
-**/*.bak
-**/*.old
-**/session.xml.inCaseOfCorruption.bak
-**/change.log
-**/loaders.cache
-**/giomodule.cache
-**/icon-theme.cache
+# Optional eslint cache
+.eslintcache
 
-# Test files and temporary scripts
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+
+# Nuxt.js build / generate output
+.nuxt
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# Electron build outputs
+out/
+app/
+release/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional stylelint cache
+.stylelintcache
+
+# Test files
 test-*.js
 test-*.cjs
 test-*.ts
@@ -95,7 +120,12 @@ fix-*.js
 fix-*.cjs
 fix-*.ts
 
-# Duplicate and unused assets
+# Backup files
+*.backup
+*.backup.*
+*~
+
+# Duplicate assets
 **/mon logo.png
 **/icon.ico
 **/icon.png
@@ -110,7 +140,11 @@ fix-*.ts
 *.spec.js
 *.spec.ts
 
-# Backup files
-*.backup
-*.backup.*
-*~
+# Documentation build
+docs/
+
+# Public folder (if not needed)
+public/
+
+# Local development
+.local/
