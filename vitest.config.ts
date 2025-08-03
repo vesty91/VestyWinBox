@@ -18,7 +18,11 @@ export default defineConfig({
         '**/*.d.ts',
         '**/*.config.*',
         'dist/',
-        'build/'
+        'build/',
+        'electron/',
+        'public/',
+        'assets/',
+        'docs/'
       ]
     }
   },
